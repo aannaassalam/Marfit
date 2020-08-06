@@ -1,0 +1,34 @@
+{
+  "files": {
+    "main.css": "/static/css/main.71590c5c.chunk.css",
+    "main.js": "/static/js/main.1b8ab672.chunk.js",
+    "main.js.map": "/static/js/main.1b8ab672.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.5ddadf72.js",
+    "runtime-main.js.map": "/static/js/runtime-main.5ddadf72.js.map",
+    "static/css/2.2607fe47.chunk.css": "/static/css/2.2607fe47.chunk.css",
+    "static/js/2.103675e5.chunk.js": "/static/js/2.103675e5.chunk.js",
+    "static/js/2.103675e5.chunk.js.map": "/static/js/2.103675e5.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.55eda1788c9cb231a995eac4b9e5888d.js": "/precache-manifest.55eda1788c9cb231a995eac4b9e5888d.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/2.2607fe47.chunk.css.map": "/static/css/2.2607fe47.chunk.css.map",
+    "static/css/main.71590c5c.chunk.css.map": "/static/css/main.71590c5c.chunk.css.map",
+    "static/js/2.103675e5.chunk.js.LICENSE.txt": "/static/js/2.103675e5.chunk.js.LICENSE.txt",
+    "static/media/Add.png": "/static/media/Add.698d0192.png",
+    "static/media/bag-icon.png": "/static/media/bag-icon.91a8979b.png",
+    "static/media/bags.png": "/static/media/bags.8ba177b4.png",
+    "static/media/cards.png": "/static/media/cards.cf8e5af4.png",
+    "static/media/left.png": "/static/media/left.9fc43131.png",
+    "static/media/poster.png": "/static/media/poster.8a78cfda.png",
+    "static/media/right.png": "/static/media/right.f8258607.png",
+    "static/media/sale.png": "/static/media/sale.8841f73e.png",
+    "static/media/title.png": "/static/media/title.d7ba511c.png"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.5ddadf72.js",
+    "static/css/2.2607fe47.chunk.css",
+    "static/js/2.103675e5.chunk.js",
+    "static/css/main.71590c5c.chunk.css",
+    "static/js/main.1b8ab672.chunk.js"
+  ]
+}

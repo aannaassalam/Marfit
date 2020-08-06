@@ -1,0 +1,16 @@
+.mini-nav{
+    height: 5vh;
+    width: 100%;
+    background-color: slategrey;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: white;
+}
+
+@media (max-width: 1024px){
+    .mini-nav{
+        font-size: 18px;
+    }
+}
+

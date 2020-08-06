@@ -1,0 +1,67 @@
+.testimonial{
+    margin-top: 15px;
+    padding-top: 40px;
+    width: 100%;
+    height: fit-content;
+    background-color: white;
+}
+
+.testimonial .testimonial-header{
+    width: 100%;
+}
+
+.testimonial .testimonial-header h2{
+    font-family: Roboto;
+    font-size: 24px;
+    font-weight: 500;
+    color: rgba(0, 0, 0, 0.75);
+    text-align: center;
+}
+
+.testimonial .testimonial-header .lines{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.testimonial .testimonial-header .lines .line-through{
+    width: 20px;
+    height: 1.5px;
+    background-color: rgba(0, 0, 0, 0.8);;
+    margin: 4px 0;
+}
+
+.testimonial .testimonial-header .lines .rotated-line{
+    transform: rotate(-45deg);
+    display: inline-block;
+    margin: 0 5px;
+}
+
+.testimonial .testimonial-header .lines .horizontal{
+    width: 30px;
+    height: 1px;
+    background-color: rgba(0, 0, 0, 0.6);;
+}
+
+.testimonial .slider{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.testimonial .slider .swiper-container{
+    width: 90%;
+}
+
+.testimonial .slider .swiper-container .swiper-wrapper{
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.testimonial .slider .swiper-container .swiper-wrapper .swiper-slide{
+    height: 400px;
+    width: 350px;
+}

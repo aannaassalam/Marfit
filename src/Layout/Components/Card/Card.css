@@ -1,0 +1,68 @@
+.card-cont{
+    height: 280px;
+    width: 240px;
+    border-top: 1px solid rgba(0, 0, 0, 0.03);
+    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
+    position: relative;
+    background-color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding-bottom: 7px;
+}
+
+.card-cont .circle{
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    box-shadow: 1px 1px 3px lightgray;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 2px 5px;
+}
+
+.card-cont .circle i{
+    color: lightgray;
+}
+
+.card-cont img{
+    margin-top: 10px;
+    margin-left: 5px;
+    width: 90%;
+    height: 60%;
+    object-fit: contain;
+}
+
+.card-cont .short-description{
+    display: flex;
+    flex-direction: column;
+    font-size: 14px;
+    margin-left: -40px;
+    font-weight: 500;
+    margin-top: 14px;
+    height: 20%;
+    justify-content: space-around;
+}
+
+.card-cont .short-description .price-flex{
+    display: flex;
+    flex-direction: row;
+    width: 60%;
+    justify-content: space-between;
+    font-weight: 400;
+    font-size: 14px;
+}
+
+.card-cont .short-description .price-line-through{
+    text-decoration: line-through;
+    color: grey;
+}
+
+.card-cont .short-description .price-flex .discount{
+    font-weight: bold;
+    color: #2874F0;
+}
+

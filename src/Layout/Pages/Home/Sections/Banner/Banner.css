@@ -1,0 +1,50 @@
+.panel{
+    width: 100%;
+    height: 77vh;
+}
+
+.swiper-container{
+    height: 100%;
+    width: 100%;
+}
+
+.panel .cont{
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    height: 100% !important;
+}
+
+.panel .cont img{
+    width: 40%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.panel .cont img:nth-child(2){
+    width: 60%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.swiper-pagination-bullet-active{
+    background-color: white !important;
+}
+
+@media (max-width: 1024px){
+    .panel{
+        height: 30vh;
+    }
+}
+
+@media (max-width: 468px){
+    .panel{
+        height: 20vh;
+    }
+}
+
+@media (max-width: 360px){
+    .panel{
+        height: 20vh;
+    }
+}

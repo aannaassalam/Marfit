@@ -1,0 +1,53 @@
+.mini-container{
+    height: 8vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.mini-container .tray{
+    width: 35%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.mini-container .tray a{
+    font-size: 14px;
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.mini-container .tray a:last-child {
+    color: #FB641B;
+}
+
+@media (max-width: 1024px){
+    .mini-container{
+        height: 6vh;
+    }
+
+    .mini-container .tray a{
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 768px){
+    .mini-container .tray{
+        width: 50%;
+    }
+
+    .mini-container{
+        height: 6vh;
+    }
+}
+
+@media (max-width: 525px){
+    .mini-container{
+        display: none;
+    }
+}
