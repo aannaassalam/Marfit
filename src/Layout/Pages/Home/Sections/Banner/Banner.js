@@ -1,25 +1,23 @@
-import React from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
+import React from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
 // import 'swiper/swiper.scss';
 // import Swiper from 'swiper';
-import bags from './assets/bags.png';
-import sale from './assets/sale.png';
-import './Banner.css';
-import SwiperCore, {Pagination, A11y, Autoplay} from 'swiper';
+import bags from "./assets/bags.png";
+import sale from "./assets/sale.png";
+import "./Banner.css";
+import SwiperCore, { Pagination, A11y, Autoplay } from "swiper";
 // import 'swiper/components/pagination/pagination.scss';
-import IndicatorDots from './Carousel-indicators/indicator-dots';
-import Carousel from 're-carousel';
-
+import IndicatorDots from "./Carousel-indicators/indicator-dots";
+import Carousel from "re-carousel";
 
 SwiperCore.use([Pagination, A11y, Autoplay]);
 
-
-export default class Banner extends React.Component{
-
-    render(){
-        return (
-            <div className="panel">
-            {/* <Swiper
+export default class Banner extends React.Component {
+  render() {
+    return (
+      <div className="panel-container">
+        <div className="panel">
+          {/* <Swiper
               spaceBetween={0}
               slidesPerView={1}
               Autoplay={{delay: 1000}}
@@ -33,14 +31,34 @@ export default class Banner extends React.Component{
               <SwiperSlide><div className="cont"><img src={sale} alt="sale"/><img src={bags} alt="bags"/></div></SwiperSlide>
             </Swiper> */}
 
-            <Carousel auto loop interval={5000} widgets={[IndicatorDots]} >
-                <div className="cont"><img src={sale} alt="sale"/><img src={bags} alt="bags"/></div>
-                <div className="cont"><img src={sale} alt="sale"/><img src={bags} alt="bags"/></div>
-                <div className="cont"><img src={sale} alt="sale"/><img src={bags} alt="bags"/></div>
-                <div className="cont"><img src={sale} alt="sale"/><img src={bags} alt="bags"/></div>
-                <div className="cont"><img src={sale} alt="sale"/><img src={bags} alt="bags"/></div>
-            </Carousel>
+          <Carousel auto loop interval={5000} widgets={[IndicatorDots]}>
+            <div className="cont">
+              <img
+                src="https://rent.flappify.com/static/media/banner.078ab306.jpg"
+                style={{ width: "100%", height: "100%" }}
+              />
+              {/* <img src={sale} alt="sale" />
+              <img src={bags} alt="bags" /> */}
             </div>
-        )
-    }
+            <div className="cont">
+              <img
+                src="https://rent.flappify.com/static/media/banner.078ab306.jpg"
+                style={{ width: "100%", height: "100%" }}
+              />
+              {/* <img src={sale} alt="sale" />
+              <img src={bags} alt="bags" /> */}
+            </div>
+            <div className="cont">
+              <img
+                src="https://rent.flappify.com/static/media/banner.078ab306.jpg"
+                style={{ width: "100%", height: "100%" }}
+              />
+              {/* <img src={sale} alt="sale" />
+              <img src={bags} alt="bags" /> */}
+            </div>
+          </Carousel>
+        </div>
+      </div>
+    );
+  }
 }
