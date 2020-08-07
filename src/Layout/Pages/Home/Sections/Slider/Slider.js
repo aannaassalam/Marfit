@@ -2,8 +2,6 @@ import React from 'react';
 import './Slider.css';
 import Card from '../../../../Components/Card/Card';
 // import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/swiper.scss';
-import 'swiper/components/navigation/navigation.scss';
 // import SwiperCore, { Navigation } from 'swiper';
 import Swiper from 'swiper';
 
@@ -15,6 +13,10 @@ export default class Slider extends React.Component{
         var swiper = new Swiper(".swiper-container", {
             slidesPerView: "auto",
             spaceBetween:20,
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev'
+            }
         })
     }
 
@@ -69,6 +71,8 @@ export default class Slider extends React.Component{
                                 <Card/>
                             </div>
                         </div>
+                        <div className="swiper-button-prev"></div>
+                        <div className="swiper-button-next"></div>
                     </div>
                 </div>
             </div>

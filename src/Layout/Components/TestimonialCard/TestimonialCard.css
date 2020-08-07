@@ -3,6 +3,7 @@
     height: 450px;
     width: 350px;
     padding-top: 50px;
+    cursor: pointer;
 }
 .testimonial-card{
     height: 350px;

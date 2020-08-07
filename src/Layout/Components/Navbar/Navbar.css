@@ -88,10 +88,6 @@
     font-size: 16px;
 }
 
-.navbar .nav-container .second-container input::placeholder{
-    font-size: .8rem;
-}
-
 .navbar .nav-container .second-container button{
     height: 100%;
     width: 20%;
@@ -104,7 +100,7 @@
 
 .navbar .nav-container .second-container .search-button{
     color: white;
-    font-size: .8rem;
+    font-size: 1rem;
     text-decoration: none;
     font-weight: 500;
 }

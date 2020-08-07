@@ -3,8 +3,6 @@ import './Slider2.css';
 import Card from '../../../../Components/Card/Card';
 import Swiper from 'swiper';
 // import { Swiper, SwiperSlide } from 'swiper/react';
-import 'swiper/swiper.scss';
-import 'swiper/components/navigation/navigation.scss';
 // import SwiperCore, { Navigation } from 'swiper';
 
 // SwiperCore.use([ Navigation ]);

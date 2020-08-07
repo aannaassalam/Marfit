@@ -5,15 +5,18 @@ import Couponbar from './Layout/Components/Couponbar/Couponbar';
 import MiniNav from './Layout/Components/MiniNav/MiniNav';
 import Home from './Layout/Pages/Home/Home';
 import Footer from './Layout/Components/Footer/Footer';
+import Cart from './Layout/Pages/Cart/Cart';
+
 
 function App() {
   return (
     <>
-      <Couponbar/>
+      {/* <Couponbar/>
       <Navbar/>
       <MiniNav/>
       <Home/>
-      <Footer/>
+      <Footer/> */}
+      <Cart/>
     </>
   );
 }
