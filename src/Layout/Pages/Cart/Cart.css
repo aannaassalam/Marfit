@@ -8,11 +8,47 @@
 }
 
 .cart-cont .blank{
-    width: 60%;
+    width: 65%;
     height: 100%;
 }
 
 .cart-cont .cart{
-    width: 40%;
+    width: 35%;
     height: 100%;
+    padding: 13px;
+    background-color: white;
+    padding-top: 0;
+}
+
+.cart-cont .cart-head{
+    height: 60px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid black;
+}
+
+.cart-cont .cart-head h2{
+    font-size: 20px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 600;
+}
+
+.cart-cont .cart-head i{
+    font-size: 16px;
+}
+
+.cart-cont .cart-body{
+    height: 300px;
+    overflow-y: scroll;
+}
+
+.cart-cont .cart-checkout{
+    height: 250px;
+    margin-top: 15px;
+}
+
+.cart-cont .cart-checkout .apply-coupon{
+    border: 2px solid darkgrey;
 }

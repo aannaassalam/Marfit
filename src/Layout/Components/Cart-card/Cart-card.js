@@ -11,9 +11,9 @@ export default class CartCard extends React.Component{
                     <p className="title">Tan Men Sling Bag</p>
                     <p className="price">&#8377;999</p>
                     <div className="counter">
-                        <span>-</span>
+                        <span className="symbol">-</span>
                         <span>1</span>
-                        <span>+</span>
+                        <span className="symbol">+</span>
                     </div>
                     <a href="#" className="remove-link">REMOVE</a>
                 </div>
