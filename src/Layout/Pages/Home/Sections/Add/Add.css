@@ -1,14 +1,15 @@
-.add{
-    position: relative;
-    width: 100%;
-    height: fit-content;
-    margin-top: 15px;
+.add {
+  position: relative;
+  width: 100%;
+  height: fit-content;
+  margin-top: 15px;
+  box-shadow: 0 3px 5px darkgray;
 }
 
-.add img{
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+.add img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 /* .add .add-button{

@@ -1,51 +1,51 @@
-
-.testimonial-card-container{
-    height: 450px;
-    width: 350px;
-    padding-top: 50px;
-    cursor: pointer;
+.testimonial-card-container {
+  height: 450px;
+  width: 350px;
+  padding-top: 50px;
+  cursor: pointer;
 }
-.testimonial-card{
-    height: 350px;
-    width: 350px;
-    background-color: #F5F7FA;
-    border-radius: 13px;
-    position: relative;
-    padding: 2rem;
+.testimonial-card {
+  height: 350px;
+  width: 350px;
+  background-color: #f5f7fa;
+  border-radius: 13px;
+  position: relative;
+  padding: 2rem;
+  box-shadow: 0 2px 6px 0 #dee0e2;
 }
 
-.testimonial-card .quoted{
-    width: 80px;
-    height: 80px;
-    position: absolute;
-    top: -30px;
-    right: 20px;
+.testimonial-card .quoted {
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  top: -30px;
+  right: 20px;
 }
 
 .testimonial-card .testimonial-container .details {
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin-bottom: 1rem;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
-.testimonial-card .testimonial-container .details img{
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    margin-right: 1rem;
-    background-color: white;
-    object-fit: contain;
+.testimonial-card .testimonial-container .details img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  margin-right: 1rem;
+  background-color: white;
+  object-fit: contain;
 }
 
-.testimonial-card .testimonial-container .details p{
-    font-size: 18px;
-    font-weight: 500;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    color: rgba(0, 0, 0, 0.8);
+.testimonial-card .testimonial-container .details p {
+  font-size: 18px;
+  font-weight: 500;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: rgba(0, 0, 0, 0.8);
 }
 
-.testimonial-card .testimonial-container .comment p{
-    color: grey;
+.testimonial-card .testimonial-container .comment p {
+  color: grey;
 }
