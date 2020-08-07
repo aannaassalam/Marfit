@@ -30,8 +30,10 @@ export default class Navbar extends React.Component{
                         </div>
                     </div>
                     <div className="second-container">
-                        <i className="fa fa-search"></i>
-                        <input type="text" name="search" id="search" placeholder='What are you looking for ?'/>
+                        <div className="input-container">
+                            <i className="fa fa-search"></i>
+                            <input type="text" name="search" id="search" placeholder='What are you looking for ?'/>
+                        </div>
                         <button><a href="#" className="search-button">Search</a></button>
                     </div>
                     <div className="third-container">
