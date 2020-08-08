@@ -10,11 +10,11 @@ import Cart from "./Layout/Pages/Cart/Cart";
 function App() {
   return (
     <>
-      {/* <Couponbar/>
+      <Couponbar/>
       <Navbar/>
       <MiniNav/>
       <Home/>
-      <Footer/> */}
+      <Footer/>
       <Cart />
     </>
   );

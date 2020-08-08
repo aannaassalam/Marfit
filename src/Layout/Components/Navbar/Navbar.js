@@ -18,6 +18,11 @@ export default class Navbar extends React.Component {
     // document.getElementById('caret').style.rotate = '90deg';
   };
 
+  handleCart = () =>{
+    document.getElementsByClassName("cart-cont")[0].style.display = "flex";
+    console.log("done");
+  }
+
   render() {
     return (
       <nav className="navbar">
@@ -54,7 +59,7 @@ export default class Navbar extends React.Component {
               <i className="fa fa-heart"></i>
               <p>WISHLIST</p>
             </a>
-            <a href="#" className="links">
+            <a href="#" className="links" onClick={this.handleCart}>
               <i className="fas fa-shopping-cart"></i>
               <p>CART</p>
             </a>

@@ -14,7 +14,7 @@ export default class FeatureItems extends React.Component{
                         <img src={title} alt="title"/>
                         <p>New Summer Collection is Here Now!</p>
                     </div>
-                    <a href="#"><i class="fas fa-arrow-right icon"></i><p><i className="italics">CLICK TO EXPLORE</i></p></a>
+                    <a href="#"><i className="fas fa-arrow-right icon"></i><p><i className="italics">CLICK TO EXPLORE</i></p></a>
                 </div>
             </div>
         )

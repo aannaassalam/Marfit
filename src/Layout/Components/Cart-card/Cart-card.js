@@ -3,6 +3,30 @@ import bag from './assets/bag.png';
 import './Cart-card.css';
 
 export default class CartCard extends React.Component{
+
+    constructor(props){
+        super(props)
+        this.state = {
+            counter: 1
+        }
+    }
+
+    handleminus = () =>{
+        var count = this.state.counter;
+        if(count > 0){
+            this.setState({
+                counter: count-1
+            })
+        }
+    }
+
+    handleplus = () =>{
+        var count = this.state.counter;
+        this.setState({
+            counter: count+1
+        })
+    }
+
     render(){
         return(
             <div className="items">
@@ -11,9 +35,9 @@ export default class CartCard extends React.Component{
                     <p className="title">Tan Men Sling Bag</p>
                     <p className="price">&#8377;999</p>
                     <div className="counter">
-                        <span className="symbol">-</span>
-                        <span>1</span>
-                        <span className="symbol">+</span>
+                        <span className="symbol" onClick={this.handleminus}>-</span>
+                        <span>{this.state.counter}</span>
+                        <span className="symbol" onClick={this.handleplus}>+</span>
                     </div>
                     <a href="#" className="remove-link">REMOVE</a>
                 </div>
