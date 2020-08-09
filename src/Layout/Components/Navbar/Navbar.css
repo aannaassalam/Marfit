@@ -152,20 +152,20 @@
 
 .navbar .hamburger-menu {
   display: none;
-  width: 18%;
+  width: 20%;
   background-color: white;
   position: fixed;
-  left: -18%;
+  left: -20%;
   top: 5vh;
   border-right: 1px solid darkgrey;
   border-bottom: 1px solid darkgray;
   height: 100%;
-  transform: translateX(100%);
   translate: transform ease 1s;
+  transform: translateX(100%);
   z-index: 999;
 }
 
-.navbar .hamburger-menu .head {
+.navbar .hamburger-menu .head{
   display: flex;
   flex-direction: row;
   height: 10vh;
@@ -188,7 +188,7 @@
 }
 
 .navbar .hamburger-menu .head img {
-  height: 40%;
+  height: 60%;
 }
 
 .navbar .hamburger-menu .head i {
@@ -198,14 +198,14 @@
 }
 
 .navbar .hamburger-menu .ham-list {
-  margin-top: 20px;
+  margin-top: 10px;
   display: flex;
   flex-direction: column;
 }
 
 .navbar .hamburger-menu .ham-list .box {
   width: 100%;
-  height: 40px;
+  height: 50px;
   margin-top: 10px;
   color: black;
   text-decoration: none;
@@ -225,8 +225,19 @@
   background-color: darkgrey;
 }
 
-.navbar .hamburger-menu .ham-list #shop {
+.navbar .hamburger-menu .ham-list #shop{
   display: none;
+  width: 100%;
+  height: 50px;
+  margin-top: 10px;
+  color: black;
+  text-decoration: none;
+  /* display: flex !important; */
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px;
+  border-bottom: 1px solid lightgray;
 }
 
 .navbar .hamburger-menu .ham-list .orange a,
@@ -234,19 +245,16 @@
   color: #fb641b !important;
 }
 
-.active {
-  background-color: gray;
-}
-
 .navbar .hamburger-menu .ham-list a {
   text-decoration: none;
   color: black !important;
   font-weight: 600;
-  font-size: 12px;
+  font-size: 15px;
 }
 
-#caret {
+.navbar .hamburger-menu .ham-list #shop .fa-caret-right.open{
   transform: rotate(90deg);
+  transition: transform .3s;
 }
 
 .navbar .hamburger-menu .ham-list .shop-menu {
@@ -255,9 +263,32 @@
   height: fit-content;
   background-color: lightgray;
   margin-top: 0;
+  width: 100%;
+  padding: 0 12px;
 }
 
-.navbar .hamburger-menu .ham-list .shop-menu a {
+.navbar .hamburger-menu .ham-list .shop-menu:active {
+  background-color: lightgrey;
+}
+
+.active {
+  background-color: gray;
+}
+
+.navbar .hamburger-menu .ham-list .shop-menu ul{
+  display: flex;
+  flex-direction: column;
+  width: 70%;
+  margin: 0 auto;
+}
+
+.navbar .hamburger-menu .ham-list .shop-menu ul li{
+  list-style: none;
+  margin: 10px 0;
+  width: 70%;
+}
+
+.navbar .hamburger-menu .ham-list .shop-menu a{
   margin: 10px 0;
   width: 70%;
 }
@@ -351,8 +382,8 @@
   }
 
   .navbar .hamburger-menu {
-    width: 40%;
-    left: -40%;
+    width: 60%;
+    left: -60%;
   }
 
   .navbar .hamburger-menu .head {
@@ -369,7 +400,7 @@
   }
 
   .navbar .hamburger-menu .ham-list #shop {
-    display: none;
+    display: flex;
   }
 
   .navbar .hamburger-menu .ham-list .shop-menu {
