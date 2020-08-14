@@ -1,11 +1,9 @@
 import React from "react";
 import './Testimonials.css';
-// import testimonial from './assets/testimonial.png';
-// import { Swiper, SwiperSlide } from 'swiper/react';
 import Swiper from 'swiper';
 import 'swiper/swiper.scss';
 import 'swiper/components/navigation/navigation.scss';
-import TestimonialCard from '../../../../Components/TestimonialCard/TestimonialCard';
+import TestimonialCard from '../../../../components/testimonialCard/TestimonialCard';
 
 export default class Testimonial extends React.Component{
     

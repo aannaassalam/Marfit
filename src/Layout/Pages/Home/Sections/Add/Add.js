@@ -1,6 +1,6 @@
 import React from 'react';
 import './Add.css';
-import add from './assets/Add.png';
+import add from '../../../../../assets/Add.png';
 
 export default class Add extends React.Component{
     render(){

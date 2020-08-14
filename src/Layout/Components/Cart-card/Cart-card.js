@@ -1,5 +1,5 @@
 import React from 'react';
-import bag from './assets/bag.png';
+import bag from '../../../assets/bag.png';
 import './Cart-card.css';
 
 export default class CartCard extends React.Component{

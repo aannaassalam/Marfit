@@ -1,11 +1,7 @@
 import React from 'react';
 import './Slider.css';
-import Card from '../../../../Components/Card/Card';
-// import { Swiper, SwiperSlide } from 'swiper/react';
-// import SwiperCore, { Navigation } from 'swiper';
+import Card from '../../../../components/card/Card';
 import Swiper from 'swiper';
-
-// SwiperCore.use([ Navigation ]);
 
 export default class Slider extends React.Component{
 

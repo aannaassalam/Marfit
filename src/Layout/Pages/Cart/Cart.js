@@ -1,23 +1,19 @@
 import React from 'react';
 import './Cart.css';
-import CartCard from '../../Components/Cart-card/Cart-card';
-import discount from './assets/download.png';
+import CartCard from '../../components/cart-card/Cart-card';
+import discount from '../../../assets/download.png';
 
 
 export default class Cart extends React.Component{
 
-    handleCross = () => {
-        document.getElementsByClassName("cart-cont")[0].style.display = "none";
-    }
-
     render(){
         return(
             <div className="cart-cont">
-                <div className="blank"></div>
+                <div className="blank" onClick={this.props.close}></div>
                 <div className="cart">
                     <div className="cart-head">
                         <h2>SHOPPING CART</h2>
-                        <i className="fa fa-times fa-1x" onClick={this.handleCross} ></i>
+                        <i className="fa fa-times fa-1x" onClick={this.props.close} ></i>
                     </div>
                     <div className="cart-body">
                         <CartCard/>

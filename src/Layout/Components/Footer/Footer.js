@@ -1,8 +1,8 @@
 import React from 'react';
 import './Footer.css';
-import marfitLogo from './assets/marfit-logo.png';
-import cards from './assets/cards.png';
-import email from './assets/email.png';
+import marfitLogo from '../../../assets/marfit-logo.png';
+import cards from '../../../assets/cards.png';
+import email from '../../../assets/email.png';
 
 export default class Footer extends React.Component{
     render(){

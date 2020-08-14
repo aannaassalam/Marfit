@@ -1,7 +1,7 @@
 import React from 'react';
 import './TestimonialCard.css';
-import quote from './assets/quote.png';
-import marfit from './assets/Marfit.png';
+import quote from '../../../assets/quote.png';
+import marfit from '../../../assets/Marfit.png';
 
 
 export default class TestimonialCard extends React.Component{

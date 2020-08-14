@@ -1,0 +1,124 @@
+.description {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.description .header {
+    width: 100%;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+.description .header p {
+    font-size: 22px;
+    color: #313131;
+    font-weight: 500;
+    margin-bottom: 10px;
+}
+
+.description .header .line {
+    height: 2.5px;
+    width: 80px;
+    background-color: orange;
+}
+
+.description .body {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.description .body .gallery {
+    width: 40%;
+}
+
+.description .body .gallery .swiper-container .swiper-wrapper .swiper-slide img {
+    width: 100%;
+    height: 100%;
+}
+
+.description .body .details {
+    width: 58%;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    flex-direction: column;
+    padding: 0.5rem 1.2rem;
+}
+
+.description .body .details .item-title {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.description .body .details .item-title p {
+    font-size: 18px;
+    color: #313131;
+    margin-bottom: 10px;
+}
+
+.description .body .details .item-title .line {
+    width: 50px;
+    height: 2.5px;
+    background-color: #c5c5c5;
+}
+
+.description .body .details .item-desc {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+}
+
+.description .body .details .item-desc p {
+    font-size: 13px;
+    color: #787878;
+    margin-bottom: 10px;
+}
+
+.description .body .details .item-desc p span {
+    font-weight: bold;
+    font-size: 14px;
+    color: #313131;
+}
+
+
+
+.description .body .details .item-price {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.description .body .details .item-price .line {
+    width: 100%;
+    height: 1.5px;
+    background-color: #e1e1e1;
+    margin-bottom: 20px;
+}
+
+.description .body .details .item-price div {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.description .body .details .item-price p {
+    font-size: 15px;
+    color: #717171;
+}
+
+.description .body .details .item-price p span{
+    color: #313131;
+    font-weight: 500;
+    margin-left: 5px;
+}

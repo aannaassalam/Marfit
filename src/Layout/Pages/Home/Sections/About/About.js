@@ -1,7 +1,7 @@
 import React from 'react';
-import left from './assets/left.png';
-import right from './assets/right.png';
-import marfit from './assets/Marfit.png'
+import left from '../../../../../assets/left.png';
+import right from '../../../../../assets/right.png';
+import marfit from '../../../../../assets/Marfit.png'
 import './About.css';
 
 export default class About extends React.Component{

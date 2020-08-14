@@ -12,6 +12,9 @@
     align-items: center;
     padding-bottom: 7px;
     cursor: pointer;
+    margin: 0 1rem 1rem 1rem;
+    text-decoration: none;
+    color: black;
 }
 
 .card-cont .circle{
@@ -40,7 +43,7 @@
 .card-cont .short-description{
     display: flex;
     flex-direction: column;
-    font-size: 14px;
+    font-size: 13px;
     margin-left: -40px;
     font-weight: 500;
     margin-top: 14px;
@@ -54,7 +57,7 @@
     width: 60%;
     justify-content: space-between;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 12px;
 }
 
 .card-cont .short-description .price-line-through{
