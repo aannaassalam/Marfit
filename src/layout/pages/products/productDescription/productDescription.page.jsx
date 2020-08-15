@@ -86,33 +86,12 @@ class ProductDesc extends React.Component {
             }
           });
           productShow["month"] = this.state.value;
-          if (firebase.auth().currentUser) {
-            firebase
-              .firestore()
-              .collection("users")
-              .where("email", "==", firebase.auth().currentUser.email)
-              .onSnapshot((snap) => {
-                snap.docChanges().forEach((change) => {
-                  var wishlist = change.doc.data().wishlist;
-                  productShow["isWished"] = false;
-                  wishlist.map((item) => {
-                    if (
-                      item.email === productShow.email &&
-                      item.id === productShow.id
-                    ) {
-                      productShow["isWished"] = true;
-                    }
-                  });
-                });
-              });
-          } else {
-            this.setState({
-              product: productShow,
-              seller: doc.data(),
-              simProducts: simProducts,
-              loading: false,
-            });
-          }
+          this.setState({
+            product: productShow,
+            seller: doc.data(),
+            simProducts: simProducts,
+            loading: false,
+          });
         });
       });
 
@@ -318,7 +297,7 @@ class ProductDesc extends React.Component {
                     Home
                   </a>
                   <a>
-                    <i class="fas fa-chevron-right"></i>
+                    <i className="fas fa-chevron-right"></i>
                   </a>
                   <a
                     href={"/Category/" + this.props.match.params.id1}
@@ -543,7 +522,9 @@ class ProductDesc extends React.Component {
                           <p>
                             Use Code <span>BED10</span>
                           </p>
-                          <p className="discount-desc">Get flat 20% off on y...</p>
+                          <p className="discount-desc">
+                            Get flat 20% off on y...
+                          </p>
                           <p style={{ color: "orange" }}>Read more</p>
                         </div>
                         <div className="copy">

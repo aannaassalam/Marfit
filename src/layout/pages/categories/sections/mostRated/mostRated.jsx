@@ -28,7 +28,7 @@ class MostRated extends React.Component {
                   itemCount++;
                   return (
                     <div class="swiper-slide">
-                      <img src={item.cover} alt="one" />
+                      <img src={item.images[0]} alt="one" />
                       <div className="details">
                         <p>{item.title}</p>
                         <div className="price-review">
