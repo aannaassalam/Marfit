@@ -18,7 +18,7 @@
   align-items: center;
 }
 
-.mini-container .tray a {
+.mini-container .tray .mini-content {
   font-size: 16px;
   color: black;
   font-weight: bold;
@@ -28,26 +28,27 @@
   justify-content: center;
   align-items: center;
   height: 100%;
+  cursor: pointer;
 }
 
-.mini-container .tray a i{
+.mini-container .tray .mini-content i{
   margin-left: 5px;
 }
 
-.mini-container .tray a:hover .category-options {
+.mini-container .tray .mini-content:hover .category-options {
   display: flex;
 }
 
-.mini-container .tray a .fa-chevron-down {
+.mini-container .tray .mini-content .fa-chevron-down {
   transition: transform 0.2s;
   font-size: 10px;
 }
 
-.mini-container .tray a:hover .fa-chevron-down {
+.mini-container .tray .mini-content:hover .fa-chevron-down {
   transform: rotate(180deg);
 }
 
-.mini-container .tray a .category-options {
+.mini-container .tray .mini-content .category-options {
   background-color: #fff;
   position: absolute;
   display: none;
@@ -61,7 +62,7 @@
   width: 150px;
 }
 
-.mini-container .tray a .category-options::after {
+.mini-container .tray .mini-content .category-options::after {
   content: "";
   width: 8px;
   height: 8px;
@@ -75,7 +76,7 @@
   border-bottom: none;
 }
 
-.mini-container .tray a .category-options a {
+.mini-container .tray .mini-content .category-options a {
   color: #000;
   font-size: 16px;
   font-weight: 500;
@@ -85,22 +86,31 @@
   z-index: 1001;
 }
 
-.mini-container .tray a .category-options a:hover {
+.mini-container .tray .mini-content .category-options a:hover {
   color: #fb641b;
   background-color: lightgrey;
   /* font-weight: bold; */
 }
 
-.mini-container .tray a:last-child {
+.mini-container .tray a {
   color: #fb641b;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
 }
+
 
 @media (max-width: 1024px) {
   .mini-container {
     height: 6vh;
   }
 
-  .mini-container .tray a {
+  .mini-container .tray .mini-content {
     font-size: 18px;
   }
 }

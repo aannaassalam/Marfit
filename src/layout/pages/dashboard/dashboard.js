@@ -130,7 +130,7 @@ class Dashboard extends React.Component {
     firebase
       .firestore()
       .collection("users")
-      .where("email", "==", firebase.auth().this.state.currentUser.email)
+      .where("email", "==", firebase.auth().currentUser.email)
       .get()
       .then((snap) => {
         snap.forEach((doc) => {

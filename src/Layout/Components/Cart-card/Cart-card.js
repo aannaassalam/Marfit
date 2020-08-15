@@ -30,10 +30,10 @@ export default class CartCard extends React.Component{
     render(){
         return(
             <div className="items">
-                <img src={bag} alt="Bag Image"/>
+                <img src={this.props.image} alt="Bag Image"/>
                 <div className="description">
-                    <p className="title">Tan Men Sling Bag</p>
-                    <p className="price">&#8377;999</p>
+                    <p className="title">{this.props.title}</p>
+                    <p className="price">&#8377;{this.props.price}</p>
                     <div className="counter">
                         <span className="symbol" onClick={this.handleminus}>-</span>
                         <span>{this.state.counter}</span>

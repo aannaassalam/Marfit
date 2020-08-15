@@ -10,6 +10,7 @@ import firebase from "../../../config/firebaseConfig";
 import loading from "../../../assets/loading.json";
 import Lottie from "lottie-react-web";
 import { firestore } from "firebase";
+import { toast } from "react-toastify";
 
 export default class Navbar extends React.Component {
   constructor(props) {
@@ -46,6 +47,8 @@ export default class Navbar extends React.Component {
               currentUser: doc.data(),
             });
           });
+        }).catch(err => {
+          console.log("User is not Logged in");
         });
     });
   }
@@ -67,7 +70,6 @@ export default class Navbar extends React.Component {
   handleShop = () => {
     if (document.getElementById("caret").classList.contains("open")) {
       document.getElementById("caret").classList.remove("open");
-      // document.getElementsByClassName("shop-menu")[0].style.display = "none";
       document
         .getElementsByClassName("shop-menu")[0]
         .classList.remove("active");
@@ -75,7 +77,6 @@ export default class Navbar extends React.Component {
         "none";
     } else {
       document.getElementById("caret").classList.add("open");
-      // document.getElementsByClassName("shop-menu")[0].style.display = "flex";
       document.getElementsByClassName("shop-menu")[0].classList.add("active");
       document.getElementsByClassName("shopmenu-list")[0].style.display =
         "block";
@@ -296,7 +297,7 @@ export default class Navbar extends React.Component {
           
         </div>
         <div className="blank" onClick={this.handleReverseClick}></div>
-        {this.state.showCart ? <Cart close={this.handleCartClose} /> : null}
+        {this.state.showCart ? <Cart close={this.handleCartClose} email={this.state.currentUser.email} /> : null}
 
         {this.state.login ? (
           <Login

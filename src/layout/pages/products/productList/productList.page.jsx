@@ -271,7 +271,8 @@ class ProductList extends React.Component {
   };
 
   addToWishlist = (e) => {
-    firebase
+    if(firebase.auth().currentUser){
+      firebase
       .firestore()
       .collection("users")
       .where("email", "==", firebase.auth().currentUser.email)
@@ -303,6 +304,9 @@ class ProductList extends React.Component {
           }
         });
       });
+    }else{
+      toast.error("Please Log in");
+    }
   };
 
   removeFromWishlist = (e) => {

@@ -22,7 +22,7 @@
 .subcategory-list-container .subcategory-header .underline {
   width: 100px;
   height: 5px;
-  background-color: #FB641B;
+  background-color: #fb641b;
   border-radius: 10px;
 }
 
@@ -34,7 +34,7 @@
 }
 
 .subcategory-list-container .subcategory-grids .sub {
-  width: 300px;
+  width: 18vw;
   height: 250px;
   position: relative;
   cursor: pointer;
