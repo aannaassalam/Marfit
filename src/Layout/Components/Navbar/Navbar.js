@@ -4,7 +4,7 @@ import logo from "../../../assets/image_1.png";
 import logo2 from "../../../assets/image_2.png";
 import title from "../../../assets/marfit-label.png";
 import title2 from "../../../assets/marfit-label2.png";
-import Cart from "../../pages/cart/Cart";
+import Cart from "../../Pages/Cart/Cart";
 import Login from "../login/Login";
 import firebase from "../../../config/firebaseConfig";
 import loading from "../../../assets/loading.json";
@@ -156,157 +156,157 @@ export default class Navbar extends React.Component {
                 height={50}
               />
             ) : (
-              <>
-                {this.state.loginStatus ? (
-                  <>
-                    <div
-                      className="profile"
-                      style={{ cursor: "pointer", userSelect: "none" }}
-                    >
-                      <a className="username">
-                        <p>Hello, {this.state.currentUser.name}</p>
-                        <i className="fas fa-chevron-down"></i>
-                      </a>
-                      {/* <div className="arrow-up"></div> */}
-                      <div className="options">
-                        <a
-                          href="/Dashboard/Profile"
-                          className="option-links"
-                          style={{ cursor: "pointer", userSelect: "none" }}
-                        >
-                          <i className="fas fa-user"></i>
-                          <p>Profile</p>
+                <>
+                  {this.state.loginStatus ? (
+                    <>
+                      <div
+                        className="profile"
+                        style={{ cursor: "pointer", userSelect: "none" }}
+                      >
+                        <a className="username">
+                          <p>Hello, {this.state.currentUser.name}</p>
+                          <i className="fas fa-chevron-down"></i>
                         </a>
-                        <a
-                          href="/Dashboard/Orders"
-                          className="option-links"
-                          style={{ cursor: "pointer", userSelect: "none" }}
-                        >
-                          <i className="fas fa-shopping-bag"></i>
-                          <p>Orders</p>
-                        </a>
-                        <a
-                          className="option-links"
-                          onClick={this.handleLogout}
-                          style={{ cursor: "pointer", userSelect: "none" }}
-                        >
-                          <i className="fas fa-sign-out-alt"></i>
-                          <p>Logout</p>
-                        </a>
+                        {/* <div className="arrow-up"></div> */}
+                        <div className="options">
+                          <a
+                            href="/Dashboard/Profile"
+                            className="option-links"
+                            style={{ cursor: "pointer", userSelect: "none" }}
+                          >
+                            <i className="fas fa-user"></i>
+                            <p>Profile</p>
+                          </a>
+                          <a
+                            href="/Dashboard/Orders"
+                            className="option-links"
+                            style={{ cursor: "pointer", userSelect: "none" }}
+                          >
+                            <i className="fas fa-shopping-bag"></i>
+                            <p>Orders</p>
+                          </a>
+                          <a
+                            className="option-links"
+                            onClick={this.handleLogout}
+                            style={{ cursor: "pointer", userSelect: "none" }}
+                          >
+                            <i className="fas fa-sign-out-alt"></i>
+                            <p>Logout</p>
+                          </a>
+                        </div>
                       </div>
-                    </div>
-                    <a href="/Dashboard/Wishlist" className="links">
-                      <i className="fa fa-heart"></i>
-                      <p>WISHLIST</p>
-                    </a>
-                    <a
-                      style={{ cursor: "pointer", userSelect: "none" }}
-                      className="links"
-                      onClick={this.handleCart}
-                    >
-                      <i className="fas fa-shopping-cart"></i>
-                      <p>CART</p>
-                    </a>
-                  </>
-                ) : (
-                  <a
-                    style={{ cursor: "pointer", userSelect: "none" }}
-                    className="login-signup"
-                    onClick={() => {
-                      this.setState({ login: true });
-                    }}
-                  >
-                    <i className="fas fa-user"></i>
-                    <p>LOGIN/SIGN UP</p>
-                  </a>
-                )}
-              </>
-            )}
+                      <a href="/Dashboard/Wishlist" className="links">
+                        <i className="fa fa-heart"></i>
+                        <p>WISHLIST</p>
+                      </a>
+                      <a
+                        style={{ cursor: "pointer", userSelect: "none" }}
+                        className="links"
+                        onClick={this.handleCart}
+                      >
+                        <i className="fas fa-shopping-cart"></i>
+                        <p>CART</p>
+                      </a>
+                    </>
+                  ) : (
+                      <a
+                        style={{ cursor: "pointer", userSelect: "none" }}
+                        className="login-signup"
+                        onClick={() => {
+                          this.setState({ login: true });
+                        }}
+                      >
+                        <i className="fas fa-user"></i>
+                        <p>LOGIN/SIGN UP</p>
+                      </a>
+                    )}
+                </>
+              )}
           </div>
         </div>
         <div className="menu" onClick={this.click}>
           <div className="hamburger-menu">
-          <div className="head">
-            <div className="logo">
-              <img src={logo} alt="Marfit Logo" className="logo-img" />
-              <img src={title} alt="Marfit Title" className="logo-title" />
+            <div className="head">
+              <div className="logo">
+                <img src={logo} alt="Marfit Logo" className="logo-img" />
+                <img src={title} alt="Marfit Title" className="logo-title" />
+              </div>
+              <i
+                className="fa fa-times fa-1x"
+                onClick={this.handleReverseClick}
+              ></i>
             </div>
-            <i
-              className="fa fa-times fa-1x"
-              onClick={this.handleReverseClick}
-            ></i>
-          </div>
-          <div className="ham-list">
-            <a href="/" className="box">
-              <p href="/">Home</p>
-              <i className="fa fa-caret-right fa-1x"></i>
-            </a>
-            <a href="#" className="box">
-              <p href="#">Contact us</p>
-              <i className="fa fa-caret-right fa-1x"></i>
-            </a>
-            <a href="#" className="box" id="cart" onClick={this.handleCart}>
-              <p href="#">Cart</p>
-              <i className="fa fa-caret-right fa-1x"></i>
-            </a>
-            <a href="#" className="box" id="shop" onClick={this.handleShop}>
-              <p href="#">Shop</p>
-              <i className="fa fa-caret-right fa-1x" id="caret"></i>
-            </a>
-            <div className="shop-menu">
-              <ul className="shopmenu-list">
-                <li>
-                  <a href="#" className="men">
-                    Mens
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="men">
-                    Womens
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="men">
-                    Child
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="men">
-                    Sale
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <a href="#" className="box" id="wishlist">
-              <p href="#">Wishlist</p>
-              <i className="fa fa-caret-right fa-1x"></i>
-            </a>
-            {!this.state.loginStatus ? (
-              <a
-                href="#"
-                className="box orange"
-                onClick={() => {
-                  this.setState({ login: true });
-                }}
-              >
-                <p style={{ cursor: "pointer", userSelect: "none" }}>Login</p>
+            <div className="ham-list">
+              <a href="/" className="box">
+                <p href="/">Home</p>
                 <i className="fa fa-caret-right fa-1x"></i>
               </a>
-            ) : null}
-          </div>
-          
-        </div>
-        <div className="blank" onClick={this.handleReverseClick}></div>
-        {this.state.showCart ? <Cart close={this.handleCartClose} email={this.state.currentUser.email} /> : null}
+              <a href="#" className="box">
+                <p href="#">Contact us</p>
+                <i className="fa fa-caret-right fa-1x"></i>
+              </a>
+              <a href="#" className="box" id="cart" onClick={this.handleCart}>
+                <p href="#">Cart</p>
+                <i className="fa fa-caret-right fa-1x"></i>
+              </a>
+              <a href="#" className="box" id="shop" onClick={this.handleShop}>
+                <p href="#">Shop</p>
+                <i className="fa fa-caret-right fa-1x" id="caret"></i>
+              </a>
+              <div className="shop-menu">
+                <ul className="shopmenu-list">
+                  <li>
+                    <a href="#" className="men">
+                      Mens
+                  </a>
+                  </li>
+                  <li>
+                    <a href="#" className="men">
+                      Womens
+                  </a>
+                  </li>
+                  <li>
+                    <a href="#" className="men">
+                      Child
+                  </a>
+                  </li>
+                  <li>
+                    <a href="#" className="men">
+                      Sale
+                  </a>
+                  </li>
+                </ul>
+              </div>
+              <a href="#" className="box" id="wishlist">
+                <p href="#">Wishlist</p>
+                <i className="fa fa-caret-right fa-1x"></i>
+              </a>
+              {!this.state.loginStatus ? (
+                <a
+                  href="#"
+                  className="box orange"
+                  onClick={() => {
+                    this.setState({ login: true });
+                  }}
+                >
+                  <p style={{ cursor: "pointer", userSelect: "none" }}>Login</p>
+                  <i className="fa fa-caret-right fa-1x"></i>
+                </a>
+              ) : null}
+            </div>
 
-        {this.state.login ? (
-          <Login
-            close={(toggle) => this.setState({ login: toggle })}
-            login={(toggle) => {
-              this.handleLoginStatus(toggle);
-            }}
-          />
-        ) : null}
+          </div>
+          <div className="blank" onClick={this.handleReverseClick}></div>
+          {this.state.showCart ? <Cart close={this.handleCartClose} email={this.state.currentUser.email} /> : null}
+
+          {this.state.login ? (
+            <Login
+              close={(toggle) => this.setState({ login: toggle })}
+              login={(toggle) => {
+                this.handleLoginStatus(toggle);
+              }}
+            />
+          ) : null}
         </div>
       </nav>
     );

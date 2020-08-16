@@ -1,6 +1,5 @@
 import React from "react";
 import "./Card.css";
-import bagicon from "../../../assets/bag-icon.png";
 
 const Card = (props) => {
   console.log(props.item);
@@ -12,7 +11,7 @@ const Card = (props) => {
           style={{ width: "100%", height: "100%" }}
           href={"/Category/Furniture/Bedroom/" + props.item.title}
         >
-          <img src={props.item.cover} alt="Bag-Icon" />
+          <img src={props.item.images[0]} alt="Bag-Icon" />
         </a>
       </div>
       {props.item.isWished ? (
@@ -23,10 +22,10 @@ const Card = (props) => {
           <i className="red fa fa-heart"></i>
         </div>
       ) : (
-        <div className="circle" onClick={() => props.addToWishlist(props.item)}>
-          <i className="fa fa-heart"></i>
-        </div>
-      )}
+          <div className="circle" onClick={() => props.addToWishlist(props.item)}>
+            <i className="fa fa-heart"></i>
+          </div>
+        )}
       <a
         href={"/Category/Furniture/Bedroom/" + props.item.title}
         className="short-description"

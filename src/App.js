@@ -2,23 +2,23 @@ import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Switch, Route, useLocation } from "react-router-dom";
 import "./App.css";
-import CouponBar from './layout/components/couponbar/Couponbar';
-import Navbar from "./layout/components/navbar/Navbar";
-import MiniNav from "./layout/components/miniNav/MiniNav";
-import Home from "./layout/pages/home/Home";
-import Footer from "./layout/components/footer/Footer";
-import Dashboard from "./layout/pages/dashboard/dashboard";
-import CategoryList from "./layout/pages/categories/categoryList.page";
-import ProductList from "./layout/pages/products/productList/productList.page";
-import ProductDesc from "./layout/pages/products/productDescription/productDescription.page";
-import ComingSoon from "./layout/components/comingSoon/comingSoon.component";
-import NotFound from "./layout/pages/notFound/notFound.page";
+import Couponbar from './Layout/Components/Couponbar/Couponbar';
+import Navbar from "./Layout/Components/Navbar/Navbar";
+import MiniNav from "./Layout/Components/MiniNav/MiniNav";
+import Home from "./Layout/Pages/Home/Home";
+import Footer from "./Layout/Components/Footer/Footer";
+import Dashboard from "./Layout/Pages/dashboard/dashboard";
+import CategoryList from "./Layout/Pages/categories/categoryList.page";
+import ProductList from "./Layout/Pages/products/productList/productList.page";
+import ProductDesc from "./Layout/Pages/products/productDescription/productDescription.page";
+import ComingSoon from "./Layout/Components/comingSoon/comingSoon.component";
+import NotFound from "./Layout/Pages/notFound/notFound.page";
 
 function App() {
   const location = useLocation();
   return (
     <div className="App">
-      <CouponBar />
+      <Couponbar />
       <Navbar />
       <MiniNav />
       <AnimatePresence>

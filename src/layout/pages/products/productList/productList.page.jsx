@@ -3,8 +3,8 @@ import { motion } from "framer-motion";
 import "./productList.style.css";
 
 import filter from "./assets/filter.png";
-import Filter from "../../../components/filter/filter.component";
-import Card from "../../../components/card/Card";
+import Filter from "../../../Components/filter/filter.component";
+import Card from "../../../Components/Card/Card";
 import firebase from "firebase";
 import Lottie from "lottie-react-web";
 import loading from "../../../../assets/loading.json";
@@ -72,9 +72,9 @@ class ProductList extends React.Component {
                 productList.map((product) => {
                   if (
                     product.category.toLowerCase() ===
-                      this.props.match.params.id1.toLowerCase() &&
+                    this.props.match.params.id1.toLowerCase() &&
                     product.subCategory.toLowerCase() ===
-                      this.props.match.params.id2.toLowerCase()
+                    this.props.match.params.id2.toLowerCase()
                   ) {
                     filterProductList.push(product);
                   }
@@ -271,40 +271,40 @@ class ProductList extends React.Component {
   };
 
   addToWishlist = (e) => {
-    if(firebase.auth().currentUser){
+    if (firebase.auth().currentUser) {
       firebase
-      .firestore()
-      .collection("users")
-      .where("email", "==", firebase.auth().currentUser.email)
-      .get()
-      .then((snap) => {
-        snap.forEach((doc) => {
-          var wishlist = doc.data().wishlist;
-          var found = false;
-          wishlist.map((item) => {
-            if (item.email === e.email && item.id === e.id) {
-              found = true;
+        .firestore()
+        .collection("users")
+        .where("email", "==", firebase.auth().currentUser.email)
+        .get()
+        .then((snap) => {
+          snap.forEach((doc) => {
+            var wishlist = doc.data().wishlist;
+            var found = false;
+            wishlist.map((item) => {
+              if (item.email === e.email && item.id === e.id) {
+                found = true;
+              }
+            });
+            if (found === false) {
+              e["isWished"] = true;
+              wishlist.push(e);
+              firebase
+                .firestore()
+                .collection("users")
+                .doc(doc.id)
+                .update({
+                  wishlist: wishlist,
+                })
+                .then(() => {
+                  toast.success("Added to your wishlist");
+                });
+            } else {
+              toast.error("Item already exists in your wishlist");
             }
           });
-          if (found === false) {
-            e["isWished"] = true;
-            wishlist.push(e);
-            firebase
-              .firestore()
-              .collection("users")
-              .doc(doc.id)
-              .update({
-                wishlist: wishlist,
-              })
-              .then(() => {
-                toast.success("Added to your wishlist");
-              });
-          } else {
-            toast.error("Item already exists in your wishlist");
-          }
         });
-      });
-    }else{
+    } else {
       toast.error("Please Log in");
     }
   };
@@ -359,150 +359,150 @@ class ProductList extends React.Component {
             />
           </div>
         ) : (
-          <>
-            <ToastContainer />
-            <motion.div
-              initial="initial"
-              animate="in"
-              exit="out"
-              variants={pageVariants}
-              transition={pageTransition}
-              className="productlist-container"
-            >
-              <div className="categorylist-breadcrumb">
-                <div className="breadcrumb-menu">
-                  <div className="bd-menu-list">
-                    <a href="/" style={{ cursor: "pointer" }}>
-                      Home
+            <>
+              <ToastContainer />
+              <motion.div
+                initial="initial"
+                animate="in"
+                exit="out"
+                variants={pageVariants}
+                transition={pageTransition}
+                className="productlist-container"
+              >
+                <div className="categorylist-breadcrumb">
+                  <div className="breadcrumb-menu">
+                    <div className="bd-menu-list">
+                      <a href="/" style={{ cursor: "pointer" }}>
+                        Home
                     </a>
-                    <a>
-                      <i class="fas fa-chevron-right"></i>
-                    </a>
-                    <a
-                      href={"/Category/" + this.props.match.params.id1}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {this.props.match.params.id1}
-                    </a>
-                    <a>
-                      <i class="fas fa-chevron-right"></i>
-                    </a>
-                    <a
-                      href={
-                        "/Category/" +
-                        this.props.match.params.id1 +
-                        "/" +
-                        this.props.match.params.id2
-                      }
-                      style={{ cursor: "pointer" }}
-                    >
-                      {this.props.match.params.id2}
-                    </a>
-                  </div>
+                      <a>
+                        <i class="fas fa-chevron-right"></i>
+                      </a>
+                      <a
+                        href={"/Category/" + this.props.match.params.id1}
+                        style={{ cursor: "pointer" }}
+                      >
+                        {this.props.match.params.id1}
+                      </a>
+                      <a>
+                        <i class="fas fa-chevron-right"></i>
+                      </a>
+                      <a
+                        href={
+                          "/Category/" +
+                          this.props.match.params.id1 +
+                          "/" +
+                          this.props.match.params.id2
+                        }
+                        style={{ cursor: "pointer" }}
+                      >
+                        {this.props.match.params.id2}
+                      </a>
+                    </div>
 
-                  <div className="bd-menu-stats">
-                    {this.props.match.params.id2 ? (
-                      <p>
-                        We have total {this.state.productList.length} products
+                    <div className="bd-menu-stats">
+                      {this.props.match.params.id2 ? (
+                        <p>
+                          We have total {this.state.productList.length} products
                         under <b>{this.props.match.params.id2}</b> category
-                      </p>
-                    ) : (
-                      <p>
-                        We have total {this.state.productList.length} products
+                        </p>
+                      ) : (
+                          <p>
+                            We have total {this.state.productList.length} products
                         under <b>{this.props.match.params.id1}</b> category
-                      </p>
-                    )}
+                          </p>
+                        )}
+                    </div>
                   </div>
                 </div>
-              </div>
-              {/* filter header */}
-              {this.state.productList.length === 0 ? (
-                <div
-                  style={{
-                    width: "100%",
-                    height: "85vh",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                  }}
-                >
-                  <Lottie
-                    options={{ animationData: empty }}
-                    width={200}
-                    height={200}
-                  />
-                  <p
+                {/* filter header */}
+                {this.state.productList.length === 0 ? (
+                  <div
                     style={{
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      color: "#313131",
+                      width: "100%",
+                      height: "85vh",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexDirection: "column",
                     }}
                   >
-                    Sorry! we could not find any items
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <div className="filter-header">
-                    <div className="left">
-                      <div className="filter">
-                        <img src={filter} alt="filter-logo" />
-                        <p>Filters</p>
-                      </div>
-                      <div className="reset">
-                        <button onClick={this.handleReset}>Reset</button>
-                      </div>
-                    </div>
-
-                    {/* Tags */}
-                    <div className="right"></div>
-                  </div>
-
-                  {/* Product List catalogue */}
-                  <div className="catalogue">
-                    <Filter
-                      handleMonths={(e) => this.handleMonths(e)}
-                      category={this.state.category}
-                      subCat={this.props.match.params.id2}
-                      type={this.state.type}
-                      handleProductAddType={(e) => this.handleProductAddType(e)}
-                      handleProductRemoveType={(e) =>
-                        this.handleProductRemoveType(e)
-                      }
-                      handleRentRange={(min, max) =>
-                        this.handleRentRange(min, max)
-                      }
-                      handleProductInStock={this.handleProductInStock}
-                      handleProductOutStock={this.handleProductOutStock}
-                      outStock={this.state.outStock}
-                      min={this.state.min}
-                      max={this.state.max}
-                      month={this.state.month}
+                    <Lottie
+                      options={{ animationData: empty }}
+                      width={200}
+                      height={200}
                     />
-                    <div className="card-list-container">
-                      <div className="card-list">
-                        {this.state.filterProductList.map((item) => {
-                          return (
-                            <Card
-                              id1={this.props.match.params.id1}
-                              id2={this.props.match.params.id2}
-                              item={item}
-                              addToWishlist={(e) => this.addToWishlist(e)}
-                              removeFromWishlist={(e) =>
-                                this.removeFromWishlist(e)
-                              }
-                            />
-                          );
-                        })}
-                      </div>
-                    </div>
+                    <p
+                      style={{
+                        fontSize: "16px",
+                        fontWeight: "bold",
+                        color: "#313131",
+                      }}
+                    >
+                      Sorry! we could not find any items
+                  </p>
                   </div>
-                </>
-              )}
-            </motion.div>
-          </>
-        )}
+                ) : (
+                    <>
+                      <div className="filter-header">
+                        <div className="left">
+                          <div className="filter">
+                            <img src={filter} alt="filter-logo" />
+                            <p>Filters</p>
+                          </div>
+                          <div className="reset">
+                            <button onClick={this.handleReset}>Reset</button>
+                          </div>
+                        </div>
+
+                        {/* Tags */}
+                        <div className="right"></div>
+                      </div>
+
+                      {/* Product List catalogue */}
+                      <div className="catalogue">
+                        <Filter
+                          handleMonths={(e) => this.handleMonths(e)}
+                          category={this.state.category}
+                          subCat={this.props.match.params.id2}
+                          type={this.state.type}
+                          handleProductAddType={(e) => this.handleProductAddType(e)}
+                          handleProductRemoveType={(e) =>
+                            this.handleProductRemoveType(e)
+                          }
+                          handleRentRange={(min, max) =>
+                            this.handleRentRange(min, max)
+                          }
+                          handleProductInStock={this.handleProductInStock}
+                          handleProductOutStock={this.handleProductOutStock}
+                          outStock={this.state.outStock}
+                          min={this.state.min}
+                          max={this.state.max}
+                          month={this.state.month}
+                        />
+                        <div className="card-list-container">
+                          <div className="card-list">
+                            {this.state.filterProductList.map((item) => {
+                              return (
+                                <Card
+                                  id1={this.props.match.params.id1}
+                                  id2={this.props.match.params.id2}
+                                  item={item}
+                                  addToWishlist={(e) => this.addToWishlist(e)}
+                                  removeFromWishlist={(e) =>
+                                    this.removeFromWishlist(e)
+                                  }
+                                />
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
+              </motion.div>
+            </>
+          )}
       </>
     );
   }
