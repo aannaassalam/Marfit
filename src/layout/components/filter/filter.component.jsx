@@ -10,8 +10,8 @@ export default class Filter extends React.Component {
       type: [],
       minLimit: 100,
       maxLimit: 1000,
-      minPrice: 100,
-      maxPrice: 1000,
+      minPrice: 500,
+      maxPrice: 5000,
     };
   }
   handleSlider = (value) => {
@@ -96,7 +96,7 @@ export default class Filter extends React.Component {
             />
           </div>
         </div> */}
-        {this.props.category.subcategories ? (
+        {this.props.category.subcategories.tags ? (
           <div className="type">
             <h1>TYPE</h1>
             {this.props.category.subcategories.map((sub) => {
@@ -112,11 +112,11 @@ export default class Filter extends React.Component {
                           }
                         ></i>
                       ) : (
-                        <div
-                          className="uncheck"
-                          onClick={() => this.props.handleProductAddType(tag)}
-                        ></div>
-                      )}
+                          <div
+                            className="uncheck"
+                            onClick={() => this.props.handleProductAddType(tag)}
+                          ></div>
+                        )}
                       <p>{tag.tag}</p>
                     </div>
                   );
@@ -153,11 +153,11 @@ export default class Filter extends React.Component {
                 onClick={this.props.handleProductInStock}
               ></i>
             ) : (
-              <div
-                className="uncheck"
-                onClick={this.props.handleProductOutStock}
-              ></div>
-            )}
+                <div
+                  className="uncheck"
+                  onClick={this.props.handleProductOutStock}
+                ></div>
+              )}
             <p>Out of Stock</p>
           </div>
         </div>
@@ -173,11 +173,11 @@ export default class Filter extends React.Component {
                 >
                   <div className="category">
                     {sub.name.toLowerCase() ===
-                    this.props.subCat.toLowerCase() ? (
-                      <i class="fas fa-check-square"></i>
-                    ) : (
-                      <div className="uncheck"></div>
-                    )}
+                      this.props.subCat.toLowerCase() ? (
+                        <i class="fas fa-check-square"></i>
+                      ) : (
+                        <div className="uncheck"></div>
+                      )}
                     <p>{sub.name}</p>
                   </div>
                 </a>

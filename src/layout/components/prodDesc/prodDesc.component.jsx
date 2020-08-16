@@ -49,19 +49,16 @@ class ProdDesc extends React.Component {
 
             <div className="item-desc">
               <p>{this.props.product.description}</p>
-              <p>
-                Retail Price <span>&#8377;{this.props.product.price}</span>
-              </p>
             </div>
 
             <div className="item-price">
               <div className="line"></div>
               <div>
                 <p>
-                  Monthly Rent: <span>&#8377;{this.props.product.rent}</span>
+                  Retail Price: <span>&#8377;{this.props.product.rent}</span>
                 </p>
                 <p>
-                  Security Deposit:{" "}
+                  Actual Price:{" "}
                   <span>&#8377;{this.props.product.deposit}</span>
                 </p>
               </div>
