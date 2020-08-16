@@ -8,10 +8,16 @@
     margin: 20px auto;
     margin-bottom: 0;
     user-select: none;
+    text-decoration: none;
+    color: #000;
 }
 
-.items img{
+.items a{
     width: 25%;
+}
+
+.items a img{
+    width: 100%;
 }
 
 .items .description{

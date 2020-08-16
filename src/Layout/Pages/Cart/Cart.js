@@ -18,14 +18,45 @@ export default class Cart extends React.Component {
       .collection("users")
       .where("email", "==", this.props.email)
       .onSnapshot((snap) => {
-        snap.docs.forEach((doc) => {
+        snap.docChanges().forEach((change) => {
           this.setState({
-            cart: doc.data().cart,
+            cart: change.doc.data().cart,
           });
-          console.log(this.state.cart);
         });
       });
   }
+
+  removeFromCart = (item) => {
+    this.setState({
+      addLoading: true,
+    });
+    console.log(item);
+    firebase
+      .firestore()
+      .collection("users")
+      .where("email", "==", firebase.auth().currentUser.email)
+      .get()
+      .then((snap) => {
+        snap.forEach((doc) => {
+          var cart = doc.data().cart;
+          var newCart = cart.filter((id) => {
+            return id === item.id;
+          });
+          firebase
+            .firestore()
+            .collection("users")
+            .doc(doc.id)
+            .update({
+              cart: newCart,
+            })
+            .then(() => {
+              this.setState({
+                cart: newCart,
+              });
+            });
+        });
+      });
+  };
 
   render() {
     return (
@@ -38,8 +69,15 @@ export default class Cart extends React.Component {
           </div>
           <div className="cart-body">
             {this.state.cart ? (
-              this.state.cart.map((items) => {
-                return <CartCard image={items.images} title={items.title} price={items.price} />;
+              this.state.cart.map((item) => {
+                return (
+                  <CartCard
+                    item={item}
+                    removeFromCart={(e) => {
+                      this.removeFromCart(e);
+                    }}
+                  />
+                );
               })
             ) : (
                 <p>NO ITEMS</p>

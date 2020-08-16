@@ -86,33 +86,12 @@ class ProductDesc extends React.Component {
             }
           });
           productShow["month"] = this.state.value;
-          if (firebase.auth().currentUser) {
-            firebase
-              .firestore()
-              .collection("users")
-              .where("email", "==", firebase.auth().currentUser.email)
-              .onSnapshot((snap) => {
-                snap.docChanges().forEach((change) => {
-                  var wishlist = change.doc.data().wishlist;
-                  productShow["isWished"] = false;
-                  wishlist.map((item) => {
-                    if (
-                      item.email === productShow.email &&
-                      item.id === productShow.id
-                    ) {
-                      productShow["isWished"] = true;
-                    }
-                  });
-                });
-              });
-          } else {
-            this.setState({
-              product: productShow,
-              seller: doc.data(),
-              simProducts: simProducts,
-              loading: false,
-            });
-          }
+          this.setState({
+            product: productShow,
+            seller: doc.data(),
+            simProducts: simProducts,
+            loading: false,
+          });
         });
       });
 
@@ -270,13 +249,13 @@ class ProductDesc extends React.Component {
           {this.state.value !== 1 ? <p>1+</p> : <p className="active">1</p>}
         </div>
       ),
-      [this.state.product.max]: (
+      10: (
         <div className="sliderLabel">
           <div className="indicator"></div>
-          {this.state.value !== this.state.product.max ? (
-            <p>{this.state.product.max}</p>
+          {this.state.value !== 10 ? (
+            <p>10</p>
           ) : (
-              <p className="active">{this.state.product.max}</p>
+              <p className="active">10</p>
             )}
         </div>
       ),
@@ -318,7 +297,7 @@ class ProductDesc extends React.Component {
                       Home
                   </a>
                     <a>
-                      <i class="fas fa-chevron-right"></i>
+                      <i className="fas fa-chevron-right"></i>
                     </a>
                     <a
                       href={"/Category/" + this.props.match.params.id1}
@@ -389,7 +368,7 @@ class ProductDesc extends React.Component {
                                     <div className="details">
                                       <p>{item.title}</p>
                                       <div className="price-review">
-                                        <p>&#8377; {item.rent} / month</p>
+                                        <p>&#8377; {item.rent}</p>
                                         <a
                                           href={
                                             "/Category/" +
@@ -447,11 +426,10 @@ class ProductDesc extends React.Component {
                         <div className="price-amt">
                           <div className="month-price">
                             <p>
-                              &#8377; {this.state.product.rent}{" "}
-                              <span>/ month</span>
+                              &#8377; {this.state.product.rent}
                             </p>
                             <span>
-                              Monthly rent{" "}
+                              Retail Price{" "}
                               <i
                                 class="fas fa-info"
                                 data-tip
@@ -460,15 +438,14 @@ class ProductDesc extends React.Component {
                             </span>
                             <ReactTooltip id="month-info" effect="solid">
                               <p className="tool-tip-info">
-                                Monthly rent you will pay at the end of each month
-                                of your plan.
+                                Sale Price
                             </p>
                             </ReactTooltip>
                           </div>
                           <div className="deposit-price">
                             <p>&#8377; {this.state.product.deposit}</p>
                             <span>
-                              Refundable deposit{" "}
+                              Actual Price{" "}
                               <i
                                 class="fas fa-info"
                                 data-tip
@@ -477,9 +454,7 @@ class ProductDesc extends React.Component {
                             </span>
                             <ReactTooltip id="deposit-info" effect="solid">
                               <p className="tool-tip-info">
-                                One-time deposit amount collected to start your
-                                rental plan. 100% Refundable as soon as you end
-                                your subscription.
+                                Actual Price
                             </p>
                             </ReactTooltip>
                           </div>
@@ -522,7 +497,7 @@ class ProductDesc extends React.Component {
                             value={this.state.value}
                             step={1}
                             min={1}
-                            max={this.state.product.max}
+                            max={10}
                             onChange={(e) => this.handleSlider(e)}
                           />
                         </div>
@@ -541,9 +516,9 @@ class ProductDesc extends React.Component {
                           </div>
                           <div className="content">
                             <p>
-                              Use Code <span>BED10</span>
+                              Use Code <span>BAG20</span>
                             </p>
-                            <p className="discount-desc">Get flat 20% off on y...</p>
+                            <p className="discount-desc">Get flat 20% off</p>
                             <p style={{ color: "orange" }}>Read more</p>
                           </div>
                           <div className="copy">

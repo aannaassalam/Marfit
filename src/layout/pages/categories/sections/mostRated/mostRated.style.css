@@ -83,7 +83,7 @@
 .most-rated-container .most-rated-body .swiper-container .swiper-slide img {
   height: 240px;
   width: 85%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .most-rated-container
