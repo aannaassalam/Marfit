@@ -704,6 +704,10 @@
     margin-right: 0;
   }
 
+  .navbar .nav-container .third-container .profile{
+    display: none;
+  }
+
   .navbar .active-menu .hamburger-menu {
     width: 60%;
   }
