@@ -18,7 +18,8 @@ export default class Home extends React.Component {
                 <Add />
                 <Slider2 />
                 <About />
-                <Testimonials />
+                <Slider2 />
+                <Add />
             </div>
         )
     }

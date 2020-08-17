@@ -3,10 +3,11 @@
     background-color: #fff;
     padding: 10px 15px;
     padding-bottom: 0;
-    box-shadow: 0 3px 5px darkgray;
     border-bottom: 1px solid lightgray;
     margin: 1rem 1rem 0 1rem;
     border-radius: 3px;
+    box-shadow: 4px 4px 12px darkgray;
+    
 }
 
 .card2 .card-title{

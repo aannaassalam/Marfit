@@ -341,9 +341,9 @@ class ProductDesc extends React.Component {
               {this.state.product.title ? (
                 <div className="desc-container">
                   <div className="prod-desc">
-                    <div className="prod-photo">
+                    {/* <div className="prod-photo">
                       <img src={this.state.product.cover} alt="prod-img" />
-                    </div>
+                    </div> */}
                     <div className="prod-details">
                       <div className="content">
                         <ProdDesc product={this.state.product} />

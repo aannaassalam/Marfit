@@ -2,10 +2,11 @@
   font-size: 14px;
   height: 10vh;
   width: 100%;
-  border-bottom: 1px solid darkgray;
+  /* border-bottom: 1px solid darkgray; */
   padding: 0 2rem;
   background-color: #fff;
   position: relative;
+  box-shadow: 0 1px 2px 0 #dee0e2;
 }
 
 .navbar .nav-container {
