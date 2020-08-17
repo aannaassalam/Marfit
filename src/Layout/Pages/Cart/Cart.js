@@ -24,13 +24,13 @@ export default class Cart extends React.Component {
           });
         });
       });
+    console.log(this.state.cart);
   }
 
   removeFromCart = (item) => {
     this.setState({
       addLoading: true,
     });
-    console.log(item);
     firebase
       .firestore()
       .collection("users")
@@ -58,7 +58,57 @@ export default class Cart extends React.Component {
       });
   };
 
+  handleminus = (id) => {
+    firebase
+      .firestore()
+      .collection("users")
+      .where("email", "==", firebase.auth().currentUser.email)
+      .get()
+      .then((snap) => {
+        snap.forEach((doc) => {
+          var cart = doc.data().cart;
+          cart.map((item) => {
+            if (item.id === id) {
+              if(item.quantity>1){
+                item.quantity -= 1;
+              }
+              else{
+                this.removeFromCart(item);
+              }
+            }
+          });
+
+          firebase.firestore().collection("users").doc(doc.id).update({
+            cart: cart,
+          });
+        });
+      });
+  };
+
+  handleplus = (id) => {
+    firebase
+      .firestore()
+      .collection("users")
+      .where("email", "==", firebase.auth().currentUser.email)
+      .get()
+      .then((snap) => {
+        snap.forEach((doc) => {
+          var cart = doc.data().cart;
+          cart.map((item) => {
+            if (item.id === id) {     
+              item.quantity += 1;
+            }
+          });
+
+          firebase.firestore().collection("users").doc(doc.id).update({
+            cart: cart,
+          });
+        });
+      });
+  };
+
   render() {
+    console.log(this.state.cart);
     return (
       <div className="cart-cont">
         <div className="blank" onClick={this.props.close}></div>
@@ -69,16 +119,23 @@ export default class Cart extends React.Component {
           </div>
           <div className="cart-body">
             {this.state.cart ? (
-              this.state.cart.map((item) => {
-                return (
+              this.state.cart.map((item, index) => (
+                <div className="list" key={index}>
                   <CartCard
                     item={item}
                     removeFromCart={(e) => {
                       this.removeFromCart(e);
                     }}
+                    handleplus={() => {
+                      this.handleplus(item.id);
+                    }}
+                    handleminus={() => {
+                      this.handleminus(item.id);
+                    }}
+                    id={index}
                   />
-                );
-              })
+                </div>
+              ))
             ) : (
               <p>NO ITEMS</p>
             )}

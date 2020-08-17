@@ -23,6 +23,8 @@ export default class Navbar extends React.Component {
       loading: true,
       profile: false,
       currentUser: [],
+      hamburgerActive: false,
+      showMenu: false,
     };
   }
 
@@ -47,25 +49,13 @@ export default class Navbar extends React.Component {
               currentUser: doc.data(),
             });
           });
-        }).catch(err => {
-          console.log("User is not Logged in");
         });
     });
   }
 
-  handleClick = () => {
-    document
-      .getElementsByClassName("hamburger-menu")[0]
-      .classList.add("hamburger-width");
-    document.getElementsByClassName("menu")[0].style.width = "100%";
-  };
+  handleClick = () => {};
 
-  handleReverseClick = () => {
-    document
-      .getElementsByClassName("hamburger-menu")[0]
-      .classList.remove("hamburger-width");
-    document.getElementsByClassName("menu")[0].style.width = "0";
-  };
+  handleReverseClick = () => {};
 
   handleShop = () => {
     if (document.getElementById("caret").classList.contains("open")) {
@@ -112,10 +102,6 @@ export default class Navbar extends React.Component {
       });
   };
 
-  click = () => {
-    console.log("HUA");
-  }
-
   render() {
     return (
       <nav className="navbar">
@@ -123,7 +109,7 @@ export default class Navbar extends React.Component {
           <div className="first-container">
             <i
               className="fa fa-bars fa-2x"
-              onClick={this.handleClick}
+              onClick={() => this.setState({showMenu : true})}
               aria-hidden="true"
             ></i>
             <a href="/" className="logo">
@@ -224,89 +210,93 @@ export default class Navbar extends React.Component {
             )}
           </div>
         </div>
-        <div className="menu" onClick={this.click}>
-          <div className="hamburger-menu">
-          <div className="head">
-            <div className="logo">
-              <img src={logo} alt="Marfit Logo" className="logo-img" />
-              <img src={title} alt="Marfit Title" className="logo-title" />
+        <div
+          className={this.state.showMenu ? "active-menu" : "menu"}
+        >
+          :
+          <div className={this.state.showMenu ? 'hamburger-menu' : 'hamburger-menu-none'}>
+            <div className="head">
+              <div className="logo">
+                <img src={logo} alt="Marfit Logo" className="logo-img" />
+                <img src={title} alt="Marfit Title" className="logo-title" />
+              </div>
+              <i
+                className="fa fa-times fa-1x"
+                onClick={() => this.setState({showMenu: false})}
+              ></i>
             </div>
-            <i
-              className="fa fa-times fa-1x"
-              onClick={this.handleReverseClick}
-            ></i>
-          </div>
-          <div className="ham-list">
-            <a href="/" className="box">
-              <p href="/">Home</p>
-              <i className="fa fa-caret-right fa-1x"></i>
-            </a>
-            <a href="#" className="box">
-              <p href="#">Contact us</p>
-              <i className="fa fa-caret-right fa-1x"></i>
-            </a>
-            <a href="#" className="box" id="cart" onClick={this.handleCart}>
-              <p href="#">Cart</p>
-              <i className="fa fa-caret-right fa-1x"></i>
-            </a>
-            <a href="#" className="box" id="shop" onClick={this.handleShop}>
-              <p href="#">Shop</p>
-              <i className="fa fa-caret-right fa-1x" id="caret"></i>
-            </a>
-            <div className="shop-menu">
-              <ul className="shopmenu-list">
-                <li>
-                  <a href="#" className="men">
-                    Mens
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="men">
-                    Womens
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="men">
-                    Child
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="men">
-                    Sale
-                  </a>
-                </li>
-              </ul>
-            </div>
-            <a href="#" className="box" id="wishlist">
-              <p href="#">Wishlist</p>
-              <i className="fa fa-caret-right fa-1x"></i>
-            </a>
-            {!this.state.loginStatus ? (
-              <a
-                href="#"
-                className="box orange"
-                onClick={() => {
-                  this.setState({ login: true });
-                }}
-              >
-                <p style={{ cursor: "pointer", userSelect: "none" }}>Login</p>
+            <div className="ham-list">
+              <a href="/" className="box">
+                <p href="/">Home</p>
+              </a>
+              <a href="#" className="box">
+                <p href="#">Contact us</p>
+              </a>
+              <a href="#" className="box" id="cart" onClick={this.handleCart}>
+                <p href="#">Cart</p>
                 <i className="fa fa-caret-right fa-1x"></i>
               </a>
-            ) : null}
+              <a href="#" className="box" id="shop" onClick={this.handleShop}>
+                <p href="#">Shop</p>
+                <i className="fa fa-caret-right fa-1x" id="caret"></i>
+              </a>
+              <div className="shop-menu">
+                <ul className="shopmenu-list">
+                  <li>
+                    <a href="#" className="men">
+                      Mens
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="men">
+                      Womens
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="men">
+                      Child
+                    </a>
+                  </li>
+                  <li>
+                    <a href="#" className="men">
+                      Sale
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <a href="#" className="box" id="wishlist">
+                <p href="#">Wishlist</p>
+                <i className="fa fa-caret-right fa-1x"></i>
+              </a>
+              {!this.state.loginStatus ? (
+                <a
+                  href="#"
+                  className="box orange"
+                  onClick={() => {
+                    this.setState({ login: true });
+                  }}
+                >
+                  <p style={{ cursor: "pointer", userSelect: "none" }}>Login</p>
+                  <i className="fa fa-caret-right fa-1x"></i>
+                </a>
+              ) : null}
+            </div>
           </div>
-          
-        </div>
-        <div className="blank" onClick={this.handleReverseClick}></div>
-        {this.state.showCart ? <Cart close={this.handleCartClose} email={this.state.currentUser.email} /> : null}
-
-        {this.state.login ? (
-          <Login
-            close={(toggle) => this.setState({ login: toggle })}
-            login={(toggle) => {
-              this.handleLoginStatus(toggle);
-            }}
-          />
-        ) : null}
+          <div className="blank" onClick={() => this.setState({showMenu: false})}></div>
+          {this.state.showCart ? (
+            <Cart
+              close={this.handleCartClose}
+              email={this.state.currentUser.email}
+            />
+          ) : null}
+          {this.state.login ? (
+            <Login
+              close={(toggle) => this.setState({ login: toggle })}
+              login={(toggle) => {
+                this.handleLoginStatus(toggle);
+              }}
+            />
+          ) : null}
         </div>
       </nav>
     );

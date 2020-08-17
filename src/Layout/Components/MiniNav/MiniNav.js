@@ -26,15 +26,16 @@ export default class MiniNav extends React.Component {
     return (
       <div className="mini-container">
         <div className="tray">
-          {this.state.categories.map((cat) => {
+          {this.state.categories.map((cat, index) => {
             return (
-              <div className="mini-content">
+              <div className="mini-content" key={index}>
                 {cat.name} <i className="fa fa-chevron-down fa-1x"></i>
                 <div className="category-options">
-                  {cat.subcategories.map((sub) => {
+                  {cat.subcategories.map((sub, index) => {
                     return (
                       <a
                         href={"/Category/" + cat.name + "/" + sub.name}
+                        key={index}
                       >
                         {sub.name}
                       </a>

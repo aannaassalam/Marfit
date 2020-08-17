@@ -26,18 +26,18 @@ class ProdDesc extends React.Component {
         </div>
         <div className="body">
           <div className="gallery">
-            <div class="swiper-container">
-              <div class="swiper-wrapper">
+            <div className="swiper-container">
+              <div className="swiper-wrapper">
                 {this.props.product.images &&
-                  this.props.product.images.map((item) => {
+                  this.props.product.images.map((item, index) => {
                     return (
-                      <div class="swiper-slide">
+                      <div className="swiper-slide" key={index}>
                         <img src={item} alt="item" />
                       </div>
                     );
                   })}
               </div>
-              <div class="swiper-pagination"></div>
+              <div className="swiper-pagination"></div>
             </div>
           </div>
 

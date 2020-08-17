@@ -3,16 +3,15 @@ import "./Card.css";
 import bagicon from "../../../assets/bag-icon.png";
 
 const Card = (props) => {
-  console.log(props.item);
   var percent = Math.round((props.item.rent / props.item.deposit) * 100);
   return (
-    <div className="card-cont">
+    <div className="card-cont" key={props.key}>
       <div className="img-container">
         <a
           style={{ width: "100%", height: "100%" }}
           href={"/Category/" + props.id1 + "/" + props.id2 + "/" + props.item.title}
         >
-          <img src={props.item.images[0]} alt="Bag-Icon" />
+          <img src={props.item.cover} alt="Bag-Icon" />
         </a>
       </div>
       {props.item.isWished ? (
