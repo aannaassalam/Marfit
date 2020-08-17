@@ -1,6 +1,6 @@
 import React from "react";
 import "./Cart.css";
-import CartCard from "../../components/cart-card/Cart-card";
+import CartCard from "../../Components/Cart-card/Cart-card";
 import discount from "../../../assets/download.png";
 import firebase from "firebase";
 
@@ -137,8 +137,8 @@ export default class Cart extends React.Component {
                 </div>
               ))
             ) : (
-              <p>NO ITEMS</p>
-            )}
+                <p>NO ITEMS</p>
+              )}
           </div>
           <div className="cart-checkout">
             <div className="apply-coupon">

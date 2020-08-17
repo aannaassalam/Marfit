@@ -32,7 +32,7 @@ class MostRated extends React.Component {
                       <div className="details">
                         <p>{item.title}</p>
                         <div className="price-review">
-                          <p>&#8377;{item.rent} / month</p>
+                          <p>&#8377;{item.rent}</p>
                           <a
                             href={
                               "/Category/" +

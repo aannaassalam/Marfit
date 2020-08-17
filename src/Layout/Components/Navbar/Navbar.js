@@ -4,7 +4,7 @@ import logo from "../../../assets/image_1.png";
 import logo2 from "../../../assets/image_2.png";
 import title from "../../../assets/marfit-label.png";
 import title2 from "../../../assets/marfit-label2.png";
-import Cart from "../../pages/cart/Cart";
+import Cart from "../../Pages/Cart/Cart";
 import Login from "../login/Login";
 import firebase from "../../../config/firebaseConfig";
 import loading from "../../../assets/loading.json";
@@ -142,72 +142,72 @@ export default class Navbar extends React.Component {
                 height={50}
               />
             ) : (
-              <>
-                {this.state.loginStatus ? (
-                  <>
-                    <div
-                      className="profile"
-                      style={{ cursor: "pointer", userSelect: "none" }}
-                    >
-                      <a className="username">
-                        <p>Hello, {this.state.currentUser.name}</p>
-                        <i className="fas fa-chevron-down"></i>
-                      </a>
-                      {/* <div className="arrow-up"></div> */}
-                      <div className="options">
-                        <a
-                          href="/Dashboard/Profile"
-                          className="option-links"
-                          style={{ cursor: "pointer", userSelect: "none" }}
-                        >
-                          <i className="fas fa-user"></i>
-                          <p>Profile</p>
+                <>
+                  {this.state.loginStatus ? (
+                    <>
+                      <div
+                        className="profile"
+                        style={{ cursor: "pointer", userSelect: "none" }}
+                      >
+                        <a className="username">
+                          <p>Hello, {this.state.currentUser.name}</p>
+                          <i className="fas fa-chevron-down"></i>
                         </a>
-                        <a
-                          href="/Dashboard/Orders"
-                          className="option-links"
-                          style={{ cursor: "pointer", userSelect: "none" }}
-                        >
-                          <i className="fas fa-shopping-bag"></i>
-                          <p>Orders</p>
-                        </a>
-                        <a
-                          className="option-links"
-                          onClick={this.handleLogout}
-                          style={{ cursor: "pointer", userSelect: "none" }}
-                        >
-                          <i className="fas fa-sign-out-alt"></i>
-                          <p>Logout</p>
-                        </a>
+                        {/* <div className="arrow-up"></div> */}
+                        <div className="options">
+                          <a
+                            href="/Dashboard/Profile"
+                            className="option-links"
+                            style={{ cursor: "pointer", userSelect: "none" }}
+                          >
+                            <i className="fas fa-user"></i>
+                            <p>Profile</p>
+                          </a>
+                          <a
+                            href="/Dashboard/Orders"
+                            className="option-links"
+                            style={{ cursor: "pointer", userSelect: "none" }}
+                          >
+                            <i className="fas fa-shopping-bag"></i>
+                            <p>Orders</p>
+                          </a>
+                          <a
+                            className="option-links"
+                            onClick={this.handleLogout}
+                            style={{ cursor: "pointer", userSelect: "none" }}
+                          >
+                            <i className="fas fa-sign-out-alt"></i>
+                            <p>Logout</p>
+                          </a>
+                        </div>
                       </div>
-                    </div>
-                    <a href="/Dashboard/Wishlist" className="links">
-                      <i className="fa fa-heart"></i>
-                      <p>WISHLIST</p>
-                    </a>
-                    <a
-                      style={{ cursor: "pointer", userSelect: "none" }}
-                      className="links"
-                      onClick={this.handleCart}
-                    >
-                      <i className="fas fa-shopping-cart"></i>
-                      <p>CART</p>
-                    </a>
-                  </>
-                ) : (
-                  <a
-                    style={{ cursor: "pointer", userSelect: "none" }}
-                    className="login-signup"
-                    onClick={() => {
-                      this.setState({ login: true });
-                    }}
-                  >
-                    <i className="fas fa-user"></i>
-                    <p>LOGIN/SIGN UP</p>
-                  </a>
-                )}
-              </>
-            )}
+                      <a href="/Dashboard/Wishlist" className="links">
+                        <i className="fa fa-heart"></i>
+                        <p>WISHLIST</p>
+                      </a>
+                      <a
+                        style={{ cursor: "pointer", userSelect: "none" }}
+                        className="links"
+                        onClick={this.handleCart}
+                      >
+                        <i className="fas fa-shopping-cart"></i>
+                        <p>CART</p>
+                      </a>
+                    </>
+                  ) : (
+                      <a
+                        style={{ cursor: "pointer", userSelect: "none" }}
+                        className="login-signup"
+                        onClick={() => {
+                          this.setState({ login: true });
+                        }}
+                      >
+                        <i className="fas fa-user"></i>
+                        <p>LOGIN/SIGN UP</p>
+                      </a>
+                    )}
+                </>
+              )}
           </div>
         </div>
         <div

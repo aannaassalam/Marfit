@@ -3,19 +3,19 @@ import './Testimonials.css';
 import Swiper from 'swiper';
 import 'swiper/swiper.scss';
 import 'swiper/components/navigation/navigation.scss';
-import TestimonialCard from '../../../../components/testimonialCard/TestimonialCard';
+import TestimonialCard from '../../../../Components/TestimonialCard/TestimonialCard';
 
-export default class Testimonial extends React.Component{
-    
-    componentDidMount(){
+export default class Testimonial extends React.Component {
+
+    componentDidMount() {
         var swiper = new Swiper(".swiper-container", {
             slidesPerView: "auto",
-            spaceBetween:20,
+            spaceBetween: 20,
         })
     }
 
-    render(){
-        return(
+    render() {
+        return (
             <div className="testimonial">
                 <div className="testimonial-header">
                     <h2>TESTIMONIALS</h2>
@@ -33,34 +33,34 @@ export default class Testimonial extends React.Component{
                     <div className="swiper-container">
                         <div className="swiper-wrapper">
                             <div className="swiper-slide">
-                                <TestimonialCard/>
+                                <TestimonialCard />
                             </div>
                             <div className="swiper-slide">
-                                <TestimonialCard/>
+                                <TestimonialCard />
                             </div>
                             <div className="swiper-slide">
-                                <TestimonialCard/>
+                                <TestimonialCard />
                             </div>
                             <div className="swiper-slide">
-                                <TestimonialCard/>
+                                <TestimonialCard />
                             </div>
                             <div className="swiper-slide">
-                                <TestimonialCard/>
+                                <TestimonialCard />
                             </div>
                             <div className="swiper-slide">
-                                <TestimonialCard/>
+                                <TestimonialCard />
                             </div>
                             <div className="swiper-slide">
-                                <TestimonialCard/>
+                                <TestimonialCard />
                             </div>
                             <div className="swiper-slide">
-                                <TestimonialCard/>
+                                <TestimonialCard />
                             </div>
                             <div className="swiper-slide">
-                                <TestimonialCard/>
+                                <TestimonialCard />
                             </div>
                             <div className="swiper-slide">
-                                <TestimonialCard/>
+                                <TestimonialCard />
                             </div>
                         </div>
                     </div>

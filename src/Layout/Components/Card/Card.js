@@ -1,6 +1,5 @@
 import React from "react";
 import "./Card.css";
-import bagicon from "../../../assets/bag-icon.png";
 
 const Card = (props) => {
   var percent = Math.round((props.item.rent / props.item.deposit) * 100);
@@ -22,10 +21,10 @@ const Card = (props) => {
           <i className="red fa fa-heart"></i>
         </div>
       ) : (
-        <div className="circle" onClick={() => props.addToWishlist(props.item)}>
-          <i className="fa fa-heart"></i>
-        </div>
-      )}
+          <div className="circle" onClick={() => props.addToWishlist(props.item)}>
+            <i className="fa fa-heart"></i>
+          </div>
+        )}
       <a
         href={"/Category/" + props.id1 + "/" + props.id2 + "/" + props.item.title}
         className="short-description"
