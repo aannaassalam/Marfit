@@ -6,7 +6,7 @@
   padding: 0 2rem;
   background-color: #fff;
   position: relative;
-  box-shadow: 0 1px 2px 0 #dee0e2;
+  z-index: 999;
 }
 
 .navbar .nav-container {
@@ -216,7 +216,7 @@
   top: -8px;
   left: 45%;
   transform: rotate(45deg);
-  z-index: 10;
+  z-index: -1;
 }
 
 .navbar .nav-container .third-container .profile:hover .options {
@@ -235,8 +235,8 @@
   align-items: center;
   height: fit-content;
   justify-content: center;
-  z-index: 998;
   border: 1px solid lightgrey;
+  z-index: 2;
 }
 
 .navbar .nav-container .third-container .profile .options .option-links {
@@ -249,7 +249,6 @@
   height: 50px;
   color: #fb641b;
   transition: all 0.1s;
-  z-index: 50;
 }
 
 .navbar .nav-container .third-container .options .option-links p {
@@ -275,17 +274,27 @@
 .navbar .menu {
   position: fixed;
   top: 0;
-  left: 0;
+  left: -20%;
   width: 0;
+  height: 100%;
+  /* display: flex;
+  flex-direction: row;
+   */
+}
+
+.navbar .active-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1000;
   display: flex;
   flex-direction: row;
-
 }
 
-.navbar .blank{
+.navbar .blank {
   width: 100%;
   height: 100%;
 }
@@ -293,12 +302,21 @@
 .navbar .menu .hamburger-menu {
   position: fixed;
   top: 0;
-  left: -20%;
-  width: 20%;
+  left: 0;
+  width: 0;
   height: 100%;
   background-color: #fff;
   padding: 0px;
   transition: left 0.3s;
+}
+
+.navbar .menu .hamburger-menu-none {
+  position: fixed;
+  top: 0;
+  left: -24%;
+  width: 0;
+  height: 100%;
+  background-color: #fff;
 }
 
 .navbar .menu .hamburger-menu .head {
@@ -432,8 +450,155 @@
   color: #fb641b;
 }
 
-.hamburger-width {
-  left: 0 !important;
+.navbar .active-menu .hamburger-menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20%;
+  height: 100%;
+  background-color: #fff;
+  padding: 0px;
+  transition: left 0.3s;
+}
+
+.navbar .active-menu .hamburger-menu-none {
+  position: fixed;
+  top: 0;
+  left: -24%;
+  width: 0;
+  height: 100%;
+  background-color: #fff;
+}
+
+.navbar .active-menu .hamburger-menu .head {
+  /* display: none; */
+  height: 12vh;
+  /* background-color: blue; */
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 2px solid grey;
+  padding: 7px;
+}
+
+.navbar .active-menu .hamburger-menu .head .logo {
+  height: 90%;
+  width: 80%;
+  margin-right: auto;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.navbar .active-menu .hamburger-menu .head .logo .logo-img {
+  width: 20%;
+}
+
+.navbar .active-menu .hamburger-menu .head .logo .logo-title {
+  width: 80%;
+}
+
+.navbar .active-menu .hamburger-menu .head i {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 19px;
+  cursor: pointer;
+}
+
+.navbar .active-menu .hamburger-menu .ham-list {
+  margin-top: 20px;
+  display: block;
+  height: 40%;
+}
+
+.navbar .active-menu .hamburger-menu .ham-list .box {
+  height: 25%;
+  background-color: #fff;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 15px;
+  border-bottom: 1px solid lightgray;
+  text-decoration: none;
+  color: #000;
+}
+
+.navbar .active-menu .hamburger-menu .ham-list .box:hover {
+  background-color: lightgray;
+}
+
+.navbar .active-menu .hamburger-menu .ham-list .box:active {
+  background-color: grey;
+}
+
+.navbar .active-menu .hamburger-menu .ham-list .box p {
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  color: black;
+}
+
+.open {
+  transform: rotate(90deg);
+  transition: transform 0.2s;
+}
+
+.navbar .active-menu .hamburger-menu .ham-list .shop-menu {
+  display: flex;
+  height: 0;
+  background-color: darkgray;
+  transition: height 0.5s;
+}
+
+.active {
+  height: 120px !important;
+}
+
+.navbar .active-menu .hamburger-menu .ham-list .shop-menu ul {
+  width: 80%;
+  height: 100%;
+  margin-left: auto;
+  display: none;
+}
+
+.navbar .active-menu .hamburger-menu .ham-list .shop-menu ul li {
+  list-style: none;
+  height: 25%;
+  width: 100%;
+  padding-left: 5px;
+  padding-top: 3px;
+}
+
+.navbar .active-menu .hamburger-menu .ham-list .shop-menu ul li:hover {
+  background-color: grey;
+}
+
+.navbar .active-menu .hamburger-menu .ham-list .shop-menu ul li a {
+  text-decoration: none;
+  font-size: 16px;
+  font-weight: 500;
+  color: black;
+}
+
+.navbar .active-menu .hamburger-menu .ham-list #cart {
+  display: none;
+}
+
+.navbar .active-menu .hamburger-menu .ham-list #shop {
+  display: none;
+}
+
+.navbar .hamburger-menu .ham-list #wishlist {
+  display: none;
+}
+
+.navbar .active-menu .hamburger-menu .ham-list .orange p,
+.navbar .active-menu .hamburger-menu .ham-list .orange i {
+  color: #fb641b;
 }
 
 @media (max-width: 1024px) {
@@ -493,9 +658,13 @@
   .navbar .nav-container .third-container a p {
     display: none;
   }
+  .navbar .menu .hamburger-menu-none {
+    width: 0%;
+    display: none;
+  }
 
-  .hamburger-width {
-    width: 40% !important;
+  .navbar .active-menu .hamburger-menu {
+    width: 40%;
   }
 
   .navbar .hamburger-menu .head {
@@ -535,36 +704,40 @@
     margin-right: 0;
   }
 
-  .hamburger-width {
-    width: 60% !important;
+  .navbar .nav-container .third-container .profile{
+    display: none;
   }
 
-  .navbar .hamburger-menu .head {
+  .navbar .active-menu .hamburger-menu {
+    width: 60%;
+  }
+
+  .navbar .active-menu .hamburger-menu .head {
     padding-right: 5px;
     height: 10vh;
   }
 
-  .navbar .hamburger-menu .head .logo {
+  .navbar .active-menu .hamburger-menu .head .logo {
     width: 80%;
   }
 
-  .navbar .hamburger-menu .head img {
+  .navbar .active-menu .hamburger-menu .head img {
     height: 50%;
   }
 
-  .navbar .hamburger-menu .ham-list #cart {
+  .navbar .active-menu .hamburger-menu .ham-list #cart {
     display: flex;
   }
 
-  .navbar .hamburger-menu .ham-list #shop {
+  .navbar .active-menu .hamburger-menu .ham-list #shop {
     display: flex;
   }
 
-  .navbar .hamburger-menu .ham-list #wishlist {
+  .navbar.active-menu .hamburger-menu .ham-list #wishlist {
     display: flex;
   }
 
-  .navbar .hamburger-menu .ham-list .shop-menu {
+  .navbar .active-menu .hamburger-menu .ham-list .shop-menu {
     display: none;
   }
 }

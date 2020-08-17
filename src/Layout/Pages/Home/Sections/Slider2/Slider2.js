@@ -77,8 +77,8 @@ export default class Slider2 extends React.Component {
         <div className="slider">
           <div className="swiper-container">
             <div className="swiper-wrapper">
-              {this.state.data.map((item) => (
-                <div className="swiper-slide">
+              {this.state.data.map((item, index) => (
+                <div className="swiper-slide" key={index}>
                   <Card item={item} />
                 </div>
               ))}

@@ -4,33 +4,9 @@ import "./Cart-card.css";
 import firebase from "firebase";
 
 export default class CartCard extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      counter: 1,
-    };
-  }
-
-  handleminus = () => {
-    var count = this.state.counter;
-    if (count > 0) {
-      this.setState({
-        counter: count - 1,
-      });
-    }
-  };
-
-  handleplus = () => {
-    var count = this.state.counter;
-    this.setState({
-      counter: count + 1,
-    });
-  };
-
   render() {
-      console.log(this.props.item)
     return (
-      <div className="items">
+      <div className="items" >
         <a
           style={{ textDecoration: "none", color: "black" }}
           href={
@@ -48,11 +24,11 @@ export default class CartCard extends React.Component {
           <p className="title">{this.props.item.title}</p>
           <p className="price">&#8377;{this.props.item.price}</p>
           <div className="counter">
-            <span className="symbol" onClick={this.handleminus}>
+            <span className="symbol" onClick={this.props.handleminus}>
               -
             </span>
-            <span>{this.state.counter}</span>
-            <span className="symbol" onClick={this.handleplus}>
+            <span>{this.props.item.quantity}</span>
+            <span className="symbol" onClick={this.props.handleplus}>
               +
             </span>
           </div>

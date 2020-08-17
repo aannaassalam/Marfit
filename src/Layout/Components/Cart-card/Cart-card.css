@@ -10,6 +10,7 @@
     user-select: none;
     text-decoration: none;
     color: #000;
+    /* position: relative; */
 }
 
 .items a{
@@ -70,4 +71,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.items .description .remove-link{
+    position: absolute;
+    right: 5px;
+    bottom: 10px;
+    text-decoration: underline;
+    cursor: pointer;
 }

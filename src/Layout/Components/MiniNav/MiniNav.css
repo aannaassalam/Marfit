@@ -31,7 +31,7 @@
   cursor: pointer;
 }
 
-.mini-container .tray .mini-content i{
+.mini-container .tray .mini-content i {
   margin-left: 5px;
 }
 
@@ -57,9 +57,9 @@
   align-items: center;
   top: 6vh;
   padding: 0.2rem 0;
-  z-index: 1000;
   border: 1px solid lightgray;
   width: 150px;
+  z-index: 100;
 }
 
 .mini-container .tray .mini-content .category-options::after {
@@ -74,6 +74,7 @@
   border: 1px solid lightgray;
   border-right: none;
   border-bottom: none;
+  z-index: -1;
 }
 
 .mini-container .tray .mini-content .category-options a {
@@ -83,7 +84,6 @@
   width: 100%;
   padding: 8px 17px;
   font-weight: 500;
-  z-index: 1001;
 }
 
 .mini-container .tray .mini-content .category-options a:hover {
@@ -103,7 +103,6 @@
   align-items: center;
   height: 100%;
 }
-
 
 @media (max-width: 1024px) {
   .mini-container {

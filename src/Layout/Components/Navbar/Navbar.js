@@ -23,6 +23,8 @@ export default class Navbar extends React.Component {
       loading: true,
       profile: false,
       currentUser: [],
+      hamburgerActive: false,
+      showMenu: false,
     };
   }
 
@@ -47,25 +49,13 @@ export default class Navbar extends React.Component {
               currentUser: doc.data(),
             });
           });
-        }).catch(err => {
-          console.log("User is not Logged in");
         });
     });
   }
 
-  handleClick = () => {
-    document
-      .getElementsByClassName("hamburger-menu")[0]
-      .classList.add("hamburger-width");
-    document.getElementsByClassName("menu")[0].style.width = "100%";
-  };
+  handleClick = () => {};
 
-  handleReverseClick = () => {
-    document
-      .getElementsByClassName("hamburger-menu")[0]
-      .classList.remove("hamburger-width");
-    document.getElementsByClassName("menu")[0].style.width = "0";
-  };
+  handleReverseClick = () => {};
 
   handleShop = () => {
     if (document.getElementById("caret").classList.contains("open")) {
@@ -112,10 +102,6 @@ export default class Navbar extends React.Component {
       });
   };
 
-  click = () => {
-    console.log("HUA");
-  }
-
   render() {
     return (
       <nav className="navbar">
@@ -123,7 +109,7 @@ export default class Navbar extends React.Component {
           <div className="first-container">
             <i
               className="fa fa-bars fa-2x"
-              onClick={this.handleClick}
+              onClick={() => this.setState({showMenu : true})}
               aria-hidden="true"
             ></i>
             <a href="/" className="logo">
@@ -224,8 +210,11 @@ export default class Navbar extends React.Component {
               )}
           </div>
         </div>
-        <div className="menu" onClick={this.click}>
-          <div className="hamburger-menu">
+        <div
+          className={this.state.showMenu ? "active-menu" : "menu"}
+        >
+          :
+          <div className={this.state.showMenu ? 'hamburger-menu' : 'hamburger-menu-none'}>
             <div className="head">
               <div className="logo">
                 <img src={logo} alt="Marfit Logo" className="logo-img" />
@@ -233,17 +222,15 @@ export default class Navbar extends React.Component {
               </div>
               <i
                 className="fa fa-times fa-1x"
-                onClick={this.handleReverseClick}
+                onClick={() => this.setState({showMenu: false})}
               ></i>
             </div>
             <div className="ham-list">
               <a href="/" className="box">
                 <p href="/">Home</p>
-                <i className="fa fa-caret-right fa-1x"></i>
               </a>
               <a href="#" className="box">
                 <p href="#">Contact us</p>
-                <i className="fa fa-caret-right fa-1x"></i>
               </a>
               <a href="#" className="box" id="cart" onClick={this.handleCart}>
                 <p href="#">Cart</p>
@@ -258,22 +245,22 @@ export default class Navbar extends React.Component {
                   <li>
                     <a href="#" className="men">
                       Mens
-                  </a>
+                    </a>
                   </li>
                   <li>
                     <a href="#" className="men">
                       Womens
-                  </a>
+                    </a>
                   </li>
                   <li>
                     <a href="#" className="men">
                       Child
-                  </a>
+                    </a>
                   </li>
                   <li>
                     <a href="#" className="men">
                       Sale
-                  </a>
+                    </a>
                   </li>
                 </ul>
               </div>
@@ -294,11 +281,14 @@ export default class Navbar extends React.Component {
                 </a>
               ) : null}
             </div>
-
           </div>
-          <div className="blank" onClick={this.handleReverseClick}></div>
-          {this.state.showCart ? <Cart close={this.handleCartClose} email={this.state.currentUser.email} /> : null}
-
+          <div className="blank" onClick={() => this.setState({showMenu: false})}></div>
+          {this.state.showCart ? (
+            <Cart
+              close={this.handleCartClose}
+              email={this.state.currentUser.email}
+            />
+          ) : null}
           {this.state.login ? (
             <Login
               close={(toggle) => this.setState({ login: toggle })}
