@@ -44,6 +44,15 @@
   cursor: pointer;
 }
 
+::-webkit-scrollbar {
+  width: 5px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(110, 110, 110, 0.2);
+  border-radius: 5px;
+}
+
 .cart-cont .cart-body {
   height: 50vh;
   overflow-y: scroll;
@@ -244,11 +253,11 @@
 
 @media (max-width: 768px) {
   .cart-cont .blank {
-    width: 50%;
+    width: 30%;
   }
 
   .cart-cont .cart {
-    width: 50%;
+    width: 70%;
   }
 
   .cart-cont .cart-checkout .apply-coupon h3 {

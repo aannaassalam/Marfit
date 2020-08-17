@@ -1,6 +1,6 @@
 .panel-container {
   width: 100%;
-  height: 70vh;
+  height: 450px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -27,13 +27,6 @@
 
 .panel .cont img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.panel .cont img:nth-child(2) {
-  width: 60%;
-  height: 100%;
   object-fit: cover;
 }
 

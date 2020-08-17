@@ -7,6 +7,7 @@
   background-color: #fff;
   position: relative;
   z-index: 999;
+  box-shadow: 0 1px 3px 0 #dee0e2;
 }
 
 .navbar .nav-container {
@@ -36,18 +37,19 @@
 .navbar .nav-container .first-container .logo {
   display: flex;
   align-items: center;
-  height: 80%;
+  height: 75%;
   margin-left: 1rem;
-  width: 55%;
   text-decoration: none;
 }
 
 .navbar .nav-container .first-container .logo .logo-img {
-  width: 20%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .navbar .nav-container .first-container .logo .logo-title {
-  width: 80%;
+  height: 100%;
+  object-fit: contain;
 }
 
 /* .navbar .nav-container .first-container .logo .logo-title{
@@ -180,6 +182,7 @@
   flex-direction: column;
   position: relative;
   height: 100%;
+  /* width: 30%; */
   /* width: 150px; */
 }
 
@@ -189,10 +192,13 @@
   justify-content: center;
   align-items: center;
   height: 100%;
+  margin: auto 10;
 }
 
 .navbar .nav-container .third-container .profile .username p {
-  font-size: 15px;
+  font-size: 0.9rem;
+  /* width: 90%;
+  margin-left: auto; */
 }
 
 .navbar .nav-container .third-container .profile .username i {
@@ -231,7 +237,7 @@
   padding: 0.25rem 0;
   position: absolute;
   top: 9.8vh;
-  right: 0;
+  right: -15%;
   align-items: center;
   height: fit-content;
   justify-content: center;
@@ -308,6 +314,7 @@
   background-color: #fff;
   padding: 0px;
   transition: left 0.3s;
+  display: none;
 }
 
 .navbar .menu .hamburger-menu-none {
@@ -317,6 +324,7 @@
   width: 0;
   height: 100%;
   background-color: #fff;
+  display: none;
 }
 
 .navbar .menu .hamburger-menu .head {
@@ -341,11 +349,8 @@
 }
 
 .navbar .menu .hamburger-menu .head .logo .logo-img {
-  width: 20%;
-}
-
-.navbar .menu .hamburger-menu .head .logo .logo-title {
-  width: 80%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .navbar .menu .hamburger-menu .head i {
@@ -396,48 +401,7 @@
   transition: transform 0.2s;
 }
 
-.navbar .menu .hamburger-menu .ham-list .shop-menu {
-  display: flex;
-  height: 0;
-  background-color: darkgray;
-  transition: height 0.5s;
-}
-
-.active {
-  height: 120px !important;
-}
-
-.navbar .menu .hamburger-menu .ham-list .shop-menu ul {
-  width: 80%;
-  height: 100%;
-  margin-left: auto;
-  display: none;
-}
-
-.navbar .menu .hamburger-menu .ham-list .shop-menu ul li {
-  list-style: none;
-  height: 25%;
-  width: 100%;
-  padding-left: 5px;
-  padding-top: 3px;
-}
-
-.navbar .menu .hamburger-menu .ham-list .shop-menu ul li:hover {
-  background-color: grey;
-}
-
-.navbar .menu .hamburger-menu .ham-list .shop-menu ul li a {
-  text-decoration: none;
-  font-size: 16px;
-  font-weight: 500;
-  color: black;
-}
-
 .navbar .menu .hamburger-menu .ham-list #cart {
-  display: none;
-}
-
-.navbar .menu .hamburger-menu .ham-list #shop {
   display: none;
 }
 
@@ -547,48 +511,7 @@
   transition: transform 0.2s;
 }
 
-.navbar .active-menu .hamburger-menu .ham-list .shop-menu {
-  display: flex;
-  height: 0;
-  background-color: darkgray;
-  transition: height 0.5s;
-}
-
-.active {
-  height: 120px !important;
-}
-
-.navbar .active-menu .hamburger-menu .ham-list .shop-menu ul {
-  width: 80%;
-  height: 100%;
-  margin-left: auto;
-  display: none;
-}
-
-.navbar .active-menu .hamburger-menu .ham-list .shop-menu ul li {
-  list-style: none;
-  height: 25%;
-  width: 100%;
-  padding-left: 5px;
-  padding-top: 3px;
-}
-
-.navbar .active-menu .hamburger-menu .ham-list .shop-menu ul li:hover {
-  background-color: grey;
-}
-
-.navbar .active-menu .hamburger-menu .ham-list .shop-menu ul li a {
-  text-decoration: none;
-  font-size: 16px;
-  font-weight: 500;
-  color: black;
-}
-
 .navbar .active-menu .hamburger-menu .ham-list #cart {
-  display: none;
-}
-
-.navbar .active-menu .hamburger-menu .ham-list #shop {
   display: none;
 }
 
@@ -605,76 +528,28 @@
   .navbar {
     height: 9vh;
   }
-}
 
-@media (max-width: 768px) {
-  .navbar {
-    height: 12vh;
-    width: 100%;
+  .navbar .nav-container .first-container {
+    width: 20%;
   }
 
   .navbar .nav-container .second-container {
     display: none;
   }
 
-  .navbar .nav-container .first-container {
-    width: 60%;
-  }
-
-  .navbar .nav-container .first-container .logo {
-    display: flex;
-    align-items: center;
-    height: 90%;
-    margin-left: 1rem;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .navbar .nav-container .first-container .logo .logo-img {
-    width: 20%;
-    height: 70%;
-    /* margin: 0 0 0 1rem; */
-  }
-
-  .navbar .nav-container .first-container .logo .logo-title {
-    width: 80%;
-    height: 75%;
-  }
-
   .navbar .nav-container .third-container {
-    width: 200px;
-    height: 40px;
+    width: 60%;
+    justify-content: flex-end;
   }
 
   .navbar .nav-container .third-container .search-icon {
     display: inline-block;
-  }
-
-  .navbar .nav-container .third-container a i {
-    font-size: 20px;
-  }
-
-  .navbar .nav-container .third-container a p {
-    display: none;
-  }
-  .navbar .menu .hamburger-menu-none {
-    width: 0%;
-    display: none;
-  }
-
-  .navbar .active-menu .hamburger-menu {
-    width: 40%;
-  }
-
-  .navbar .hamburger-menu .head {
-    padding-right: 5px;
+    color: #000;
   }
 }
 
-@media (max-width: 468px) {
+@media (max-width: 568px) {
   .navbar {
-    height: 10vh;
     padding: 0 10px;
   }
 
@@ -682,7 +557,7 @@
     width: fit-content;
   }
 
-  .navbar .nav-container .third-container .links {
+  .navbar .nav-container .third-container a p {
     display: none;
   }
 
@@ -690,21 +565,13 @@
     width: 80%;
   }
 
-  .navbar .nav-container .first-container .logo {
-    height: 50px;
-  }
-
-  .navbar .nav-container .first-container .logo .logo-img {
-    margin-right: 1px;
-    object-fit: contain;
-  }
 
   .navbar .nav-container .third-container .search-icon i {
     font-size: 21px;
     margin-right: 0;
   }
 
-  .navbar .nav-container .third-container .profile{
+  .navbar .nav-container .third-container .profile {
     display: none;
   }
 
@@ -721,23 +588,11 @@
     width: 80%;
   }
 
-  .navbar .active-menu .hamburger-menu .head img {
-    height: 50%;
-  }
-
   .navbar .active-menu .hamburger-menu .ham-list #cart {
-    display: flex;
-  }
-
-  .navbar .active-menu .hamburger-menu .ham-list #shop {
     display: flex;
   }
 
   .navbar.active-menu .hamburger-menu .ham-list #wishlist {
     display: flex;
-  }
-
-  .navbar .active-menu .hamburger-menu .ham-list .shop-menu {
-    display: none;
   }
 }
