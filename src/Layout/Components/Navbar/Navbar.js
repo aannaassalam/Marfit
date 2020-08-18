@@ -25,6 +25,7 @@ export default class Navbar extends React.Component {
       currentUser: [],
       hamburgerActive: false,
       showMenu: false,
+      searchbtn: false,
     };
   }
 
@@ -86,7 +87,11 @@ export default class Navbar extends React.Component {
     return (
       <nav className="navbar">
         <div className="nav-container">
-          <div className="first-container">
+          <div
+            className={
+              this.state.searchbtn ? "first-container-none" : "first-container"
+            }
+          >
             <i
               className="fa fa-bars fa-2x"
               onClick={() => this.setState({ showMenu: true })}
@@ -97,7 +102,13 @@ export default class Navbar extends React.Component {
               <img src={title} alt="Marfit Title" className="logo-title" />
             </a>
           </div>
-          <div className="second-container">
+          <div
+            className={
+              this.state.searchbtn
+                ? "second-container-active"
+                : "second-container"
+            }
+          >
             <div className="input-container">
               <input
                 type="text"
@@ -110,8 +121,23 @@ export default class Navbar extends React.Component {
               <i className="fa fa-search"></i>
             </button>
           </div>
-          <div className="third-container">
-            <a href="#" className="search-icon">
+          <div
+            className={
+              this.state.searchbtn ? "third-container-none" : "third-container"
+            }
+          >
+            <i
+              className="fas fa-times"
+              onClick={() => {
+                this.setState({ searchbtn: false });
+              }}
+            ></i>
+            <a
+              className="search-icon links"
+              onClick={() => {
+                this.setState({ searchbtn: true });
+              }}
+            >
               <i className="fa fa-search"></i>
             </a>
 
@@ -193,70 +219,71 @@ export default class Navbar extends React.Component {
               </>
             )}
           </div>
-        </div>
-        <div className={this.state.showMenu ? "active-menu" : "menu"}>
-          :
-          <div
-            className={
-              this.state.showMenu ? "hamburger-menu" : "hamburger-menu-none"
-            }
-          >
-            <div className="head">
-              <div className="logo">
-                <img src={logo} alt="Marfit Logo" className="logo-img" />
+          <div className={this.state.showMenu ? "active-menu" : "menu"}>
+            :
+            <div
+              className={
+                this.state.showMenu ? "hamburger-menu" : "hamburger-menu-none"
+              }
+            >
+              <div className="head">
+                <div className="logo">
+                  <img src={logo} alt="Marfit Logo" className="logo-img" />
+                </div>
+                <i
+                  className="fa fa-times fa-1x"
+                  onClick={() => this.setState({ showMenu: false })}
+                ></i>
               </div>
-              <i
-                className="fa fa-times fa-1x"
-                onClick={() => this.setState({ showMenu: false })}
-              ></i>
-            </div>
-            <div className="ham-list">
-              <a href="/" className="box">
-                <p href="/">Home</p>
-              </a>
-              <a href="#" className="box">
-                <p href="#">Contact us</p>
-              </a>
-              <a href="#" className="box" id="cart" onClick={this.handleCart}>
-                <p href="#">Cart</p>
-                <i className="fa fa-caret-right fa-1x"></i>
-              </a>
-              <a href="#" className="box" id="wishlist">
-                <p href="#">Wishlist</p>
-                <i className="fa fa-caret-right fa-1x"></i>
-              </a>
-              {!this.state.loginStatus ? (
-                <a
-                  href="#"
-                  className="box orange"
-                  onClick={() => {
-                    this.setState({ login: true });
-                  }}
-                >
-                  <p style={{ cursor: "pointer", userSelect: "none" }}>Login</p>
+              <div className="ham-list">
+                <a href="/" className="box">
+                  <p href="/">Home</p>
+                </a>
+                <a href="#" className="box">
+                  <p href="#">Contact us</p>
+                </a>
+                <a className="box" id="cart" onClick={this.handleCart}>
+                  <p href="#">Cart</p>
                   <i className="fa fa-caret-right fa-1x"></i>
                 </a>
-              ) : null}
+                <a href="/Dashboard/Wishlist" className="box" id="wishlist">
+                  <p href="#">Wishlist</p>
+                  <i className="fa fa-caret-right fa-1x"></i>
+                </a>
+                {!this.state.loginStatus ? (
+                  <a
+                    className="box orange"
+                    onClick={() => {
+                      this.setState({ login: true });
+                    }}
+                  >
+                    <p style={{ cursor: "pointer", userSelect: "none" }}>
+                      Login
+                    </p>
+                    <i className="fa fa-caret-right fa-1x"></i>
+                  </a>
+                ) : null}
+              </div>
             </div>
+            <div
+              className="blank"
+              onClick={() => this.setState({ showMenu: false })}
+            ></div>
+            {this.state.showCart ? (
+              <Cart
+                close={this.handleCartClose}
+                email={this.state.currentUser.email}
+              />
+            ) : null}
+            {this.state.login ? (
+              <Login
+                close={(toggle) => this.setState({ login: toggle })}
+                login={(toggle) => {
+                  this.handleLoginStatus(toggle);
+                }}
+              />
+            ) : null}
           </div>
-          <div
-            className="blank"
-            onClick={() => this.setState({ showMenu: false })}
-          ></div>
-          {this.state.showCart ? (
-            <Cart
-              close={this.handleCartClose}
-              email={this.state.currentUser.email}
-            />
-          ) : null}
-          {this.state.login ? (
-            <Login
-              close={(toggle) => this.setState({ login: toggle })}
-              login={(toggle) => {
-                this.handleLoginStatus(toggle);
-              }}
-            />
-          ) : null}
         </div>
       </nav>
     );

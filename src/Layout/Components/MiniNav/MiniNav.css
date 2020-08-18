@@ -110,22 +110,3 @@
   height: 100%;
 }
 
-/* @media (max-width: 1024px) {
-  .mini-container {
-    height: 6vh;
-  }
-
-  .mini-container .tray .mini-content {
-    font-size: 18px;
-  }
-}
-
-@media (max-width: 768px) {
-  .mini-container .tray {
-    width: 50%;
-  }
-
-  .mini-container {
-    height: 6vh;
-  }
-} */

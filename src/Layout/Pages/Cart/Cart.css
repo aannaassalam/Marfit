@@ -82,7 +82,7 @@
   height: fit-content;
   width: 33%;
   color: rgba(0, 0, 0, 0.8);
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 700;
   position: absolute;
   top: -10%;
@@ -221,15 +221,15 @@
 
 @media (max-width: 1024px) {
   .cart-cont .blank {
-    width: 60%;
+    width: 55%;
   }
 
   .cart-cont .cart {
-    width: 40%;
+    width: 45%;
   }
 
   .cart-cont .cart-checkout .apply-coupon h3 {
-    font-size: 14px;
+    font-size: 12px;
     width: 30%;
   }
 
@@ -243,7 +243,7 @@
     .avail-coupon
     .coupon-selector
     .coupon-title {
-    width: 75%;
+    width: 90%;
   }
 
   .cart-cont .cart-checkout .checkout {
@@ -261,7 +261,7 @@
   }
 
   .cart-cont .cart-checkout .apply-coupon h3 {
-    width: 35%;
+    width: 30%;
     top: -8%;
   }
 
