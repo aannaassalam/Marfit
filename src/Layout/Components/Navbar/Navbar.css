@@ -43,7 +43,7 @@
 .navbar .nav-container .first-container .logo {
   display: flex;
   align-items: center;
-  height: 75%;
+  height: 60%;
   margin-left: 1rem;
   text-decoration: none;
 }
@@ -73,7 +73,7 @@
   height: 100%;
   display: flex;
   align-items: center;
-  border: 1.5px solid #f4f6f6;
+  border: 1.5px solid lightgrey;
   /* border-radius: 50px; */
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
@@ -115,20 +115,14 @@
   border: none;
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
-  border: 1.5px solid #f4f6f6;
+  border: 1.5px solid lightgray;
   border-left: none;
   font-size: 1.2rem;
   color: #000;
   cursor: pointer;
   transition: width 0.5s;
+  outline: none;
 }
-
-/* .navbar .nav-container .second-container .search-button {
-  color: white;
-  font-size: 1rem;
-  text-decoration: none;
-  font-weight: 500;
-} */
 
 .navbar .nav-container .second-container-active {
   width: 0;
@@ -184,6 +178,11 @@
 .navbar .nav-container .third-container a.login-signup {
   color: #fb641b;
   display: flex;
+  transition: transform 0.2s;
+}
+
+.navbar .nav-container .third-container a.login-signup:hover {
+  transform: translateY(-5px);
 }
 
 .navbar .nav-container .third-container a.login-signup p {

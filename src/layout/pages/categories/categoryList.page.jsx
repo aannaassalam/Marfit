@@ -54,18 +54,17 @@ class CategoryList extends React.Component {
         snap.docChanges().forEach((change) => {
           firebase
             .firestore()
-            .collection("supplier")
+            .collection("products")
             .onSnapshot((snap) => {
               var productList = [];
               snap.docChanges().forEach((change2) => {
-                change2.doc.data().products.map((product) => {
-                  if (
-                    product.category.toLowerCase() ===
-                    this.props.match.params.id.toLowerCase()
-                  ) {
-                    productList.push(product);
-                  }
-                });
+                var product = change2.doc.data();
+                if (
+                  product.category.toLowerCase() ===
+                  this.props.match.params.id.toLowerCase()
+                ) {
+                  productList.push(product);
+                }
               });
               this.setState({
                 categories: change.doc.data().categories,

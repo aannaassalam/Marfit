@@ -4,9 +4,10 @@ import "./Cart-card.css";
 import firebase from "firebase";
 
 export default class CartCard extends React.Component {
+  
   render() {
     return (
-      <div className="items" >
+      <div className="items">
         <a
           style={{ textDecoration: "none", color: "black" }}
           href={
@@ -22,19 +23,19 @@ export default class CartCard extends React.Component {
         </a>
         <div className="description">
           <p className="title">{this.props.item.title}</p>
-          <p className="price">&#8377;{this.props.item.price}</p>
+          <p className="price">&#8377;{this.props.item.sp}</p>
           <div className="counter">
-            <span className="symbol" onClick={this.props.handleminus}>
+            <span className="symbol" onClick={() => this.props.handleminus(this.props.item.id)}>
               -
             </span>
-            <span>{this.props.item.quantity}</span>
-            <span className="symbol" onClick={this.props.handleplus}>
+            <span>{this.props.item.cartQuantity}</span>
+            <span className="symbol" onClick={() => this.props.handleplus(this.props.item.id)}>
               +
             </span>
           </div>
           <div
             onClick={() => {
-              this.props.removeFromCart(this.props.item);
+              this.props.removeFromCart(this.props.item.id);
             }}
             className="remove-link"
           >

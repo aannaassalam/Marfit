@@ -3,6 +3,8 @@ import "./Cart.css";
 import CartCard from "../../Components/Cart-card/Cart-card";
 import discount from "../../../assets/download.png";
 import firebase from "firebase";
+import empty from "./629-empty-box.json";
+import Lottie from "lottie-react-web";
 
 export default class Cart extends React.Component {
   constructor(props) {
@@ -13,102 +15,161 @@ export default class Cart extends React.Component {
   }
 
   componentDidMount() {
-    firebase
-      .firestore()
-      .collection("users")
-      .where("email", "==", this.props.email)
-      .onSnapshot((snap) => {
-        snap.docChanges().forEach((change) => {
-          this.setState({
-            cart: change.doc.data().cart,
+    if (this.props.email) {
+      firebase
+        .firestore()
+        .collection("users")
+        .where("email", "==", this.props.email)
+        .onSnapshot((snap) => {
+          snap.docChanges().forEach((change) => {
+            this.setState({
+              cart: change.doc.data().cart,
+            });
           });
         });
+    } else {
+      var cart = JSON.parse(localStorage.getItem("cart"));
+      this.setState({
+        cart: JSON.parse(localStorage.getItem("cart"))
+          ? JSON.parse(localStorage.getItem("cart"))
+          : [],
       });
-    console.log(this.state.cart);
+    }
   }
 
-  removeFromCart = (item) => {
+  removeFromCart = (id) => {
     this.setState({
       addLoading: true,
     });
-    firebase
-      .firestore()
-      .collection("users")
-      .where("email", "==", firebase.auth().currentUser.email)
-      .get()
-      .then((snap) => {
-        snap.forEach((doc) => {
-          var cart = doc.data().cart;
-          var newCart = cart.filter((id) => {
-            return id === item.id;
-          });
-          firebase
-            .firestore()
-            .collection("users")
-            .doc(doc.id)
-            .update({
-              cart: newCart,
-            })
-            .then(() => {
-              this.setState({
-                cart: newCart,
-              });
+    if (firebase.auth().currentUser) {
+      firebase
+        .firestore()
+        .collection("users")
+        .where("email", "==", firebase.auth().currentUser.email)
+        .get()
+        .then((snap) => {
+          snap.forEach((doc) => {
+            var cart = doc.data().cart;
+            var newCart = cart.filter((item) => {
+              return item.id !== id;
             });
+            firebase
+              .firestore()
+              .collection("users")
+              .doc(doc.id)
+              .update({
+                cart: newCart,
+              })
+              .then(() => {
+                this.setState({
+                  cart: newCart,
+                });
+              });
+          });
         });
+    } else {
+      var cart = JSON.parse(localStorage.getItem("cart"));
+      var newCart = [];
+      cart.forEach((car) => {
+        if (car.id !== id) {
+          newCart.push(car);
+        }
       });
+      this.setState({
+        cart: newCart,
+      });
+      localStorage.setItem("cart", JSON.stringify(newCart));
+      return newCart;
+    }
   };
 
   handleminus = (id) => {
-    firebase
-      .firestore()
-      .collection("users")
-      .where("email", "==", firebase.auth().currentUser.email)
-      .get()
-      .then((snap) => {
-        snap.forEach((doc) => {
-          var cart = doc.data().cart;
-          cart.map((item) => {
-            if (item.id === id) {
-              if(item.quantity>1){
-                item.quantity -= 1;
+    if (firebase.auth().currentUser) {
+      firebase
+        .firestore()
+        .collection("users")
+        .where("email", "==", firebase.auth().currentUser.email)
+        .get()
+        .then((snap) => {
+          snap.forEach((doc) => {
+            var cart = doc.data().cart;
+            cart.map((item) => {
+              if (item.id === id) {
+                if (item.cartQuantity > 1) {
+                  item.cartQuantity -= 1;
+                } else {
+                  this.removeFromCart(id);
+                }
               }
-              else{
-                this.removeFromCart(item);
-              }
-            }
-          });
-
-          firebase.firestore().collection("users").doc(doc.id).update({
-            cart: cart,
+            });
+            firebase.firestore().collection("users").doc(doc.id).update({
+              cart: cart,
+            });
           });
         });
+    } else {
+      var cart = this.state.cart;
+      cart.forEach((item) => {
+        if (item.id === id) {
+          if (item.cartQuantity > 1) {
+            item.cartQuantity -= 1;
+          } else {
+            var newCart = this.removeFromCart(id);
+            cart = newCart;
+          }
+        }
       });
+      this.setState({
+        cart: cart,
+      });
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
   };
 
   handleplus = (id) => {
-    firebase
-      .firestore()
-      .collection("users")
-      .where("email", "==", firebase.auth().currentUser.email)
-      .get()
-      .then((snap) => {
-        snap.forEach((doc) => {
-          var cart = doc.data().cart;
-          cart.map((item) => {
-            if (item.id === id) {     
-              item.quantity += 1;
-            }
-          });
+    if (firebase.auth().currentUser) {
+      firebase
+        .firestore()
+        .collection("users")
+        .where("email", "==", firebase.auth().currentUser.email)
+        .get()
+        .then((snap) => {
+          snap.forEach((doc) => {
+            var cart = doc.data().cart;
+            cart.forEach((item) => {
+              if (item.id === id) {
+                item.cartQuantity += 1;
+              }
+            });
 
-          firebase.firestore().collection("users").doc(doc.id).update({
-            cart: cart,
+            firebase.firestore().collection("users").doc(doc.id).update({
+              cart: cart,
+            });
           });
         });
+    } else {
+      var cart = this.state.cart;
+      cart.forEach((item) => {
+        if (item.id === id) {
+          item.cartQuantity += 1;
+        }
       });
+      localStorage.setItem("cart", JSON.stringify(cart));
+      this.setState({
+        cart: cart,
+      });
+    }
   };
 
   render() {
-    console.log(this.state.cart);
+    var total = 0;
+    var i = 0;
+    if (this.state.cart.length > 0) {
+      this.state.cart.map(
+        (item) => (total += item.sp * item.cartQuantity)
+      );
+    }
+
     return (
       <div className="cart-cont">
         <div className="blank" onClick={this.props.close}></div>
@@ -118,7 +179,7 @@ export default class Cart extends React.Component {
             <i className="fa fa-times fa-1x" onClick={this.props.close}></i>
           </div>
           <div className="cart-body">
-            {this.state.cart ? (
+            {this.state.cart.length > 0 ? (
               this.state.cart.map((item, index) => (
                 <div className="list" key={index}>
                   <CartCard
@@ -137,8 +198,32 @@ export default class Cart extends React.Component {
                 </div>
               ))
             ) : (
-                <p>NO ITEMS</p>
-              )}
+              <div
+                style={{
+                  width: "100%",
+                  height: "40vh",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                }}
+              >
+                <Lottie
+                  options={{ animationData: empty }}
+                  width={150}
+                  height={150}
+                />
+                <p
+                  style={{
+                    fontSize: "14px",
+                    fontWeight: "bold",
+                    color: "#313131",
+                  }}
+                >
+                  No items in cart
+                </p>
+              </div>
+            )}
           </div>
           <div className="cart-checkout">
             <div className="apply-coupon">
@@ -178,11 +263,15 @@ export default class Cart extends React.Component {
                 </div>
               </div>
             </div>
-            <button className="checkout">
-              <a href="#" className="checkout-btn">
-                CHECKOUT . &#8377;999
-              </a>
-            </button>
+            {this.state.cart.length > 0 ? (
+              <button className="checkout-btn">
+                <a href="/Cart/Checkout">CHECKOUT . &#8377;{total}</a>
+              </button>
+            ) : (
+              <button className="checkout-btn-disabled">
+                <p>CHECKOUT</p>
+              </button>
+            )}
           </div>
         </div>
       </div>

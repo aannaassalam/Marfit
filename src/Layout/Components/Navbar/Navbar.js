@@ -11,6 +11,7 @@ import loading from "../../../assets/loading.json";
 import Lottie from "lottie-react-web";
 import { firestore } from "firebase";
 import { toast } from "react-toastify";
+import {Link} from 'react-router-dom';
 
 export default class Navbar extends React.Component {
   constructor(props) {
@@ -35,6 +36,7 @@ export default class Navbar extends React.Component {
         this.setState({
           loading: false,
           loginStatus: true,
+          isAnonymous: user.isAnonymous,
         });
       } else {
         this.setState({
@@ -195,14 +197,6 @@ export default class Navbar extends React.Component {
                         </a>
                       </div>
                     </div>
-                    <a
-                      style={{ cursor: "pointer", userSelect: "none" }}
-                      className="links"
-                      onClick={this.handleCart}
-                    >
-                      <i className="fas fa-shopping-cart"></i>
-                      <p>CART</p>
-                    </a>
                   </>
                 ) : (
                   <a
@@ -216,6 +210,14 @@ export default class Navbar extends React.Component {
                     <p>LOGIN/SIGN UP</p>
                   </a>
                 )}
+                <a
+                  style={{ cursor: "pointer", userSelect: "none" }}
+                  className="links"
+                  onClick={this.handleCart}
+                >
+                  <i className="fas fa-shopping-cart"></i>
+                  <p>CART</p>
+                </a>
               </>
             )}
           </div>
@@ -236,20 +238,20 @@ export default class Navbar extends React.Component {
                 ></i>
               </div>
               <div className="ham-list">
-                <a href="/" className="box">
-                  <p href="/">Home</p>
-                </a>
-                <a href="#" className="box">
+                <Link to="/" className="box">
+                  <p>Home</p>
+                </Link>
+                <Link to="#" className="box">
                   <p href="#">Contact us</p>
-                </a>
-                <a className="box" id="cart" onClick={this.handleCart}>
-                  <p href="#">Cart</p>
+                </Link>
+                <p className="box" id="cart" onClick={this.handleCart}>
+                  <span href="#">Cart</span>
                   <i className="fa fa-caret-right fa-1x"></i>
-                </a>
-                <a href="/Dashboard/Wishlist" className="box" id="wishlist">
+                </p>
+                <Link to="/Dashboard/Wishlist" className="box" id="wishlist">
                   <p href="#">Wishlist</p>
                   <i className="fa fa-caret-right fa-1x"></i>
-                </a>
+                </Link>
                 {!this.state.loginStatus ? (
                   <a
                     className="box orange"
@@ -272,7 +274,7 @@ export default class Navbar extends React.Component {
             {this.state.showCart ? (
               <Cart
                 close={this.handleCartClose}
-                email={this.state.currentUser.email}
+                email={this.state.currentUser ? this.state.currentUser.email : null}
               />
             ) : null}
             {this.state.login ? (

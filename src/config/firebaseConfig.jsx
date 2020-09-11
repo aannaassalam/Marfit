@@ -2,15 +2,15 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
 
-var firebaseConfig = {
-  apiKey: "AIzaSyAZZBovr3E2y26HeI_YiY1nfSZBze5GcRU",
-    authDomain: "hirepluto-c045a.firebaseapp.com",
-    databaseURL: "https://hirepluto-c045a.firebaseio.com",
-    projectId: "hirepluto-c045a",
-    storageBucket: "hirepluto-c045a.appspot.com",
-    messagingSenderId: "977586421372",
-    appId: "1:977586421372:web:6df314fe8949bd7c6113f9",
-    measurementId: "G-CL0DEPLQ8L"
+const firebaseConfig = {
+  apiKey: "AIzaSyBqCcCvs2_O1-DCxkXNZaJ99-WLGuu4VFE",
+  authDomain: "project-a0139.firebaseapp.com",
+  databaseURL: "https://project-a0139.firebaseio.com",
+  projectId: "project-a0139",
+  storageBucket: "project-a0139.appspot.com",
+  messagingSenderId: "138167120267",
+  appId: "1:138167120267:web:e50d2243da92458a047f8e",
+  measurementId: "G-JJ6QZPGSNM",
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);

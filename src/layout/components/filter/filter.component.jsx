@@ -9,8 +9,8 @@ export default class Filter extends React.Component {
       value: 3,
       type: [],
       minLimit: 100,
-      maxLimit: 1000,
-      minPrice: 500,
+      maxLimit: 5000,
+      minPrice: 100,
       maxPrice: 5000,
     };
   }
@@ -96,7 +96,7 @@ export default class Filter extends React.Component {
             />
           </div>
         </div> */}
-        {this.props.category.subcategories.tags ? (
+        {/* {this.props.category.subcategories.tags ? (
           <div className="type">
             <h1>TYPE</h1>
             {this.props.category.subcategories.map((sub) => {
@@ -112,11 +112,11 @@ export default class Filter extends React.Component {
                           }
                         ></i>
                       ) : (
-                          <div
-                            className="uncheck"
-                            onClick={() => this.props.handleProductAddType(tag)}
-                          ></div>
-                        )}
+                        <div
+                          className="uncheck"
+                          onClick={() => this.props.handleProductAddType(tag)}
+                        ></div>
+                      )}
                       <p>{tag.tag}</p>
                     </div>
                   );
@@ -124,10 +124,10 @@ export default class Filter extends React.Component {
               }
             })}
           </div>
-        ) : null}
+        ) : null} */}
 
         <div className="price">
-          <h1>RENTAL RANGE</h1>
+          <h1>PRICE RANGE</h1>
           <p>
             &#8377;{this.state.minPrice} - &#8377;{this.state.maxPrice}
           </p>
@@ -153,31 +153,32 @@ export default class Filter extends React.Component {
                 onClick={this.props.handleProductInStock}
               ></i>
             ) : (
-                <div
-                  className="uncheck"
-                  onClick={this.props.handleProductOutStock}
-                ></div>
-              )}
+              <div
+                className="uncheck"
+                onClick={this.props.handleProductOutStock}
+              ></div>
+            )}
             <p>Out of Stock</p>
           </div>
         </div>
         {this.props.category.subcategories ? (
           <div className="cat">
             <h1>SUB-CATEGORIES</h1>
-            {this.props.category.subcategories.map((sub) => {
+            {this.props.category.subcategories.map((sub, index) => {
               return (
                 <a
+                  key={index}
                   href={
                     "/Category/" + this.props.category.name + "/" + sub.name
                   }
                 >
                   <div className="category">
                     {sub.name.toLowerCase() ===
-                      this.props.subCat.toLowerCase() ? (
-                        <i class="fas fa-check-square"></i>
-                      ) : (
-                        <div className="uncheck"></div>
-                      )}
+                    this.props.subCat.toLowerCase() ? (
+                      <i className="fas fa-check-square"></i>
+                    ) : (
+                      <div className="uncheck"></div>
+                    )}
                     <p>{sub.name}</p>
                   </div>
                 </a>

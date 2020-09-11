@@ -13,6 +13,7 @@ import ProductList from "./Layout/Pages/products/productList/productList.page";
 import ProductDesc from "./Layout/Pages/products/productDescription/productDescription.page";
 import ComingSoon from "./Layout/Components/comingSoon/comingSoon.component";
 import NotFound from "./Layout/Pages/notFound/notFound.page";
+import Checkout from "./Layout/Pages/Checkout/Checkout";
 
 function App() {
   const location = useLocation();
@@ -33,6 +34,7 @@ function App() {
           />
           <Route exact path="/Dashboard/:id" component={Dashboard} />
           <Route exact path="/ComingSoon" component={ComingSoon} />
+          <Route exact path="/Cart/Checkout" component={Checkout} />
           <Route exact path="*" component={NotFound} />
         </Switch>
       </AnimatePresence>

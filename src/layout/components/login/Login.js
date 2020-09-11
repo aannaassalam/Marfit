@@ -3,6 +3,7 @@ import "./Login.css";
 import logo from "../../../assets/image_1.png";
 import marfit from "../../../assets/marfit-label.png";
 import google from "../../../assets/google.png";
+import fb from "../../../assets/fb.png";
 import loginBag from "../../../assets/login bag.jpg";
 import firebase from "firebase";
 import { signInWithGoogle } from "../../../config/firebaseConfig";
@@ -23,6 +24,9 @@ export default class Login extends React.Component {
       email: "",
       password: "",
       loading: false,
+      forgotpass: false,
+      resetEmail: "",
+      referal: "",
     };
   }
 
@@ -38,6 +42,7 @@ export default class Login extends React.Component {
   };
 
   handleRegister = (e) => {
+    var points = 0;
     e.preventDefault();
     this.setState({
       loading: true,
@@ -70,6 +75,96 @@ export default class Login extends React.Component {
       this.setState({
         loading: false,
       });
+    } else if (this.state.referal.length > 0) {
+      firebase
+        .firestore()
+        .collection("users")
+        .where("referalID", "==", this.state.referal)
+        .get()
+        .then((snap) => {
+          if (snap.size > 0) {
+            points = 10;
+            firebase
+              .firestore()
+              .collection("users")
+              .where("email", "==", this.state.email)
+              .get()
+              .then((snap) => {
+                if (snap.size === 0) {
+                  firebase
+                    .auth()
+                    .createUserWithEmailAndPassword(
+                      this.state.email,
+                      this.state.password
+                    )
+                    .then(() => {
+                      firebase
+                        .firestore()
+                        .collection("users")
+                        .add({
+                          email: this.state.email,
+                          name: this.state.username,
+                          orders: [],
+                          addresses: [],
+                          phone: "",
+                          dob: "",
+                          gender: "",
+                          alt: "",
+                          cart: [],
+                          wishlist: [],
+                          referalID: "",
+                          points: points,
+                        })
+                        .then((res) => {
+                          var referal =
+                            res.id.substr(16, 4) +
+                            this.state.email.substr(0, 2);
+                          firebase
+                            .firestore()
+                            .collection("users")
+                            .doc(res.id)
+                            .update({
+                              referalID: referal,
+                            });
+                          this.setState({
+                            loading: false,
+                          });
+                          this.props.login(true);
+                          this.props.close(false);
+                        })
+                        .catch((err) => {
+                          toast.error(err.message);
+                          this.setState({
+                            loading: false,
+                          });
+                        });
+                    })
+                    .catch((err) => {
+                      toast.error(err.message);
+                      this.setState({
+                        loading: false,
+                      });
+                    });
+                } else {
+                  toast.error("You are already a user");
+                  this.setState({
+                    loading: false,
+                  });
+                }
+              });
+          }else{
+            toast.info("Invalid Referal Code");
+          this.setState({
+            loading: false,
+          });
+          }
+        })
+        .catch((err) => {
+          toast.info("Invalid Referal Code");
+          this.setState({
+            loading: false,
+          });
+        });
     } else {
       firebase
         .firestore()
@@ -99,16 +194,24 @@ export default class Login extends React.Component {
                     alt: "",
                     cart: [],
                     wishlist: [],
+                    referalID: "",
+                    points: points,
                   })
-                  .then(() => {
-                    toast.success("Registered");
+                  .then((res) => {
+                    var referal =
+                      res.id.substr(16, 4) + this.state.email.substr(0, 2);
+                    firebase
+                      .firestore()
+                      .collection("users")
+                      .doc(res.id)
+                      .update({
+                        referalID: referal,
+                      });
                     this.setState({
                       loading: false,
                     });
                     this.props.login(true);
-                    setTimeout(() => {
-                      this.props.close(false);
-                    }, 2000);
+                    this.props.close(false);
                   })
                   .catch((err) => {
                     toast.error(err.message);
@@ -168,14 +271,11 @@ export default class Login extends React.Component {
               .auth()
               .signInWithEmailAndPassword(this.state.email, this.state.password)
               .then(() => {
-                toast.success("Logged In");
                 this.setState({
                   loading: false,
                 });
                 this.props.login(true);
-                setTimeout(() => {
-                  this.props.close(false);
-                }, 2000);
+                this.props.close(false);
               })
               .catch((err) => {
                 toast.error(err.message);
@@ -191,6 +291,27 @@ export default class Login extends React.Component {
           }
         });
     }
+  };
+
+  resetPassword = () => {
+    this.setState({
+      loading: true,
+    });
+    firebase
+      .auth()
+      .sendPasswordResetEmail(this.state.resetEmail)
+      .then(() => {
+        toast.success("Reset E-mail sent successfully");
+        this.setState({
+          loading: false,
+        });
+      })
+      .catch((err) => {
+        toast.error("User account does not exist!!!");
+        this.setState({
+          loading: false,
+        });
+      });
   };
 
   render() {
@@ -231,6 +352,12 @@ export default class Login extends React.Component {
                   placeholder="Enter Passsword"
                   onChange={this.handleChange}
                 />
+                <input
+                  type="text"
+                  name="referal"
+                  placeholder="Referal code  (optional)"
+                  onChange={this.handleChange}
+                />
               </div>
               <div className="agree">
                 <input
@@ -267,9 +394,9 @@ export default class Login extends React.Component {
                 <div className="or">OR</div>
                 <div className="horizontal"></div>
               </div>
-              <div className="google">
+              <div className="social">
                 <img src={google} alt="Google Image" />
-                <p>Sign Up with Google</p>
+                <img src={fb} alt="Facebook Image" />
               </div>
               <div className="already-customer">
                 <p>
@@ -286,50 +413,99 @@ export default class Login extends React.Component {
                 <img src={logo} alt="Marfit logo" />
                 <img src={marfit} alt="Marfit title" />
               </div>
-              <div className="input-fields">
-                <input
-                  type="email"
-                  name="email"
-                  id="user-email"
-                  placeholder="Enter Email"
-                  onChange={this.handleChange}
-                />
-                <input
-                  type="password"
-                  name="password"
-                  id="user-password"
-                  placeholder="Enter Password"
-                  onChange={this.handleChange}
-                />
-              </div>
-              {this.state.loading ? (
-                <Lottie
-                  options={{ animationData: loading }}
-                  width={80}
-                  height={80}
-                />
+              {this.state.forgotpass ? (
+                <div className="resetPass">
+                  <i
+                    className="fas fa-arrow-left"
+                    onClick={() =>
+                      this.setState({
+                        forgotpass: false,
+                      })
+                    }
+                  ></i>
+                  <div className="sendmail">
+                    <input
+                      type="email"
+                      name="resetEmail"
+                      placeholder="Enter your Email"
+                      onChange={this.handleChange}
+                    />
+                    {this.state.loading ? (
+                      <Lottie
+                        options={{ animationData: loading }}
+                        width={50}
+                        height={50}
+                      />
+                    ) : (
+                      <button type="button" onClick={this.resetPassword}>
+                        <p>Reset Password</p>
+                      </button>
+                    )}
+                  </div>
+                </div>
               ) : (
-                <button type="button" onClick={this.handleLogin}>
-                  Log In
-                </button>
+                <>
+                  <div className="input-fields">
+                    <input
+                      type="email"
+                      name="email"
+                      id="user-email"
+                      placeholder="Enter Email"
+                      onChange={this.handleChange}
+                    />
+                    <div className="pass">
+                      <input
+                        type="password"
+                        name="password"
+                        id="user-password"
+                        placeholder="Enter Password"
+                        onChange={this.handleChange}
+                      />
+                      <p
+                        onClick={() =>
+                          this.setState({
+                            forgotpass: true,
+                          })
+                        }
+                      >
+                        Forgot password?
+                      </p>
+                    </div>
+                  </div>
+                  {this.state.loading ? (
+                    <Lottie
+                      options={{ animationData: loading }}
+                      width={80}
+                      height={80}
+                    />
+                  ) : (
+                    <button type="button" onClick={this.handleLogin}>
+                      Log In
+                    </button>
+                  )}
+                  <div className="lines">
+                    <div className="horizontal"></div>
+                    <div className="or">OR</div>
+                    <div className="horizontal"></div>
+                  </div>
+                  <div className="social">
+                    <img
+                      src={google}
+                      alt="Google Image"
+                      onClick={signInWithGoogle}
+                    />
+                    <img src={fb} alt="Facebook Image" />
+                  </div>
+                  <div className="already-customer">
+                    <p>
+                      Not a Customer.{" "}
+                      <a onClick={() => this.setState({ toggle: "register" })}>
+                        Register
+                      </a>
+                    </p>
+                  </div>
+                </>
               )}
-              <div className="lines">
-                <div className="horizontal"></div>
-                <div className="or">OR</div>
-                <div className="horizontal"></div>
-              </div>
-              <div className="google" onClick={signInWithGoogle}>
-                <img src={google} alt="Google Image" />
-                <p>Sign In with Google</p>
-              </div>
-              <div className="already-customer">
-                <p>
-                  Not a Customer.{" "}
-                  <a onClick={() => this.setState({ toggle: "register" })}>
-                    Register
-                  </a>
-                </p>
-              </div>
             </div>
           )}
         </div>

@@ -50,32 +50,57 @@
   color: #414141;
 }
 
+.product-container {
+  width: 100%;
+  height: 73vh;
+  background-color: #fff;
+  box-shadow: 0px 3px 5px lightgrey;
+}
+
 .product-desc {
   width: 80%;
   margin: 0 auto;
   display: flex;
   flex-direction: row;
-  height: 75vh;
+  height: 100%;
   padding-top: 0.5rem;
+  background-color: #fff;
 }
 
-.product-desc .carousal-section {
+.product-desc .all-product-image {
   width: 40%;
   height: 100%;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
 }
 
-.product-desc .product-images {
+.product-desc .all-product-image .carousal-section {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.product-desc .all-product-image .carousal-section .product-images {
   width: 60px;
   overflow-y: scroll;
 }
 
-.product-desc .product-images::-webkit-scrollbar {
+.product-desc
+  .all-product-image
+  .carousal-section
+  .product-images::-webkit-scrollbar {
   width: 0;
 }
 
-.product-desc .product-images .preview-image {
+.product-desc
+  .all-product-image
+  .carousal-section
+  .product-images
+  .preview-image {
   width: 100%;
   height: 60px;
   cursor: pointer;
@@ -89,24 +114,107 @@
   opacity: 1 !important;
 }
 
-.product-desc .product-images .preview-image img {
+.product-desc
+  .all-product-image
+  .carousal-section
+  .product-images
+  .preview-image
+  img {
   object-fit: contain;
   width: 100%;
   height: 100%;
 }
 
-.product-desc .product-image {
+.product-desc .all-product-image .carousal-section .product-image {
+  display: flex;
+  justify-content: center;
   width: 80%;
+}
+
+.product-desc
+  .all-product-image
+  .carousal-section
+  .product-image
+  .product-image-container {
+  width: 18vw !important;
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  height: 18vw !important;
+  margin: 0 auto;
 }
 
-.product-desc .product-image img {
-  width: 70%;
-  height: 100%;
+.product-desc
+  .all-product-image
+  .carousal-section
+  .product-image
+  .product-image-image {
+  width: 100% !important;
+  height: 100% !important;
   object-fit: contain;
+  background-color: #fff;
+}
+
+.product-desc .all-product-image .carousal-section .product-zoom-container {
+  width: 60vw !important;
+  height: 65vh !important;
+  background-color: #fff;
+  border-radius: 5px;
+  box-shadow: 5px 5px 10px 0 #dee0e2;
+}
+
+.product-desc .all-product-image .carousal-section .product-zoom-image {
+  width: 1400px !important;
+  height: 1800px !important;
+  background-color: #fff;
+}
+
+.product-desc .all-product-image .buying-options {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  position: absolute;
+  bottom: 10px;
+}
+
+.product-desc .all-product-image .buying-options .option {
+  width: 180px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  margin: 0 0.5rem;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.product-desc .all-product-image .buying-options .option:hover {
+  transform: translateY(-5px);
+}
+
+.product-desc .all-product-image .buying-options .option:nth-child(1) {
+  background-color: #fff;
+  border: 2px solid #fb6b25;
+  color: #000;
+  transition: background-color .1s, color .1s;
+}
+
+.product-desc .all-product-image .buying-options .option:nth-child(1):active {
+  background-color: orangered;
+  border-color: orangered;
+  color: white;
+}
+
+.product-desc .all-product-image .buying-options .option:nth-child(2) {
+  background-color: orangered;
+  border: 2px solid orangered;
+  color: #fff;
+}
+
+.product-desc .all-product-image .buying-options .option i {
+  margin-right: 0.25rem;
 }
 
 .product-desc .description-section {
@@ -121,9 +229,38 @@
 }
 
 .product-desc .description-section .product-title {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0.25rem 0.5rem 0.25rem 0;
+}
+
+.product-desc .description-section .product-title p {
   font-size: 32px;
   line-height: 25.2px;
   text-align: start;
+}
+
+.product-desc .description-section .product-title .circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  box-shadow: 1px 1px 3px lightgray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  cursor: pointer;
+}
+
+.product-desc .description-section .product-title .circle i {
+  font-size: 18px;
+  color: darkgray;
+}
+
+.red {
+  color: red !important;
 }
 
 .product-desc .price {
@@ -155,6 +292,71 @@
   letter-spacing: -0.2px;
   font-weight: bold;
   color: #fb6b25;
+}
+
+.product-desc .description-section .other-details{
+  width: 350px;
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.product-desc .description-section .other-details .quantity-cont .title-tag,
+.product-desc .description-section .other-details .size-cont .title-tag{
+  font-weight: 600;
+  margin-left: 7px;
+  margin-bottom: 7px;
+}
+
+.product-desc .description-section .other-details .quantity-cont .quantity{
+  height: 30px;
+  border: 1px solid grey;
+  width: 100px;
+  display: flex;
+  justify-content: space-around;
+  border-radius: 5px;
+  align-items: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+.product-desc .description-section .other-details .quantity-cont .quantity .symbol{
+  font-size: 18px;
+  height: fit-content;
+  padding-bottom: 2px;
+  width: 20%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.product-desc .description-section .other-details .size-cont .size{
+  width: 185px;
+  height: 30px;
+  border: 1px solid grey;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  cursor: pointer;
+  overflow: hidden;
+  user-select: none;
+}
+
+.product-desc .description-section .other-details .size-cont .size p{
+  padding: 5px 12px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.sizeSelected{
+  background-color: orangered;
+  color: white;
+  font-size: 15px;
 }
 
 .product-desc .description-section .product-details {

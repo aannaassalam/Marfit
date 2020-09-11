@@ -9,6 +9,8 @@ import "react-toastify/dist/ReactToastify.css";
 import empty from "./629-empty-box.json";
 import emptywish from "./10000-empty-box.json";
 import Card from "../../Components/Card/Card";
+import { CopyToClipboard } from "react-copy-to-clipboard";
+import refer from "../../../assets/refer.json";
 
 const pageVariants = {
   initial: {
@@ -47,6 +49,8 @@ class Dashboard extends React.Component {
       orders: [],
       address: [],
       loading: true,
+      wishlist: [],
+      copy: false,
     };
   }
 
@@ -126,37 +130,8 @@ class Dashboard extends React.Component {
     this.setState({ [id]: value });
   };
 
-  removeFromWishlist = (e) => {
-    firebase
-      .firestore()
-      .collection("users")
-      .where("email", "==", firebase.auth().currentUser.email)
-      .get()
-      .then((snap) => {
-        snap.forEach((doc) => {
-          var wishlist = doc.data().wishlist;
-          var newwishlist = [];
-          wishlist.map((item) => {
-            if (item.email === e.email && item.id === e.id) {
-            } else {
-              newwishlist.push(item);
-            }
-          });
-          firebase
-            .firestore()
-            .collection("users")
-            .doc(doc.id)
-            .update({
-              wishlist: newwishlist,
-            })
-            .then(() => {
-              toast.success(" Item removed from your wishlist");
-            });
-        });
-      });
-  };
-
   render() {
+    const sharecode = this.state.currentUser.referalID;
     return (
       <>
         {this.state.loading ? (
@@ -224,6 +199,16 @@ class Dashboard extends React.Component {
                     onClick={() => this.setState({ tab: "Address" })}
                   >
                     Address
+                  </div>
+                )}
+                {this.state.tab === "Refer" ? (
+                  <div className="menu-active">Refer & Earn</div>
+                ) : (
+                  <div
+                    className="menu"
+                    onClick={() => this.setState({ tab: "Refer" })}
+                  >
+                    Refer & Earn
                   </div>
                 )}
               </div>
@@ -404,6 +389,7 @@ class Dashboard extends React.Component {
                     <div className="divider"></div>
                     {this.state.currentUser.orders.length === 0 ? (
                       <div
+                        className="ordersdiv"
                         style={{
                           width: "100%",
                           height: "100%",
@@ -418,6 +404,11 @@ class Dashboard extends React.Component {
                           width={200}
                           height={200}
                         />
+                        <p>
+                          <span>EMPTY ORDER LIST</span>
+                          <br />
+                          You have no items in your orderlist
+                        </p>
                         <a href="/" className="empty">
                           Take me back to shopping
                         </a>
@@ -452,14 +443,9 @@ class Dashboard extends React.Component {
                     ) : (
                       <div className="wishlist-container">
                         {this.state.currentUser.wishlist.map((item) => {
-                          return (
-                            <Card
-                              item={item}
-                              removeFromWishlist={(e) =>
-                                this.removeFromWishlist(e)
-                              }
-                            />
-                          );
+                          var product = {};
+                          product.id = item;
+                          return <Card key={item} item={product} />;
                         })}
                       </div>
                     )}
@@ -469,6 +455,65 @@ class Dashboard extends React.Component {
                   <>
                     <h1>Your Address List</h1>
                     <div className="divider"></div>
+                  </>
+                ) : null}
+                {this.state.tab === "Refer" ? (
+                  <>
+                    <h1>Refer & Earn</h1>
+                    <div className="divider"></div>
+                    <div className="referanimation">
+                      <Lottie
+                        options={{ animationData: refer }}
+                        width={300}
+                        height={300}
+                        style={{ position: "absolute", top: 0 }}
+                      />
+                    </div>
+                    <div className="referCode">
+                      <div className="referInput">
+                        <input
+                          type="text"
+                          value={this.state.currentUser.referalID}
+                          disabled
+                          id="referalText"
+                        />
+                        <CopyToClipboard
+                          text={this.state.currentUser.referalID}
+                        >
+                          <button
+                            type="button"
+                            className={
+                              this.state.copy ? "copiedButton" : "copyButton"
+                            }
+                            onClick={() => {
+                              this.setState({ copy: true });
+                              setTimeout(() => {
+                                this.setState({
+                                  copy: false,
+                                });
+                              }, 1000);
+                            }}
+                          >
+                            {!this.state.copy ? (
+                              <>
+                                <p>Copy</p>
+                                <i className="far fa-clipboard"></i>
+                              </>
+                            ) : (
+                              <>
+                                <p>Copied</p>
+                                <i className="fas fa-check"></i>
+                              </>
+                            )}
+                          </button>
+                        </CopyToClipboard>
+                      </div>
+                      {/* <div className="referSocial">
+                        <FacebookShareButton url={sharecode}>
+                          <FacebookIcon size={32} round />
+                        </FacebookShareButton>
+                      </div> */}
+                    </div>
                   </>
                 ) : null}
               </div>
