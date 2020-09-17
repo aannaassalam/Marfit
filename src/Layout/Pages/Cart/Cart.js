@@ -11,6 +11,8 @@ export default class Cart extends React.Component {
     super(props);
     this.state = {
       cart: [],
+      coupons: [],
+      selectedCoupon: "",
     };
   }
 
@@ -30,11 +32,27 @@ export default class Cart extends React.Component {
     } else {
       var cart = JSON.parse(localStorage.getItem("cart"));
       this.setState({
-        cart: JSON.parse(localStorage.getItem("cart"))
-          ? JSON.parse(localStorage.getItem("cart"))
-          : [],
+        cart: cart ? cart : [],
       });
     }
+    firebase
+      .firestore()
+      .collection("settings")
+      .get()
+      .then((snap) => {
+        snap.forEach((doc) => {
+          this.setState({
+            coupons: doc.data().coupons,
+          });
+        });
+      });
+  }
+
+  handleChange(e) {
+    this.setState({
+      selectedCoupon: this.state.coupons[e.target.value],
+    });
+    console.log(this.state.selectedCoupon);
   }
 
   removeFromCart = (id) => {
@@ -165,9 +183,14 @@ export default class Cart extends React.Component {
     var total = 0;
     var i = 0;
     if (this.state.cart.length > 0) {
-      this.state.cart.map(
-        (item) => (total += item.sp * item.cartQuantity)
-      );
+      this.state.cart.map((item) => (total += item.sp * item.cartQuantity));
+    }
+    if (this.state.selectedCoupon !== "") {
+      if (this.state.selectedCoupon.type === "money") {
+        total -= this.state.selectedCoupon.value;
+      } else {
+        total -= total * (this.state.selectedCoupon.value / 100);
+      }
     }
 
     return (
@@ -236,36 +259,42 @@ export default class Cart extends React.Component {
               />
               <div className="avail-coupon">
                 <p>Available Coupons</p>
-                <div className="coupon-selector">
-                  <div className="coupon-title">
-                    <img src={discount} alt="discount image" />
-                    <div className="paragraphs">
-                      <p className="coupon-name">FIRST10</p>
-                      <p className="coupon-details">
-                        (get 10% off on first order)
-                      </p>
-                    </div>
-                  </div>
-                  <input type="radio" name="coupon-select" id="selector" />
-                </div>
-
-                <div className="coupon-selector">
-                  <div className="coupon-title">
-                    <img src={discount} alt="discount image" />
-                    <div className="paragraphs">
-                      <p className="coupon-name">FIRST10</p>
-                      <p className="coupon-details">
-                        (get 10% off on first order)
-                      </p>
-                    </div>
-                  </div>
-                  <input type="radio" name="coupon-select" id="selector" />
-                </div>
+                {this.state.coupons.map((item, index) => {
+                  var date = new Date();
+                  if (item.start.toDate() < date && item.end.toDate() > date) {
+                    return (
+                      <div className="coupon-selector" key={index}>
+                        <div className="coupon-title">
+                          <img src={item.image} alt="discount image" />
+                          <div className="paragraphs">
+                            <p className="coupon-name">{item.name}</p>
+                            <p className="coupon-details">
+                              ({item.description})
+                            </p>
+                          </div>
+                        </div>
+                        <input
+                          type="radio"
+                          name="coupon-select"
+                          id="selector"
+                          value={index}
+                          onChange={(e) => this.handleChange(e)}
+                        />
+                      </div>
+                    );
+                  }
+                })}
               </div>
             </div>
             {this.state.cart.length > 0 ? (
               <button className="checkout-btn">
-                <a href="/Cart/Checkout">CHECKOUT . &#8377;{total}</a>
+                <a
+                  href={
+                    "/Cart/Checkout/coupon:" + this.state.selectedCoupon.name
+                  }
+                >
+                  CHECKOUT . &#8377;{total}
+                </a>
               </button>
             ) : (
               <button className="checkout-btn-disabled">

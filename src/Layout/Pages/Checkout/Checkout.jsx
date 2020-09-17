@@ -9,6 +9,7 @@ export default class Checkout extends React.Component {
     this.state = {
       cart: [],
       openLogin: false,
+      coupon: ""
     };
   }
 
@@ -34,6 +35,19 @@ export default class Checkout extends React.Component {
         });
       }
     });
+    firebase.firestore().collection('settings').get().then((snap)=>{
+      snap.forEach(doc => {
+        var coupons = doc.data().coupons;
+        coupons.forEach(coupon => {
+          if(coupon.name === this.props.match.params.coupon){
+            this.setState({
+              coupon: coupon
+            });
+          }
+        }
+        )
+      })
+    })
   }
 
   render() {
@@ -44,6 +58,19 @@ export default class Checkout extends React.Component {
       shipping += this.state.cart[i].shippingCharge * this.state.cart[i].cartQuantity;
     }
     var total = shipping + subTotal;
+    var value = "";
+    var date = new Date();
+    if(this.state.coupon !== ""){
+      if(this.state.coupon.start.toDate()< date && this.state.coupon.end.toDate()>date){
+      if (this.state.coupon.type === "money") {
+        total -= this.state.coupon.value;
+        value = this.state.coupon.value;
+      } else {
+        value = total * (this.state.coupon.value / 100);
+        total -= value;
+      }
+    }
+    }
     return (
       <div className="checkout">
         <div className="left">
@@ -143,7 +170,7 @@ export default class Checkout extends React.Component {
               </div>
             ))}
           </div>
-          <div className="discount-sec">
+          {/* <div className="discount-sec">
             <input
               type="text"
               name="discount"
@@ -151,7 +178,7 @@ export default class Checkout extends React.Component {
               placeholder="Discount Code"
             />
             <button type="button">APPLY</button>
-          </div>
+          </div> */}
           <div className="order-details">
             <div className="sub">
               <p className="sub-title">Subtotal</p>
@@ -159,7 +186,11 @@ export default class Checkout extends React.Component {
             </div>
             <div className="shipping-sub">
               <p className="sub-title">Shipping</p>
-              <p>&#8377; {shipping}</p>
+              <p>+ &#8377; {shipping}</p>
+            </div>
+            <div className="discount-sub">
+              <p className="sub-title">Discount ({this.state.coupon.name})</p>
+              <p>- &#8377; {value}</p>
             </div>
           </div>
           <div className="total">
