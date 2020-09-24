@@ -4,6 +4,7 @@
   flex-direction: row;
   height: 110vh;
   background-color: #fff;
+  margin-top: 1px;
 }
 
 .checkout .left {
@@ -147,7 +148,6 @@
   border: 1px solid darkgrey;
   border-right: none;
   border-top: none;
-  margin-top: 4px;
 }
 
 .checkout .right .items-container{

@@ -6,6 +6,8 @@ import notfound from './lf30_editor_SvDNsR.json';
 
 class NotFound extends React.Component {
     render() {
+        console.log(this.props);
+
         return(
             <div className="not-found-container">
                 <div className = "not-found-box">

@@ -9,7 +9,9 @@ export default class Checkout extends React.Component {
     this.state = {
       cart: [],
       openLogin: false,
-      coupon: ""
+      coupon: "",
+      currentUser: "",
+      loginStatus: "",
     };
   }
 
@@ -25,6 +27,7 @@ export default class Checkout extends React.Component {
             snap.forEach((doc) => {
               this.setState({
                 cart: doc.data().cart,
+                currentUser: doc.data(),
               });
               console.log(doc.data().cart);
             });
@@ -32,22 +35,26 @@ export default class Checkout extends React.Component {
       } else {
         this.setState({
           cart: JSON.parse(localStorage.getItem("cart")),
+          currentUser: "",
         });
       }
     });
-    firebase.firestore().collection('settings').get().then((snap)=>{
-      snap.forEach(doc => {
-        var coupons = doc.data().coupons;
-        coupons.forEach(coupon => {
-          if(coupon.name === this.props.match.params.coupon){
-            this.setState({
-              coupon: coupon
-            });
-          }
-        }
-        )
-      })
-    })
+    firebase
+      .firestore()
+      .collection("settings")
+      .get()
+      .then((snap) => {
+        snap.forEach((doc) => {
+          var coupons = doc.data().coupons;
+          coupons.forEach((coupon) => {
+            if (coupon.name === this.props.match.params.coupon) {
+              this.setState({
+                coupon: coupon,
+              });
+            }
+          });
+        });
+      });
   }
 
   render() {
@@ -55,33 +62,44 @@ export default class Checkout extends React.Component {
     var shipping = 0;
     for (var i = 0; i < this.state.cart.length; i++) {
       subTotal += this.state.cart[i].sp * this.state.cart[i].cartQuantity;
-      shipping += this.state.cart[i].shippingCharge * this.state.cart[i].cartQuantity;
+      shipping +=
+        this.state.cart[i].shippingCharge * this.state.cart[i].cartQuantity;
     }
+    console.log(this.state.currentUser.length);
     var total = shipping + subTotal;
     var value = "";
     var date = new Date();
-    if(this.state.coupon !== ""){
-      if(this.state.coupon.start.toDate()< date && this.state.coupon.end.toDate()>date){
-      if (this.state.coupon.type === "money") {
-        total -= this.state.coupon.value;
-        value = this.state.coupon.value;
-      } else {
-        value = total * (this.state.coupon.value / 100);
-        total -= value;
+    if (this.state.coupon !== "") {
+      if (
+        this.state.coupon.start.toDate() < date &&
+        this.state.coupon.end.toDate() > date
+      ) {
+        if (this.state.coupon.type === "money") {
+          total -= this.state.coupon.value;
+          value = this.state.coupon.value;
+        } else {
+          value = total * (this.state.coupon.value / 100);
+          total -= value;
+        }
       }
+    } else {
+      value = 0;
     }
-    }
+
     return (
       <div className="checkout">
         <div className="left">
-          <div className="already">
-            <p>
-              Already have an account?{" "}
-              <span onClick={() => this.setState({ openLogin: true })}>
-                Log in
-              </span>
-            </p>
-          </div>
+          {this.state.currentUser !== "" ? null : (
+            <div className="already">
+              <p>
+                Already have an account?{" "}
+                <span onClick={() => this.setState({ openLogin: true })}>
+                  Log in
+                </span>
+              </p>
+            </div>
+          )}
+
           <main className="info">
             <div className="contact">
               <div className="contact-label">
@@ -92,6 +110,11 @@ export default class Checkout extends React.Component {
                 className="email-input"
                 placeholder="Email"
                 name="email"
+                value={
+                  this.state.currentUser === ""
+                    ? null
+                    : this.state.currentUser.email
+                }
               />
             </div>
             <div className="shipping">
@@ -102,12 +125,36 @@ export default class Checkout extends React.Component {
                   placeholder="First name"
                   name="firstName"
                   id="firstName"
+                  value={
+                    this.state.currentUser === ""
+                      ? null
+                      : this.state.currentUser.name.includes(
+                          " "
+                        )
+                      ? this.state.currentUser.name.substr(
+                          0,
+                          this.state.currentUser.name.indexOf(" ")
+                        )
+                      : this.state.currentUser.name
+                  }
                 />
                 <input
                   type="text"
                   placeholder="Last name"
                   name="lastName"
                   id="lastName"
+                  value={
+                    this.state.currentUser === ""
+                      ? null
+                      : this.state.currentUser.name.includes(
+                          " "
+                        )
+                      ? this.state.currentUser.name.substr(
+                          this.state.currentUser.name.indexOf(" "),
+                          this.state.currentUser.name.length
+                        )
+                      : null
+                  }
                 />
               </div>
               <input
@@ -115,6 +162,11 @@ export default class Checkout extends React.Component {
                 placeholder="Address"
                 name="address"
                 id="address"
+                value={
+                  this.state.currentUser === ""
+                    ? null
+                    : this.state.currentUser.address
+                }
               />
               <input
                 type="text"
@@ -143,6 +195,11 @@ export default class Checkout extends React.Component {
                 id="phone"
                 maxLength="10"
                 placeholder="Phone"
+                value={
+                  this.state.currentUser === ""
+                    ? null
+                    : this.state.currentUser.phone
+                }
               />
             </div>
           </main>
@@ -199,7 +256,12 @@ export default class Checkout extends React.Component {
           </div>
         </div>
         {this.state.openLogin ? (
-          <Login close={(toggle) => this.setState({ openLogin: toggle })} />
+          <Login
+            close={(toggle) => this.setState({ openLogin: toggle })}
+            login={(toggle) => {
+              this.setState({ loginStatus: toggle });
+            }}
+          />
         ) : null}
       </div>
     );

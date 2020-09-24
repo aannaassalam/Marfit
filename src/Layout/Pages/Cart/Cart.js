@@ -290,7 +290,10 @@ export default class Cart extends React.Component {
               <button className="checkout-btn">
                 <a
                   href={
-                    "/Cart/Checkout/coupon:" + this.state.selectedCoupon.name
+                    this.state.selectedCoupon !== ""
+                      ? "/Cart/Checkout/coupon:" +
+                        this.state.selectedCoupon.name
+                      : "/Cart/Checkout/coupon:" + " ?"
                   }
                 >
                   CHECKOUT . &#8377;{total}

@@ -51,6 +51,8 @@ class Dashboard extends React.Component {
       loading: true,
       wishlist: [],
       copy: false,
+      fetchedAddresses: [],
+      addTab: false,
     };
   }
 
@@ -65,6 +67,7 @@ class Dashboard extends React.Component {
             snap.docChanges().forEach((change) => {
               this.setState({
                 currentUser: change.doc.data(),
+                fetchedAddresses: change.doc.data().addresses,
                 loading: false,
               });
             });
@@ -129,6 +132,66 @@ class Dashboard extends React.Component {
     const { value, id } = e.target;
     this.setState({ [id]: value });
   };
+
+  handleDelete(index) {
+    console.log(index);
+    var addresses = this.state.fetchedAddresses;
+    console.log(addresses);
+    var newAddresses = addresses.filter(
+      (address) => address !== addresses[index]
+    );
+    firebase
+      .firestore()
+      .collection("users")
+      .where("email", "==", firebase.auth().currentUser.email)
+      .get()
+      .then((snap) => {
+        snap.forEach((doc) => {
+          firebase
+            .firestore()
+            .collection("users")
+            .doc(doc.id)
+            .update({
+              addresses: newAddresses,
+            })
+            .then(() => {
+              this.setState({
+                fetchedAddress: newAddresses,
+              });
+            });
+        });
+      });
+  }
+
+  handleAdd() {
+    var addresses = this.state.fetchedAddresses;
+    if (this.state.address.length > 0) {
+      document.getElementById("address").value = "";
+      addresses.push(this.state.address);
+      firebase
+        .firestore()
+        .collection("users")
+        .where("email", "==", firebase.auth().currentUser.email)
+        .get()
+        .then((snap) => {
+          snap.forEach((doc) => {
+            firebase
+              .firestore()
+              .collection("users")
+              .doc(doc.id)
+              .update({
+                addresses: addresses,
+              })
+              .then(() => {
+                this.setState({
+                  fetchedAddresses: addresses,
+                  addTab: false
+                });
+              });
+          });
+        });
+    }
+  }
 
   render() {
     const sharecode = this.state.currentUser.referalID;
@@ -455,6 +518,60 @@ class Dashboard extends React.Component {
                   <>
                     <h1>Your Address List</h1>
                     <div className="divider"></div>
+                    <div className="address-cont">
+                      {this.state.fetchedAddresses.map((address, index) => (
+                        <div className="address" key={index}>
+                          <div className="paras">
+                            <p>Address {index + 1} :</p>
+                            <p>{address}</p>
+                          </div>
+                          <div
+                            className="minus"
+                            onClick={() => {
+                              this.handleDelete(index);
+                            }}
+                          >
+                            <i className="fas fa-minus-circle"></i>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    {this.state.addTab ? (
+                      <div className="addtab">
+                        <div className="inputs">
+                          <input
+                            type="text"
+                            name="address"
+                            id="address"
+                            onChange={this.handleChange}
+                            placeholder="Address"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              this.handleAdd();
+                            }}
+                          >
+                            Add
+                          </button>
+                        </div>
+                        <i
+                          className="fas fa-times"
+                          onClick={() => {
+                            this.setState({ addTab: false });
+                          }}
+                        ></i>
+                      </div>
+                    ) : null}
+                    <div
+                      className="newAddress"
+                      onClick={() => {
+                        this.setState({ addTab: true });
+                      }}
+                    >
+                      <i className="fas fa-plus-circle"></i>
+                      <p>ADD NEW ADDRESS</p>
+                    </div>
                   </>
                 ) : null}
                 {this.state.tab === "Refer" ? (

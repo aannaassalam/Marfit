@@ -34,7 +34,11 @@ function App() {
           />
           <Route exact path="/Dashboard/:id" component={Dashboard} />
           <Route exact path="/ComingSoon" component={ComingSoon} />
-          <Route exact path="/Cart/Checkout/coupon::coupon" component={Checkout} />
+          <Route
+            exact
+            path="/Cart/Checkout/coupon::coupon"
+            component={Checkout}
+          />
           <Route exact path="*" component={NotFound} />
         </Switch>
       </AnimatePresence>
