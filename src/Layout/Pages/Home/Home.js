@@ -1,6 +1,6 @@
 import React from "react";
 import Banner from "./Sections/Banner/Banner";
-// import CouponGenerator from "../../Components/couponGenerator/couponGenerator";
+import Toaster from "../../Components/Toaster/Toaster";
 import FeatureItems from "./Sections/FeatureItems/FeatureItems";
 import Slider from "../../Components/Slider/Slider";
 import Add from "./Sections/Add/Add";
@@ -111,7 +111,7 @@ export default class Home extends React.Component {
           title={this.state.sliderTitle}
           view={this.state.viewAll}
         />
-        {/* <CouponGenerator /> */}
+        {/* <Toaster.success text="error"></Toaster.success> */}
       </div>
     );
   }

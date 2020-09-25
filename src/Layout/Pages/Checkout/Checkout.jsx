@@ -2,6 +2,8 @@ import React from "react";
 import "./Checkout.css";
 import firebase from "firebase";
 import Login from "../../Components/login/Login";
+import toaster from "toasted-notes";
+import Razorpay from "razorpay";
 
 export default class Checkout extends React.Component {
   constructor(props) {
@@ -12,6 +14,16 @@ export default class Checkout extends React.Component {
       coupon: "",
       currentUser: "",
       loginStatus: "",
+      email: "",
+      address: "",
+      phone: "",
+      state: "",
+      country: "",
+      firstName: "",
+      lastName: "",
+      apartment: "",
+      city: "",
+      pincode: ""
     };
   }
 
@@ -28,6 +40,33 @@ export default class Checkout extends React.Component {
               this.setState({
                 cart: doc.data().cart,
                 currentUser: doc.data(),
+                email: doc.data().email,
+                address: doc.data().address,
+                phone: doc.data().phone,
+                state: doc.data().state,
+                country: doc.data().country,
+                apartment: doc.data().apartment,
+                city: doc.data().city,
+                pincode: doc.data().pincode
+              },()=>{
+                this.state.currentUser.name.includes(
+                  " "
+                )
+              ? this.setState({
+                //first name
+                firstName: this.state.currentUser.name.substr(
+                  0,
+                  this.state.currentUser.name.indexOf(" ")
+                ),
+                //last name
+                lastName: this.state.currentUser.name.substr(
+                  this.state.currentUser.name.indexOf(" "),
+                  this.state.currentUser.name.length)
+              })
+              : 
+              this.setState({
+                firstName: this.state.currentUser.name
+              })
               });
               console.log(doc.data().cart);
             });
@@ -55,6 +94,54 @@ export default class Checkout extends React.Component {
           });
         });
       });
+  }
+
+  handlePay=(total)=>{
+    console.log("?",total);
+    if(this.state.email.length > 0 && this.state.country.length > 0 && this.state.state.length > 0 && this.state.phone.length > 0 && this.state.appartment.length > 0 && this.state.address.length > 0 && this.state.city.length > 0 && this.state.pincode.length > 0 && this.state.firstName.length > 0){
+      const options = {
+        key: "rzp_test_dxlgLQGi0JrIZp",
+        name: "Marfit",
+        amount: total*100,
+        handler: async (response) => {
+          try {
+            firebase
+              .firestore()
+              .collection("payments")
+              .add({
+                name: this.state.name,
+                phone: this.state.phone,
+                email: this.state.email,
+                paymentId: response.razorpay_payment_id,
+                amount: this.state.amount,
+              })
+              .then(() => {
+              });
+          } catch (err) {
+            console.log(err);
+          }
+        },
+        prefill: {
+          name: this.state.firstName,
+          email: this.state.email,
+          contact: this.state.phone,
+        },
+        theme: {
+          color: "#2D499B",
+        },
+      };
+      const rzp1 = new window.Razorpay(options);
+      rzp1.open();
+    }else{
+      toaster.notify("Please Fill in all the fields")
+    }
+  }
+
+  handleChange=(e)=>{
+    const { name, value } = e.target;
+    this.setState({
+      [name]: value
+    })
   }
 
   render() {
@@ -111,10 +198,9 @@ export default class Checkout extends React.Component {
                 placeholder="Email"
                 name="email"
                 value={
-                  this.state.currentUser === ""
-                    ? null
-                    : this.state.currentUser.email
+                  this.state.email
                 }
+                onChange={this.handleChange}
               />
             </div>
             <div className="shipping">
@@ -125,36 +211,22 @@ export default class Checkout extends React.Component {
                   placeholder="First name"
                   name="firstName"
                   id="firstName"
+                  required
                   value={
-                    this.state.currentUser === ""
-                      ? null
-                      : this.state.currentUser.name.includes(
-                          " "
-                        )
-                      ? this.state.currentUser.name.substr(
-                          0,
-                          this.state.currentUser.name.indexOf(" ")
-                        )
-                      : this.state.currentUser.name
+                    this.state.firstName 
                   }
+                  onChange={this.handleChange}
                 />
                 <input
                   type="text"
                   placeholder="Last name"
                   name="lastName"
                   id="lastName"
+                  required
                   value={
-                    this.state.currentUser === ""
-                      ? null
-                      : this.state.currentUser.name.includes(
-                          " "
-                        )
-                      ? this.state.currentUser.name.substr(
-                          this.state.currentUser.name.indexOf(" "),
-                          this.state.currentUser.name.length
-                        )
-                      : null
+                    this.state.lastName
                   }
+                  onChange={this.handleChange}
                 />
               </div>
               <input
@@ -162,44 +234,70 @@ export default class Checkout extends React.Component {
                 placeholder="Address"
                 name="address"
                 id="address"
+                required
                 value={
-                  this.state.currentUser === ""
-                    ? null
-                    : this.state.currentUser.address
+                  this.state.address
                 }
+                onChange={this.handleChange}
               />
               <input
                 type="text"
                 placeholder="Appartment, suite, etc. (optional)"
                 name="appartment"
+                required
                 id="appartment"
+                value={this.state.apartment}
+                onChange={this.handleChange}
               />
               <div className="region">
-                <select name="country" id="country">
-                  <option value="">--SELECT--</option>
-                  <option value="India">India</option>
-                  <option value="Pakistan">Pakistan</option>
-                  <option value="Bangladesh">Bangladesh</option>
-                </select>
-                <select name="state" id="state">
-                  <option value="">--SELECT--</option>
-                  <option value="West Bengal">West Benagal</option>
-                  <option value="Jharkhand">Jharkhand</option>
-                  <option value="Odhissa">Odhissa</option>
-                </select>
+              <input
+                type="text"
+                placeholder="Country / Nation"
+                name="country"
+                required
+                id="country"
+                value={this.state.country}
+                onChange={this.handleChange}
+              />
+                <input
+                type="text"
+                placeholder="State"
+                name="state"
+                required
+                id="state"
+                value={this.state.state}
+                onChange={this.handleChange}
+              />
               </div>
-              <input type="text" placeholder="City" name="city" id="city" />
+              <div className="region">
+              <input
+                type="text"
+                placeholder="City"
+                name="city"
+                required
+                id="city"
+                value={this.state.city}
+                onChange={this.handleChange}
+              />
+                <input
+                type="text"
+                placeholder="Pincode"
+                name="pincode"
+                required
+                id="pincode"
+                value={this.state.pincode}
+                onChange={this.handleChange}
+              />
+              </div>
               <input
                 type="text"
                 name="phone"
                 id="phone"
-                maxLength="10"
                 placeholder="Phone"
                 value={
-                  this.state.currentUser === ""
-                    ? null
-                    : this.state.currentUser.phone
+                  this.state.phone
                 }
+                onChange={this.handleChange}
               />
             </div>
           </main>
@@ -207,7 +305,7 @@ export default class Checkout extends React.Component {
             <a>
               <i className="fas fa-chevron-left"></i>Return to cart
             </a>
-            <div className="checkoutbtn">
+            <div className="checkoutbtn" onClick={() => {this.handlePay(total)}}>
               <a>Place an Order</a>
             </div>
           </div>
@@ -227,15 +325,6 @@ export default class Checkout extends React.Component {
               </div>
             ))}
           </div>
-          {/* <div className="discount-sec">
-            <input
-              type="text"
-              name="discount"
-              id="discount"
-              placeholder="Discount Code"
-            />
-            <button type="button">APPLY</button>
-          </div> */}
           <div className="order-details">
             <div className="sub">
               <p className="sub-title">Subtotal</p>

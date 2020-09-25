@@ -12,6 +12,7 @@
     "js-cookie": "^2.2.1",
     "lottie-react-web": "^2.2.2",
     "node-sass": "^4.14.1",
+    "razorpay": "^2.0.6",
     "rc-slider": "^9.3.1",
     "re-carousel": "^2.4.0",
     "react": "^16.13.1",
@@ -24,10 +25,11 @@
     "react-scripts": "^3.4.3",
     "react-share": "^4.2.1",
     "react-social": "^1.10.0",
-    "react-toastify": "^6.0.8",
+    "react-spring": "^8.0.27",
     "react-tooltip": "^4.2.8",
     "redux": "^4.0.5",
-    "swiper": "^6.1.1"
+    "swiper": "^6.1.1",
+    "toasted-notes": "^3.2.0"
   },
   "scripts": {
     "start": "react-scripts start",

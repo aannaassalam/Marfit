@@ -9,9 +9,8 @@ import firebase from "firebase";
 import { signInWithGoogle } from "../../../config/firebaseConfig";
 import loading from "../../../assets/loading.json";
 import Lottie from "lottie-react-web";
-
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import toaster from "toasted-notes";
+import "toasted-notes/src/styles.css";
 
 export default class Login extends React.Component {
   constructor(props) {
@@ -48,7 +47,7 @@ export default class Login extends React.Component {
       loading: true,
     });
     if (this.state.email === "" || !this.state.email.includes("@")) {
-      toast.info("Enter email correctly !", {
+      toaster.notify("Enter email correctly !", {
         position: "top-right",
         autoClose: 5000,
         hideProgressBar: false,
@@ -61,17 +60,17 @@ export default class Login extends React.Component {
         loading: false,
       });
     } else if (this.state.password === "") {
-      toast.info("Enter password !");
+      toaster.notify("Enter password !");
       this.setState({
         loading: false,
       });
     } else if (this.state.username === "") {
-      toast.info("Enter Username !");
+      toaster.notify("Enter Username !");
       this.setState({
         loading: false,
       });
     } else if (!this.state.checked) {
-      toast.info("Please agree to the Terms & Condition");
+      toaster.notify("Please agree to the Terms & Condition");
       this.setState({
         loading: false,
       });
@@ -133,34 +132,34 @@ export default class Login extends React.Component {
                           this.props.close(false);
                         })
                         .catch((err) => {
-                          toast.error(err.message);
+                          toaster.notify(err.message);
                           this.setState({
                             loading: false,
                           });
                         });
                     })
                     .catch((err) => {
-                      toast.error(err.message);
+                      toaster.notify(err.message);
                       this.setState({
                         loading: false,
                       });
                     });
                 } else {
-                  toast.error("You are already a user");
+                  toaster.notify("You are already a user");
                   this.setState({
                     loading: false,
                   });
                 }
               });
-          }else{
-            toast.info("Invalid Referal Code");
-          this.setState({
-            loading: false,
-          });
+          } else {
+            toaster.notify("Invalid Referal Code");
+            this.setState({
+              loading: false,
+            });
           }
         })
         .catch((err) => {
-          toast.info("Invalid Referal Code");
+          toaster.notify("Invalid Referal Code");
           this.setState({
             loading: false,
           });
@@ -214,20 +213,20 @@ export default class Login extends React.Component {
                     this.props.close(false);
                   })
                   .catch((err) => {
-                    toast.error(err.message);
+                    toaster.notify(err.message);
                     this.setState({
                       loading: false,
                     });
                   });
               })
               .catch((err) => {
-                toast.error(err.message);
+                toaster.notify(err.message);
                 this.setState({
                   loading: false,
                 });
               });
           } else {
-            toast.error("You are already a user");
+            toaster.notify("You are already a user");
             this.setState({
               loading: false,
             });
@@ -242,20 +241,12 @@ export default class Login extends React.Component {
     });
 
     if (this.state.email === "" || !this.state.email.includes("@")) {
-      toast.info("Enter email correctly", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: false,
-        draggable: true,
-        progress: undefined,
-      });
+      toaster.notify("Enter email correctly");
       this.setState({
         loading: false,
       });
     } else if (this.state.password === "") {
-      toast.info("Enter password");
+      toaster.notify("Enter password");
       this.setState({
         loading: false,
       });
@@ -278,13 +269,13 @@ export default class Login extends React.Component {
                 this.props.close(false);
               })
               .catch((err) => {
-                toast.error(err.message);
+                toaster.notify(err.message);
                 this.setState({
                   loading: false,
                 });
               });
           } else {
-            toast.error("Please register!");
+            toaster.notify("Please register!");
             this.setState({
               loading: false,
             });
@@ -301,13 +292,13 @@ export default class Login extends React.Component {
       .auth()
       .sendPasswordResetEmail(this.state.resetEmail)
       .then(() => {
-        toast.success("Reset E-mail sent successfully");
+        toaster.notify("Reset E-mail sent successfully");
         this.setState({
           loading: false,
         });
       })
       .catch((err) => {
-        toast.error("User account does not exist!!!");
+        toaster.notify("User account does not exist!!!");
         this.setState({
           loading: false,
         });
@@ -317,7 +308,6 @@ export default class Login extends React.Component {
   render() {
     return (
       <div className="login-container">
-        <ToastContainer />
         <div className="login">
           <i
             className="fa fa-times fa-1x"

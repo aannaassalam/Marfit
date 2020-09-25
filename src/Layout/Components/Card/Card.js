@@ -1,7 +1,7 @@
 import React from "react";
 import "./Card.css";
 import firebase from "firebase";
-import { ToastContainer, toast } from "react-toastify";
+import toaster from "toasted-notes";
 
 export default class Card extends React.Component {
   constructor(props) {
@@ -87,10 +87,10 @@ export default class Card extends React.Component {
                 wishlist: wishlist,
               })
               .then(() => {
-                toast.success("Added to your wishlist");
+                toaster.notify("Added to your wishlist");
               });
           } else {
-            toast.error("Item already exists in your wishlist");
+            toaster.notify("Item already exists in your wishlist");
           }
         });
       });
@@ -120,7 +120,7 @@ export default class Card extends React.Component {
                 wishlist: newwishlist,
               })
               .then(() => {
-                toast.success(" Item removed from your wishlist");
+                toaster.notify(" Item removed from your wishlist");
                 this.setState({
                   isWished: false,
                 });

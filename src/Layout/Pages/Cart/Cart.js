@@ -13,28 +13,35 @@ export default class Cart extends React.Component {
       cart: [],
       coupons: [],
       selectedCoupon: "",
+      currentUser: ""
     };
   }
 
   componentDidMount() {
-    if (this.props.email) {
-      firebase
-        .firestore()
-        .collection("users")
-        .where("email", "==", this.props.email)
-        .onSnapshot((snap) => {
-          snap.docChanges().forEach((change) => {
-            this.setState({
-              cart: change.doc.data().cart,
+    firebase.auth().onAuthStateChanged(user => {
+      if(user){
+        firebase
+          .firestore()
+          .collection("users")
+          .where("email", "==", user.email)
+          .onSnapshot((snap) => {
+            snap.docChanges().forEach((change) => {
+              console.log("change", change.doc.data());
+              this.setState({
+                cart: change.doc.data().cart,
+                currentUser: change.doc.data()
+              });
             });
           });
+      } else {
+        console.log("here");
+        setInterval(() => {
+          var cart = JSON.parse(localStorage.getItem("cart"));
+        this.setState({
+          cart: cart ? cart : [],
         });
-    } else {
-      var cart = JSON.parse(localStorage.getItem("cart"));
-      this.setState({
-        cart: cart ? cart : [],
-      });
-    }
+        }, 1000);
+      }}) 
     firebase
       .firestore()
       .collection("settings")
@@ -194,9 +201,9 @@ export default class Cart extends React.Component {
     }
 
     return (
-      <div className="cart-cont">
+      <div className={this.props.active ? "cart-cont active" : "cart-cont"}>
         <div className="blank" onClick={this.props.close}></div>
-        <div className="cart">
+        <div className={this.props.active ? "cart active" : "cart"}>
           <div className="cart-head">
             <h2>SHOPPING CART</h2>
             <i className="fa fa-times fa-1x" onClick={this.props.close}></i>

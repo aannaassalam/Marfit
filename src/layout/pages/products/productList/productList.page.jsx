@@ -8,7 +8,7 @@ import Card from "../../../Components/Card/Card";
 import firebase from "firebase";
 import Lottie from "lottie-react-web";
 import loading from "../../../../assets/loading.json";
-import { ToastContainer, toast } from "react-toastify";
+import toaster from "toasted-notes";
 import empty from "../629-empty-box.json";
 
 const pageVariants = {
@@ -292,15 +292,15 @@ class ProductList extends React.Component {
                   wishlist: wishlist,
                 })
                 .then(() => {
-                  toast.success("Added to your wishlist");
+                  toaster.notify("Added to your wishlist");
                 });
             } else {
-              toast.error("Item already exists in your wishlist");
+              toaster.notify("Item already exists in your wishlist");
             }
           });
         });
     } else {
-      toast.error("Please Log in");
+      toaster.notify("Please Log in");
     }
   };
 
@@ -328,7 +328,7 @@ class ProductList extends React.Component {
               wishlist: newwishlist,
             })
             .then(() => {
-              toast.success(" Item removed from your wishlist");
+              toaster.notify(" Item removed from your wishlist");
             });
         });
       });
@@ -355,7 +355,6 @@ class ProductList extends React.Component {
           </div>
         ) : (
           <>
-            <ToastContainer />
             <motion.div
               initial="initial"
               animate="in"

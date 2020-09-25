@@ -12,4 +12,5 @@ a{
 
 .App{
   background-color: #eef0f3;
+  position: relative;
 }

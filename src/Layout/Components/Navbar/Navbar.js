@@ -6,12 +6,11 @@ import title from "../../../assets/marfit-label.png";
 import title2 from "../../../assets/marfit-label2.png";
 import Cart from "../../Pages/Cart/Cart";
 import Login from "../login/Login";
+import HamburgerMenu from "../HambugerMenu/HamburgerMenu";
 import firebase from "../../../config/firebaseConfig";
 import loading from "../../../assets/loading.json";
 import Lottie from "lottie-react-web";
 import { firestore } from "firebase";
-import { toast } from "react-toastify";
-import {Link} from 'react-router-dom';
 
 export default class Navbar extends React.Component {
   constructor(props) {
@@ -86,6 +85,7 @@ export default class Navbar extends React.Component {
   };
 
   render() {
+    console.log(this.state.currentUser)
     return (
       <nav className="navbar">
         <div className="nav-container">
@@ -214,6 +214,7 @@ export default class Navbar extends React.Component {
                   style={{ cursor: "pointer", userSelect: "none" }}
                   className="links"
                   onClick={this.handleCart}
+                  id="cartId"
                 >
                   <i className="fas fa-shopping-cart"></i>
                   <p>CART</p>
@@ -221,72 +222,27 @@ export default class Navbar extends React.Component {
               </>
             )}
           </div>
-          <div className={this.state.showMenu ? "active-menu" : "menu"}>
-            :
-            <div
-              className={
-                this.state.showMenu ? "hamburger-menu" : "hamburger-menu-none"
-              }
-            >
-              <div className="head">
-                <div className="logo">
-                  <img src={logo} alt="Marfit Logo" className="logo-img" />
-                </div>
-                <i
-                  className="fa fa-times fa-1x"
-                  onClick={() => this.setState({ showMenu: false })}
-                ></i>
-              </div>
-              <div className="ham-list">
-                <Link to="/" className="box">
-                  <p>Home</p>
-                </Link>
-                <Link to="#" className="box">
-                  <p href="#">Contact us</p>
-                </Link>
-                <p className="box" id="cart" onClick={this.handleCart}>
-                  <span href="#">Cart</span>
-                  <i className="fa fa-caret-right fa-1x"></i>
-                </p>
-                <Link to="/Dashboard/Wishlist" className="box" id="wishlist">
-                  <p href="#">Wishlist</p>
-                  <i className="fa fa-caret-right fa-1x"></i>
-                </Link>
-                {!this.state.loginStatus ? (
-                  <a
-                    className="box orange"
-                    onClick={() => {
-                      this.setState({ login: true });
-                    }}
-                  >
-                    <p style={{ cursor: "pointer", userSelect: "none" }}>
-                      Login
-                    </p>
-                    <i className="fa fa-caret-right fa-1x"></i>
-                  </a>
-                ) : null}
-              </div>
-            </div>
-            <div
-              className="blank"
-              onClick={() => this.setState({ showMenu: false })}
-            ></div>
-            {this.state.showCart ? (
-              <Cart
-                close={this.handleCartClose}
-                email={this.state.currentUser ? this.state.currentUser.email : null}
-              />
-            ) : null}
-            {this.state.login ? (
-              <Login
-                close={(toggle) => this.setState({ login: toggle })}
-                login={(toggle) => {
-                  this.handleLoginStatus(toggle);
-                }}
-              />
-            ) : null}
-          </div>
+            <Cart
+              active={this.state.showCart}
+              close={this.handleCartClose}
+            />
+          {this.state.login ? (
+            <Login
+              close={(toggle) => this.setState({ login: toggle })}
+              login={(toggle) => {
+                this.handleLoginStatus(toggle);
+              }}
+            />
+          ) : null}
         </div>
+        <HamburgerMenu
+          active={this.state.showMenu}
+          cart={this.handleCart}
+          logout={this.handleLogout}
+          login={this.state.loginStatus}
+          close={() => this.setState({ showMenu: false })}
+          handleLogin={() => this.setState({ login: true })}
+        />
       </nav>
     );
   }

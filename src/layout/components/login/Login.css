@@ -14,12 +14,12 @@
 
 .login-container .login {
   width: 50%;
-  height: 80%;
+  /* height: 80%; */
+  padding: 2rem 1rem;
   background-color: #fff;
   position: relative;
   display: flex;
   flex-direction: row;
-  padding: 20px;
   border-radius: 5px;
 }
 
@@ -52,7 +52,7 @@
 }
 
 .login-container .login .register-form .marfit-img {
-  height: 10%;
+  height: 80px;
   width: 60%;
   display: flex;
   flex-direction: row;
@@ -69,7 +69,6 @@
 }
 
 .login-container .login .register-form .input-fields {
-  height: 40%;
   width: 80%;
   display: flex;
   flex-direction: column;
@@ -78,13 +77,14 @@
 
 .login-container .login .register-form .input-fields input {
   width: 100%;
-  height: 25%;
+  height: 50px;
   outline: none;
   border: none;
   padding: 5px 0;
   border-bottom: 1px solid lightgray;
   font-size: 15px;
   transition: border-bottom 0.5s;
+  margin-bottom: 15px;
 }
 
 .login-container .login .register-form .input-fields input::placeholder {
@@ -101,6 +101,7 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
+  margin-bottom: 15px;
 }
 
 .login-container .login .register-form .agree p {
@@ -116,7 +117,7 @@
 
 .login-container .login .register-form button {
   width: 80%;
-  height: 10%;
+  height: 45px;
   font-size: 16px;
   background-color: #fb641b;
   border: none;
@@ -125,10 +126,10 @@
   font-weight: bold;
   border-radius: 5px;
   cursor: pointer;
+  margin-bottom: 15px;
 }
 
 .login-container .login .register-form .lines {
-  height: 5%;
   width: 75%;
   display: flex;
   flex-direction: row;
@@ -150,7 +151,6 @@
 
 .login-container .login .register-form .social {
   width: 40%;
-  height: 10%;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -158,15 +158,18 @@
   padding: 5px;
   border-radius: 5px;
   user-select: none;
+  margin-bottom: 15px;
 }
 
 .login-container .login .register-form .social img {
-  width: 25%;
+  width: 40px;
+  height: 40px;
   cursor: pointer;
 }
 
-.login-container .login .register-form .social img:last-child{
-  width: 28%;
+.login-container .login .register-form .social img:last-child {
+  width: 45px;
+  height: 45px;
 }
 
 .login-container .login .register-form .already-customer p {
@@ -191,7 +194,7 @@
 }
 
 .login-container .login .login-form .marfit-img {
-  height: 20%;
+  height: 80px;
   width: 60%;
   display: flex;
   flex-direction: row;
@@ -208,22 +211,19 @@
 }
 
 .login-container .login .login-form .input-fields {
-  height: 25%;
   width: 80%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-around;
 }
 
 .login-container .login .login-form .input-fields input {
   width: 100%;
-  height: 40%;
+  height: 50px;
   outline: none;
   border: none;
   padding: 5px 0;
   border-bottom: 1px solid lightgray;
   font-size: 15px;
   transition: border-bottom 0.5s;
+  margin-bottom: 15px;
 }
 
 .login-container .login .login-form .input-fields .pass {
@@ -236,7 +236,6 @@
 
 .login-container .login .login-form .input-fields .pass input[type="password"] {
   width: 100%;
-  height: 95%;
 }
 
 .login-container .login .login-form .input-fields input::placeholder {
@@ -251,12 +250,12 @@
   font-size: 11px;
   cursor: pointer;
   color: darkblue;
-  margin-top: 3px;
+  margin: 3px 0 7px;
 }
 
 .login-container .login .login-form button {
   width: 80%;
-  height: 10%;
+  height: 45px;
   font-size: 16px;
   background-color: #fb641b;
   border: none;
@@ -265,10 +264,10 @@
   font-weight: bold;
   border-radius: 5px;
   cursor: pointer;
+  margin-bottom: 10px;
 }
 
 .login-container .login .login-form .lines {
-  height: 5%;
   width: 75%;
   display: flex;
   flex-direction: row;
@@ -290,7 +289,6 @@
 
 .login-container .login .login-form .social {
   width: 40%;
-  height: 10%;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -298,15 +296,18 @@
   padding: 5px;
   border-radius: 5px;
   user-select: none;
+  margin: 15px 0;
 }
 
 .login-container .login .login-form .social img {
-  width: 25%;
+  width: 40px;
+  height: 40px;
   cursor: pointer;
 }
 
-.login-container .login .login-form .social img:last-child{
-  width: 28%;
+.login-container .login .login-form .social img:last-child {
+  width: 45px;
+  height: 45px;
 }
 
 .login-container .login .login-form .social p {
@@ -360,10 +361,15 @@
   margin-top: 15px;
 }
 
+@media(max-width: 1024px){
+  .login-container .login{
+    width: 65%;
+  }
+}
+
 @media (max-width: 768px) {
   .login-container .login {
     width: 90%;
-    height: 50%;
   }
 
   .login-container .login .register-form .social,
@@ -378,9 +384,7 @@
   }
 
   .login-container .login {
-    height: 80%;
     margin-top: 1rem;
-    padding: 5px;
   }
 
   .login-container .login .section-1 {

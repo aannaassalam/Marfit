@@ -4,8 +4,7 @@ import { motion } from "framer-motion";
 import firebase from "firebase";
 import Lottie from "lottie-react-web";
 import loading from "../../../assets/loading.json";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import toaster from "toasted-notes";
 import empty from "./629-empty-box.json";
 import emptywish from "./10000-empty-box.json";
 import Card from "../../Components/Card/Card";
@@ -122,7 +121,7 @@ class Dashboard extends React.Component {
                 editProifleLoading: false,
                 editProifle: false,
               });
-              toast.success("Profile Updated");
+              toaster.notfiy("Profile Updated");
             });
         });
       });
@@ -221,7 +220,6 @@ class Dashboard extends React.Component {
             variants={pageVariants}
             transition={pageTransition}
           >
-            <ToastContainer />
             <div className="dashboard-container">
               <div className="sidebar">
                 {this.state.tab === "Profile" ? (
@@ -562,16 +560,15 @@ class Dashboard extends React.Component {
                           }}
                         ></i>
                       </div>
-                    ) : null}
-                    <div
-                      className="newAddress"
-                      onClick={() => {
-                        this.setState({ addTab: true });
-                      }}
-                    >
-                      <i className="fas fa-plus-circle"></i>
-                      <p>ADD NEW ADDRESS</p>
-                    </div>
+                    ) : <div
+                    className="newAddress"
+                    onClick={() => {
+                      this.setState({ addTab: true });
+                    }}
+                  >
+                    <i className="fas fa-plus-circle"></i>
+                    <p>ADD NEW ADDRESS</p>
+                  </div>}
                   </>
                 ) : null}
                 {this.state.tab === "Refer" ? (

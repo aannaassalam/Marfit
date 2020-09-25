@@ -4,7 +4,7 @@ import Slider from "../../../Components/Slider/Slider";
 import { motion } from "framer-motion";
 import Lottie from "lottie-react-web";
 import loading from "../../../../assets/loading.json";
-import { ToastContainer, toast } from "react-toastify";
+import toaster from "toasted-notes";
 import ReactImageMagnify from "react-image-magnify";
 import firebase from "firebase";
 
@@ -35,56 +35,6 @@ export default class ProductDesc extends React.Component {
     this.state = {
       sliderTitle: "You may also like",
       viewAll: false,
-      data: [
-        {
-          images: {
-            0: "https://rukminim1.flixcart.com/image/495/594/jyeq64w0/hand-messenger-bag/x/y/p/black-messenger-bag-ket-new-23-messenger-bag-ketsaal-original-imafgng68xynkbnv.jpeg?q=50",
-          },
-          rent: 400,
-          deposit: 600,
-          title: "Men Black Mesenger Bag",
-        },
-        {
-          images: {
-            0: "https://rukminim1.flixcart.com/image/495/594/jsge4cw0/backpack/j/p/3/classic-anti-theft-faux-leather-lbpclslth1901-laptop-backpack-original-imafeypjt5reuyyf.jpeg?q=50",
-          },
-          rent: 700,
-          deposit: 1200,
-          title: "Classic Anti-Theft Bag",
-        },
-        {
-          images: {
-            0: "https://rukminim1.flixcart.com/image/495/594/joixj0w0/backpack/y/r/n/luxur-uber061-backpack-f-gear-original-imaf94g5jyfxdqsv.jpeg?q=50",
-          },
-          rent: 500,
-          deposit: 800,
-          title: "Luxur 25 L Backpack",
-        },
-        {
-          images: {
-            0: "https://rukminim1.flixcart.com/image/495/594/jrtj2q80/wallet-card-wallet/y/b/g/beige-slider-casuel-wallet-samtroh-original-imafdg9yahygu9hh.jpeg?q=50",
-          },
-          rent: 1300,
-          deposit: 2000,
-          title: "Men Casual Beige Wallet",
-        },
-        {
-          images: {
-            0: "https://rukminim1.flixcart.com/image/495/594/jx502vk0/shoe/t/t/z/415-7-dls-brown-original-imafhnu49m4fzzyz.jpeg?q=50",
-          },
-          rent: 1700,
-          deposit: 2400,
-          title: "Lace up for Men Party Shoes",
-        },
-        {
-          images: {
-            0: "https://rukminim1.flixcart.com/image/495/594/jbgtnrk0/shoe/u/e/z/mrj558-44-aadi-black-original-imafysmvagxcwxk9.jpeg?q=50",
-          },
-          rent: 348,
-          deposit: 500,
-          title: "AADI Men Shoes",
-        },
-      ],
       activeImage: 0,
       isWished: false,
       cart: [],
@@ -189,7 +139,7 @@ export default class ProductDesc extends React.Component {
             var cart = doc.data().cart;
             var found = false;
             cart.forEach((item) => {
-              if (item.id === this.state.id) {
+              if (item.id === this.state.product.id) {
                 found = true;
               }
             });
@@ -203,7 +153,7 @@ export default class ProductDesc extends React.Component {
                   cart: cart,
                 })
                 .then(() => {
-                  toast.success("Added to cart");
+                  toaster.notify("Added to cart");
                   this.setState({
                     addLoading: false,
                   });
@@ -211,7 +161,7 @@ export default class ProductDesc extends React.Component {
                   this.removeFromWishlist(this.state.product.id);
                 });
             } else {
-              toast.error("Item already exist in your cart");
+              toaster.notify("Item already exist in your cart");
               this.setState({
                 addLoading: false,
               });
@@ -234,11 +184,11 @@ export default class ProductDesc extends React.Component {
               () => {
                 var localCart = JSON.stringify(this.state.cart);
                 localStorage.setItem("cart", localCart);
-                toast.success("Added to cart");
+                toaster.notify("Added to cart");
               }
             );
           } else {
-            toast.error("Item already exist in your cart");
+            toaster.notify("Item already exist in your cart");
             this.setState({
               addLoading: false,
             });
@@ -254,7 +204,7 @@ export default class ProductDesc extends React.Component {
           () => {
             var localCart = JSON.stringify(this.state.cart);
             localStorage.setItem("cart", localCart);
-            toast.success("Added to cart");
+            toaster.notify("Added to cart");
           }
         );
       }
@@ -289,10 +239,10 @@ export default class ProductDesc extends React.Component {
                 wishlist: wishlist,
               })
               .then(() => {
-                toast.success("Added to your wishlist");
+                toaster.notify("Added to your wishlist");
               });
           } else {
-            toast.error("Item already exists in your wishlist");
+            toaster.notify("Item already exists in your wishlist");
           }
         });
       });
@@ -322,7 +272,7 @@ export default class ProductDesc extends React.Component {
                 wishlist: newwishlist,
               })
               .then(() => {
-                toast.success(" Item removed from your wishlist");
+                toaster.notify(" Item removed from wishlist");
               });
           }
         });
@@ -350,7 +300,6 @@ export default class ProductDesc extends React.Component {
   render() {
     return (
       <>
-        <ToastContainer />
         {this.state.loading ? (
           <div
             style={{
