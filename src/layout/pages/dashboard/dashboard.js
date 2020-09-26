@@ -52,6 +52,7 @@ class Dashboard extends React.Component {
       copy: false,
       fetchedAddresses: [],
       addTab: false,
+      points: ""
     };
   }
 
@@ -66,6 +67,7 @@ class Dashboard extends React.Component {
             snap.docChanges().forEach((change) => {
               this.setState({
                 currentUser: change.doc.data(),
+                points: change.doc.data().points,
                 fetchedAddresses: change.doc.data().addresses,
                 loading: false,
               });
@@ -193,7 +195,6 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    const sharecode = this.state.currentUser.referalID;
     return (
       <>
         {this.state.loading ? (
@@ -474,7 +475,11 @@ class Dashboard extends React.Component {
                           Take me back to shopping
                         </a>
                       </div>
-                    ) : null}
+                    ) : <div className="order-container">
+                    {this.state.currentUser.orders.map((item) => {
+                      return <Card key={item.id} item={item} />;
+                    })}
+                  </div>}
                   </>
                 ) : null}
                 {this.state.tab === "Wishlist" ? (

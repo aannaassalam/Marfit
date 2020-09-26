@@ -94,10 +94,11 @@
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  margin-top: 15px;
 }
 
 .checkout .left .info .shipping #country,
+.checkout .left .info .shipping #city,
+.checkout .left .info .shipping #pincode,
 .checkout .left .info .shipping #state{
   height: 40px;
   background-color: transparent;
@@ -242,6 +243,7 @@
 
 .checkout .right .order-details .sub,
 .checkout .right .order-details .shipping-sub,
+.checkout .right .order-details .points-sub,
 .checkout .right .order-details .discount-sub{
   display: flex;
   flex-direction: row;
@@ -257,20 +259,20 @@
   color: green;
 }
 
+.checkout .right .order-details .points-sub{
+  color: goldenrod;
+}
+
 .checkout .right .order-details .sub p,
 .checkout .right .order-details .shipping-sub p,
+.checkout .right .order-details .points-sub p,
 .checkout .right .order-details .discount-sub p{
   font-weight: bold;
 }
 
 .checkout .right .order-details .sub .sub-title,
-.checkout .right .order-details .shipping-sub .sub-title,
-.checkout .right .order-details .discount-sub .sub-title{
+.checkout .right .order-details .shipping-sub .sub-title{
   color: #555;
-}
-
-.checkout .right .order-details .discount-sub .sub-title{
-  color: green;
 }
 
 .checkout .right .total{

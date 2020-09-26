@@ -137,7 +137,21 @@ export default class Login extends React.Component {
                             loading: false,
                           });
                         });
-                    })
+                    },
+                      firebase.firestore().collection("users").where("referalID", "==", this.state.referal).get().then((snap) => {
+                        if(snap.size > 0){
+                          var id = "";
+                          var points = "";
+                          snap.docChanges().forEach((change) => {
+                            id=change.doc.id;
+                            points = change.doc.data().points+10;
+                            firebase.firestore().collection("users").doc(id).update({
+                              points: points
+                            })
+                          })
+                        }
+                      })
+                    )
                     .catch((err) => {
                       toaster.notify(err.message);
                       this.setState({

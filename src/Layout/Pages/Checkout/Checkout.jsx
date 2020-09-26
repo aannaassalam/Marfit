@@ -3,7 +3,6 @@ import "./Checkout.css";
 import firebase from "firebase";
 import Login from "../../Components/login/Login";
 import toaster from "toasted-notes";
-import Razorpay from "razorpay";
 
 export default class Checkout extends React.Component {
   constructor(props) {
@@ -23,7 +22,8 @@ export default class Checkout extends React.Component {
       lastName: "",
       apartment: "",
       city: "",
-      pincode: ""
+      pincode: "",
+      points: ""
     };
   }
 
@@ -43,11 +43,7 @@ export default class Checkout extends React.Component {
                 email: doc.data().email,
                 address: doc.data().address,
                 phone: doc.data().phone,
-                state: doc.data().state,
-                country: doc.data().country,
-                apartment: doc.data().apartment,
-                city: doc.data().city,
-                pincode: doc.data().pincode
+                points: doc.data().points
               },()=>{
                 this.state.currentUser.name.includes(
                   " "
@@ -97,26 +93,42 @@ export default class Checkout extends React.Component {
   }
 
   handlePay=(total)=>{
-    console.log("?",total);
-    if(this.state.email.length > 0 && this.state.country.length > 0 && this.state.state.length > 0 && this.state.phone.length > 0 && this.state.appartment.length > 0 && this.state.address.length > 0 && this.state.city.length > 0 && this.state.pincode.length > 0 && this.state.firstName.length > 0){
+    if(this.state.email.length > 0 && this.state.country.length > 0 && this.state.state.length > 0 && this.state.phone.length > 0 && this.state.address.length > 0 && this.state.city.length > 0 && this.state.pincode.length > 0 && this.state.firstName.length > 0){
       const options = {
         key: "rzp_test_dxlgLQGi0JrIZp",
         name: "Marfit",
         amount: total*100,
         handler: async (response) => {
+          console.log("succ");
           try {
-            firebase
-              .firestore()
-              .collection("payments")
-              .add({
-                name: this.state.name,
-                phone: this.state.phone,
-                email: this.state.email,
-                paymentId: response.razorpay_payment_id,
-                amount: this.state.amount,
-              })
-              .then(() => {
-              });
+            console.log("ess");
+            // firebase
+            //   .firestore()
+            //   .collection("payments")
+            //   .add({
+            //     name: this.state.name,
+            //     phone: this.state.phone,
+            //     email: this.state.email,
+            //     paymentId: response.razorpay_payment_id,
+            //     amount: this.state.amount,
+            //   })
+              // .then(() => {
+                console.log("done");
+                firebase.firestore().collection("users").where("email", "==", this.state.currentUser.email).get().then((snap) => {
+                  if(snap.size > 0){
+                    snap.docChanges().forEach(changes => {
+                      var products = changes.doc.data().orders.concat(this.state.cart);
+                      firebase.firestore().collection("users").doc(changes.doc.id).update({
+                        orders: products,
+                        cart: [],
+                        points: 0
+                      }).then(()=>{
+                        window.location.href = "/";
+                      })
+                    })
+                  }
+                })
+              // });
           } catch (err) {
             console.log(err);
           }
@@ -153,7 +165,7 @@ export default class Checkout extends React.Component {
         this.state.cart[i].shippingCharge * this.state.cart[i].cartQuantity;
     }
     console.log(this.state.currentUser.length);
-    var total = shipping + subTotal;
+    var total = shipping + subTotal - this.state.points;
     var value = "";
     var date = new Date();
     if (this.state.coupon !== "") {
@@ -244,7 +256,6 @@ export default class Checkout extends React.Component {
                 type="text"
                 placeholder="Appartment, suite, etc. (optional)"
                 name="appartment"
-                required
                 id="appartment"
                 value={this.state.apartment}
                 onChange={this.handleChange}
@@ -314,7 +325,7 @@ export default class Checkout extends React.Component {
           <div className="items-container">
             {this.state.cart.map((item, index) => (
               <div className="item" key={index}>
-                <img src={item.images[0]} alt="Item Image" />
+                <img src={item.images[0]} alt=""/>
                 <div className="item-info">
                   <p>{item.title}</p>
                   <div className="price-cont">
@@ -337,6 +348,10 @@ export default class Checkout extends React.Component {
             <div className="discount-sub">
               <p className="sub-title">Discount ({this.state.coupon.name})</p>
               <p>- &#8377; {value}</p>
+            </div>
+            <div className="points-sub">
+              <p className="sub-title">Points ({this.state.points})</p>
+              <p>- &#8377; {this.state.points}</p>
             </div>
           </div>
           <div className="total">
