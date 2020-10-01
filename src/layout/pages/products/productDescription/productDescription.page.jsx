@@ -123,8 +123,8 @@ export default class ProductDesc extends React.Component {
   }
 
   AddToCart = () => {
-    var concatinateQuantity = this.state.product;
-    concatinateQuantity.cartQuantity = this.state.usersQuantity;
+    // var concatinateQuantity = this.state.product;
+    // concatinateQuantity.cartQuantity = this.state.usersQuantity;
     this.setState({
       addLoading: true,
     });
@@ -144,7 +144,10 @@ export default class ProductDesc extends React.Component {
               }
             });
             if (found === false) {
-              cart.push(concatinateQuantity);
+              var tempCart = {};
+              tempCart.id = this.state.product.id;
+              tempCart.quantity = this.state.usersQuantity;
+              cart.push(tempCart);
               firebase
                 .firestore()
                 .collection("users")
@@ -175,7 +178,10 @@ export default class ProductDesc extends React.Component {
       if (cart.length > 0) {
         cart.forEach((item) => {
           if (item.id !== this.state.product.id) {
-            cart.push(concatinateQuantity);
+            var tempCart = {};
+            tempCart.id = this.state.product.id;
+            tempCart.quantity = this.state.usersQuantity;
+            cart.push(tempCart);
             this.setState(
               {
                 cart: cart,
@@ -195,7 +201,10 @@ export default class ProductDesc extends React.Component {
           }
         });
       } else {
-        cart.push(concatinateQuantity);
+        var tempCart = {};
+        tempCart.id = this.state.product.id;
+        tempCart.quantity = this.state.usersQuantity;
+        cart.push(tempCart);
         this.setState(
           {
             cart: cart,

@@ -23,7 +23,8 @@ export default class Checkout extends React.Component {
       apartment: "",
       city: "",
       pincode: "",
-      points: ""
+      points: "",
+      userID: "",
     };
   }
 
@@ -37,33 +38,35 @@ export default class Checkout extends React.Component {
           .get()
           .then((snap) => {
             snap.forEach((doc) => {
-              this.setState({
-                cart: doc.data().cart,
-                currentUser: doc.data(),
-                email: doc.data().email,
-                address: doc.data().address,
-                phone: doc.data().phone,
-                points: doc.data().points
-              },()=>{
-                this.state.currentUser.name.includes(
-                  " "
-                )
-              ? this.setState({
-                //first name
-                firstName: this.state.currentUser.name.substr(
-                  0,
-                  this.state.currentUser.name.indexOf(" ")
-                ),
-                //last name
-                lastName: this.state.currentUser.name.substr(
-                  this.state.currentUser.name.indexOf(" "),
-                  this.state.currentUser.name.length)
-              })
-              : 
-              this.setState({
-                firstName: this.state.currentUser.name
-              })
-              });
+              this.setState(
+                {
+                  cart: doc.data().cart,
+                  currentUser: doc.data(),
+                  email: doc.data().email,
+                  address: doc.data().address,
+                  phone: doc.data().phone,
+                  points: doc.data().points,
+                  userID: doc.id,
+                },
+                () => {
+                  this.state.currentUser.name.includes(" ")
+                    ? this.setState({
+                        //first name
+                        firstName: this.state.currentUser.name.substr(
+                          0,
+                          this.state.currentUser.name.indexOf(" ")
+                        ),
+                        //last name
+                        lastName: this.state.currentUser.name.substr(
+                          this.state.currentUser.name.indexOf(" "),
+                          this.state.currentUser.name.length
+                        ),
+                      })
+                    : this.setState({
+                        firstName: this.state.currentUser.name,
+                      });
+                }
+              );
               console.log(doc.data().cart);
             });
           });
@@ -92,12 +95,21 @@ export default class Checkout extends React.Component {
       });
   }
 
-  handlePay=(total)=>{
-    if(this.state.email.length > 0 && this.state.country.length > 0 && this.state.state.length > 0 && this.state.phone.length > 0 && this.state.address.length > 0 && this.state.city.length > 0 && this.state.pincode.length > 0 && this.state.firstName.length > 0){
+  handlePay = (total, subtotal, shipping) => {
+    if (
+      this.state.email.length > 0 &&
+      this.state.country.length > 0 &&
+      this.state.state.length > 0 &&
+      this.state.phone.length > 0 &&
+      this.state.address.length > 0 &&
+      this.state.city.length > 0 &&
+      this.state.pincode.length > 0 &&
+      this.state.firstName.length > 0
+    ) {
       const options = {
         key: "rzp_test_dxlgLQGi0JrIZp",
         name: "Marfit",
-        amount: total*100,
+        amount: total * 100,
         handler: async (response) => {
           console.log("succ");
           try {
@@ -112,23 +124,42 @@ export default class Checkout extends React.Component {
             //     paymentId: response.razorpay_payment_id,
             //     amount: this.state.amount,
             //   })
-              // .then(() => {
-                console.log("done");
-                firebase.firestore().collection("users").where("email", "==", this.state.currentUser.email).get().then((snap) => {
-                  if(snap.size > 0){
-                    snap.docChanges().forEach(changes => {
-                      var products = changes.doc.data().orders.concat(this.state.cart);
-                      firebase.firestore().collection("users").doc(changes.doc.id).update({
-                        orders: products,
-                        cart: [],
-                        points: 0
-                      }).then(()=>{
-                        window.location.href = "/";
-                      })
-                    })
-                  }
+            // .then(() => {
+            console.log("done");
+            var product = [];
+            this.state.cart.forEach(item => {
+              var tempItem = {};
+              tempItem.quantity = item.cartQuantity;
+              tempItem.id = item.id;
+              product.push(tempItem);
+            })
+            firebase.firestore().collection("orders").add({
+              products: product,
+              date: new Date(),
+              points: this.state.points,
+              user: this.state.userID,
+              address: this.state.address,
+              coupon: this.state.coupon,
+              total: total,
+              shipping: shipping,
+              tag: "user"
+            }).then((res) => {
+              firebase.firestore().collection("users").doc(this.state.userID).get().then(doc => {
+                var orders = doc.data().orders;
+                orders.push(res.id);
+                firebase.firestore().collection("users").doc(this.state.userID).update({
+                  orders: orders,
+                  cart: [],
+                  points: 0
+                }).then(() => {
+                  window.location.href = "/";
                 })
-              // });
+                firebase.firestore().collection("orders").doc(res.id).update({
+                  orderID: res.id
+                })
+              })
+            });
+            // });
           } catch (err) {
             console.log(err);
           }
@@ -144,17 +175,17 @@ export default class Checkout extends React.Component {
       };
       const rzp1 = new window.Razorpay(options);
       rzp1.open();
-    }else{
-      toaster.notify("Please Fill in all the fields")
+    } else {
+      toaster.notify("Please Fill in all the fields");
     }
-  }
+  };
 
-  handleChange=(e)=>{
+  handleChange = (e) => {
     const { name, value } = e.target;
     this.setState({
-      [name]: value
-    })
-  }
+      [name]: value,
+    });
+  };
 
   render() {
     var subTotal = 0;
@@ -209,9 +240,7 @@ export default class Checkout extends React.Component {
                 className="email-input"
                 placeholder="Email"
                 name="email"
-                value={
-                  this.state.email
-                }
+                value={this.state.email}
                 onChange={this.handleChange}
               />
             </div>
@@ -224,9 +253,7 @@ export default class Checkout extends React.Component {
                   name="firstName"
                   id="firstName"
                   required
-                  value={
-                    this.state.firstName 
-                  }
+                  value={this.state.firstName}
                   onChange={this.handleChange}
                 />
                 <input
@@ -235,9 +262,7 @@ export default class Checkout extends React.Component {
                   name="lastName"
                   id="lastName"
                   required
-                  value={
-                    this.state.lastName
-                  }
+                  value={this.state.lastName}
                   onChange={this.handleChange}
                 />
               </div>
@@ -247,9 +272,7 @@ export default class Checkout extends React.Component {
                 name="address"
                 id="address"
                 required
-                value={
-                  this.state.address
-                }
+                value={this.state.address}
                 onChange={this.handleChange}
               />
               <input
@@ -261,53 +284,51 @@ export default class Checkout extends React.Component {
                 onChange={this.handleChange}
               />
               <div className="region">
-              <input
-                type="text"
-                placeholder="Country / Nation"
-                name="country"
-                required
-                id="country"
-                value={this.state.country}
-                onChange={this.handleChange}
-              />
                 <input
-                type="text"
-                placeholder="State"
-                name="state"
-                required
-                id="state"
-                value={this.state.state}
-                onChange={this.handleChange}
-              />
+                  type="text"
+                  placeholder="Country / Nation"
+                  name="country"
+                  required
+                  id="country"
+                  value={this.state.country}
+                  onChange={this.handleChange}
+                />
+                <input
+                  type="text"
+                  placeholder="State"
+                  name="state"
+                  required
+                  id="state"
+                  value={this.state.state}
+                  onChange={this.handleChange}
+                />
               </div>
               <div className="region">
-              <input
-                type="text"
-                placeholder="City"
-                name="city"
-                required
-                id="city"
-                value={this.state.city}
-                onChange={this.handleChange}
-              />
                 <input
-                type="text"
-                placeholder="Pincode"
-                name="pincode"
-                required
-                id="pincode"
-                value={this.state.pincode}
-                onChange={this.handleChange}
-              />
+                  type="text"
+                  placeholder="City"
+                  name="city"
+                  required
+                  id="city"
+                  value={this.state.city}
+                  onChange={this.handleChange}
+                />
+                <input
+                  type="text"
+                  placeholder="Pincode"
+                  name="pincode"
+                  required
+                  id="pincode"
+                  value={this.state.pincode}
+                  onChange={this.handleChange}
+                />
               </div>
               <input
                 type="text"
                 name="phone"
                 id="phone"
                 placeholder="Phone"
-                value={
-                  this.state.phone
-                }
+                value={this.state.phone}
                 onChange={this.handleChange}
               />
             </div>
@@ -316,7 +337,12 @@ export default class Checkout extends React.Component {
             <a>
               <i className="fas fa-chevron-left"></i>Return to cart
             </a>
-            <div className="checkoutbtn" onClick={() => {this.handlePay(total)}}>
+            <div
+              className="checkoutbtn"
+              onClick={() => {
+                this.handlePay(total, subTotal, shipping);
+              }}
+            >
               <a>Place an Order</a>
             </div>
           </div>
@@ -325,7 +351,7 @@ export default class Checkout extends React.Component {
           <div className="items-container">
             {this.state.cart.map((item, index) => (
               <div className="item" key={index}>
-                <img src={item.images[0]} alt=""/>
+                <img src={item.images[0]} alt="" />
                 <div className="item-info">
                   <p>{item.title}</p>
                   <div className="price-cont">

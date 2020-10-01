@@ -10,6 +10,8 @@ import emptywish from "./10000-empty-box.json";
 import Card from "../../Components/Card/Card";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import refer from "../../../assets/refer.json";
+import moment from "moment";
+import { Link } from "react-router-dom";
 
 const pageVariants = {
   initial: {
@@ -52,7 +54,9 @@ class Dashboard extends React.Component {
       copy: false,
       fetchedAddresses: [],
       addTab: false,
-      points: ""
+      points: "",
+      orderID: [],
+      orderedProduct: [],
     };
   }
 
@@ -65,12 +69,47 @@ class Dashboard extends React.Component {
           .where("email", "==", user.email)
           .onSnapshot((snap) => {
             snap.docChanges().forEach((change) => {
-              this.setState({
-                currentUser: change.doc.data(),
-                points: change.doc.data().points,
-                fetchedAddresses: change.doc.data().addresses,
-                loading: false,
-              });
+              this.setState(
+                {
+                  currentUser: change.doc.data(),
+                  points: change.doc.data().points,
+                  fetchedAddresses: change.doc.data().addresses,
+                  loading: false,
+                  orderID: change.doc.data().orders,
+                },
+                () => {
+                  this.state.orderID.forEach((item) => {
+                    firebase
+                      .firestore()
+                      .collection("orders")
+                      .doc(item)
+                      .get()
+                      .then((doc) => {
+                        var products = doc.data().products;
+                        var finalProduct = [];
+                        products.forEach((item) => {
+                          firebase
+                            .firestore()
+                            .collection("products")
+                            .doc(item.id)
+                            .get()
+                            .then((prod) => {
+                              var product = {};
+                              product = prod.data();
+                              product.productID = item.id;
+                              product.quantity = item.quantity;
+                              finalProduct.push(product);
+                              var data = doc.data();
+                              data.products = finalProduct;
+                              this.setState({
+                                orders: [...this.state.orders, data],
+                              });
+                            });
+                        });
+                      });
+                  });
+                }
+              );
             });
           });
       } else {
@@ -186,7 +225,7 @@ class Dashboard extends React.Component {
               .then(() => {
                 this.setState({
                   fetchedAddresses: addresses,
-                  addTab: false
+                  addTab: false,
                 });
               });
           });
@@ -195,6 +234,7 @@ class Dashboard extends React.Component {
   }
 
   render() {
+    console.log(this.state.orders);
     return (
       <>
         {this.state.loading ? (
@@ -449,12 +489,12 @@ class Dashboard extends React.Component {
                   <>
                     <h1>Your Orders</h1>
                     <div className="divider"></div>
-                    {this.state.currentUser.orders.length === 0 ? (
+                    {this.state.orders.length === 0 ? (
                       <div
                         className="ordersdiv"
                         style={{
                           width: "100%",
-                          height: "100%",
+                          height: "90%",
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",
@@ -475,11 +515,45 @@ class Dashboard extends React.Component {
                           Take me back to shopping
                         </a>
                       </div>
-                    ) : <div className="order-container">
-                    {this.state.currentUser.orders.map((item) => {
-                      return <Card key={item.id} item={item} />;
-                    })}
-                  </div>}
+                    ) : (
+                      <div className="order-container">
+                        {this.state.orders.map((item) =>
+                          item.products.map((data) => (
+                            <Link
+                              to={{
+                                pathname: "/Dashboard/Orders/" + item.orderID,
+                                id: data.productID,
+                                quantity: data.quantity,
+                              }}
+                              className="orderList"
+                            >
+                              <div className="part1">
+                                <img src={data.images[0]} alt="img" />
+                                <div className="part1-detail">
+                                  <h5>{data.title}</h5>
+                                  <p>Color : Black</p>
+                                  <p>Quantity : {data.quantity}</p>
+                                  {/* <p>Order date : {moment(item.date.toDate()).format('ll')}</p> */}
+                                </div>
+                              </div>
+                              <div className="part2">
+                                <p>&#8377;{item.total}</p>
+                              </div>
+                              <div className="part3">
+                                <div className="one">
+                                  <div className="indictionCircle"></div>
+                                  <p className="deliveryState">Delivered</p>
+                                </div>
+                                <p className="deliveryDate">
+                                  Delivered on :{" "}
+                                  {moment(item.date.toDate()).format("ll")}
+                                </p>
+                              </div>
+                            </Link>
+                          ))
+                        )}
+                      </div>
+                    )}
                   </>
                 ) : null}
                 {this.state.tab === "Wishlist" ? (
@@ -490,7 +564,7 @@ class Dashboard extends React.Component {
                       <div
                         style={{
                           width: "100%",
-                          height: "100%",
+                          height: "90%",
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",
@@ -565,73 +639,77 @@ class Dashboard extends React.Component {
                           }}
                         ></i>
                       </div>
-                    ) : <div
-                    className="newAddress"
-                    onClick={() => {
-                      this.setState({ addTab: true });
-                    }}
-                  >
-                    <i className="fas fa-plus-circle"></i>
-                    <p>ADD NEW ADDRESS</p>
-                  </div>}
+                    ) : (
+                      <div
+                        className="newAddress"
+                        onClick={() => {
+                          this.setState({ addTab: true });
+                        }}
+                      >
+                        <i className="fas fa-plus-circle"></i>
+                        <p>ADD NEW ADDRESS</p>
+                      </div>
+                    )}
                   </>
                 ) : null}
                 {this.state.tab === "Refer" ? (
                   <>
                     <h1>Refer & Earn</h1>
                     <div className="divider"></div>
-                    <div className="referanimation">
-                      <Lottie
-                        options={{ animationData: refer }}
-                        width={300}
-                        height={300}
-                        style={{ position: "absolute", top: 0 }}
-                      />
-                    </div>
-                    <div className="referCode">
-                      <div className="referInput">
-                        <input
-                          type="text"
-                          value={this.state.currentUser.referalID}
-                          disabled
-                          id="referalText"
+                    <div className="referMain">
+                      <div className="referanimation">
+                        <Lottie
+                          options={{ animationData: refer }}
+                          width={300}
+                          height={300}
+                          style={{ position: "absolute", top: 0 }}
                         />
-                        <CopyToClipboard
-                          text={this.state.currentUser.referalID}
-                        >
-                          <button
-                            type="button"
-                            className={
-                              this.state.copy ? "copiedButton" : "copyButton"
-                            }
-                            onClick={() => {
-                              this.setState({ copy: true });
-                              setTimeout(() => {
-                                this.setState({
-                                  copy: false,
-                                });
-                              }, 1000);
-                            }}
-                          >
-                            {!this.state.copy ? (
-                              <>
-                                <p>Copy</p>
-                                <i className="far fa-clipboard"></i>
-                              </>
-                            ) : (
-                              <>
-                                <p>Copied</p>
-                                <i className="fas fa-check"></i>
-                              </>
-                            )}
-                          </button>
-                        </CopyToClipboard>
                       </div>
-                      {/* <div className="referSocial">
+                      <div className="referCode">
+                        <div className="referInput">
+                          <input
+                            type="text"
+                            value={this.state.currentUser.referalID}
+                            disabled
+                            id="referalText"
+                          />
+                          <CopyToClipboard
+                            text={this.state.currentUser.referalID}
+                          >
+                            <button
+                              type="button"
+                              className={
+                                this.state.copy ? "copiedButton" : "copyButton"
+                              }
+                              onClick={() => {
+                                this.setState({ copy: true });
+                                setTimeout(() => {
+                                  this.setState({
+                                    copy: false,
+                                  });
+                                }, 1000);
+                              }}
+                            >
+                              {!this.state.copy ? (
+                                <>
+                                  <p>Copy</p>
+                                  <i className="far fa-clipboard"></i>
+                                </>
+                              ) : (
+                                <>
+                                  <p>Copied</p>
+                                  <i className="fas fa-check"></i>
+                                </>
+                              )}
+                            </button>
+                          </CopyToClipboard>
+                        </div>
+                        {/* <div className="referSocial">
                         <FacebookShareButton url={sharecode}>
                           <FacebookIcon size={32} round />
                         </FacebookShareButton>
                       </div> */}
+                      </div>
                     </div>
                   </>
                 ) : null}

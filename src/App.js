@@ -14,6 +14,7 @@ import ProductDesc from "./Layout/Pages/products/productDescription/productDescr
 import ComingSoon from "./Layout/Components/comingSoon/comingSoon.component";
 import NotFound from "./Layout/Pages/notFound/notFound.page";
 import Checkout from "./Layout/Pages/Checkout/Checkout";
+import Order from "./Layout/Pages/Order/order";
 
 function App() {
   const location = useLocation();
@@ -39,6 +40,7 @@ function App() {
             path="/Cart/Checkout/coupon::coupon"
             component={Checkout}
           />
+          <Route exact path="/Dashboard/Orders/:id" render={(props) => <Order {...props}/>} />
           <Route exact path="*" component={NotFound} />
         </Switch>
       </AnimatePresence>

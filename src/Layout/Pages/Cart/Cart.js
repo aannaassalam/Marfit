@@ -120,8 +120,8 @@ export default class Cart extends React.Component {
             var cart = doc.data().cart;
             cart.map((item) => {
               if (item.id === id) {
-                if (item.cartQuantity > 1) {
-                  item.cartQuantity -= 1;
+                if (item.quantity > 1) {
+                  item.quantity -= 1;
                 } else {
                   this.removeFromCart(id);
                 }
@@ -136,8 +136,8 @@ export default class Cart extends React.Component {
       var cart = this.state.cart;
       cart.forEach((item) => {
         if (item.id === id) {
-          if (item.cartQuantity > 1) {
-            item.cartQuantity -= 1;
+          if (item.quantity > 1) {
+            item.quantity -= 1;
           } else {
             var newCart = this.removeFromCart(id);
             cart = newCart;
@@ -163,7 +163,7 @@ export default class Cart extends React.Component {
             var cart = doc.data().cart;
             cart.forEach((item) => {
               if (item.id === id) {
-                item.cartQuantity += 1;
+                item.quantity += 1;
               }
             });
 
@@ -176,7 +176,7 @@ export default class Cart extends React.Component {
       var cart = this.state.cart;
       cart.forEach((item) => {
         if (item.id === id) {
-          item.cartQuantity += 1;
+          item.quantity += 1;
         }
       });
       localStorage.setItem("cart", JSON.stringify(cart));

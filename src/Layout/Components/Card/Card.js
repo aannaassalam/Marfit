@@ -2,6 +2,9 @@ import React from "react";
 import "./Card.css";
 import firebase from "firebase";
 import toaster from "toasted-notes";
+import Order from "../../Pages/Order/order";
+import { Link } from "react-router-dom";
+import { cssNumber } from "jquery";
 
 export default class Card extends React.Component {
   constructor(props) {
@@ -11,6 +14,7 @@ export default class Card extends React.Component {
       loading: true,
       isWished: false,
       currentUser: "",
+      orderDetail: false,
     };
   }
 
@@ -31,7 +35,6 @@ export default class Card extends React.Component {
             () => {
               firebase.auth().onAuthStateChanged((user) => {
                 if (user) {
-                  this.setState({ currentUser: user.email });
                   firebase
                     .firestore()
                     .collection("users")
@@ -40,6 +43,12 @@ export default class Card extends React.Component {
                     .then((snap) =>
                       snap.forEach((doc) => {
                         var wishlist = doc.data().wishlist;
+                        var currentUser = {};
+                        currentUser.email = user.email;
+                        currentUser.id = doc.id;
+                        this.setState({
+                          currentUser: currentUser
+                        })
                         wishlist.forEach((item) => {
                           if (item === this.state.item.id) {
                             this.setState({
@@ -153,7 +162,7 @@ export default class Card extends React.Component {
                 <img src={this.state.item.images[0]} alt="Bag-Icon" />
               </a>
             </div>
-            {this.state.currentUser.length > 0 ? (
+            {this.state.currentUser && this.state.currentUser.email.length > 0 ? (
               <>
                 {this.state.isWished ? (
                   <div

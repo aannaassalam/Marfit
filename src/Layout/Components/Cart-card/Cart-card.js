@@ -4,32 +4,57 @@ import "./Cart-card.css";
 import firebase from "firebase";
 
 export default class CartCard extends React.Component {
-  
+  constructor(props) {
+    super(props);
+    this.state = {
+      product: "",
+    };
+  }
+
+  componentDidMount() {
+    firebase
+      .firestore()
+      .collection("products")
+      .doc(this.props.item.id)
+      .onSnapshot((doc) => {
+        this.setState({
+          product: doc.data(),
+        });
+      });
+  }
+
   render() {
+    console.log(this.state.product);
     return (
       <div className="items">
         <a
           style={{ textDecoration: "none", color: "black" }}
           href={
             "/Category/" +
-            this.props.item.category +
+            this.state.product.category +
             "/" +
-            this.props.item.subCategory +
+            this.state.product.subCategory +
             "/" +
-            this.props.item.title
+            this.state.product.title
           }
         >
-          <img src={this.props.item.images[0]} alt="Bag Image" />
+          <img src={this.state.product && this.state.product.images[0]} />
         </a>
         <div className="description">
-          <p className="title">{this.props.item.title}</p>
-          <p className="price">&#8377;{this.props.item.sp}</p>
+          <p className="title">{this.state.product.title}</p>
+          <p className="price">&#8377;{this.state.product.sp}</p>
           <div className="counter">
-            <span className="symbol" onClick={() => this.props.handleminus(this.props.item.id)}>
+            <span
+              className="symbol"
+              onClick={() => this.props.handleminus()}
+            >
               -
             </span>
-            <span>{this.props.item.cartQuantity}</span>
-            <span className="symbol" onClick={() => this.props.handleplus(this.props.item.id)}>
+            <span>{this.props.item.quantity}</span>
+            <span
+              className="symbol"
+              onClick={() => this.props.handleplus()}
+            >
               +
             </span>
           </div>

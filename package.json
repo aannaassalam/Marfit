@@ -11,6 +11,7 @@
     "jquery": "^3.5.1",
     "js-cookie": "^2.2.1",
     "lottie-react-web": "^2.2.2",
+    "moment": "^2.29.0",
     "node-sass": "^4.14.1",
     "razorpay": "^2.0.6",
     "rc-slider": "^9.3.1",
