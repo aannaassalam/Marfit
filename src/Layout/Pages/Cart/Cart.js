@@ -13,7 +13,9 @@ export default class Cart extends React.Component {
       cart: [],
       coupons: [],
       selectedCoupon: "",
-      currentUser: ""
+      currentUser: "",
+      products: [],
+      total: 0
     };
   }
 
@@ -26,15 +28,27 @@ export default class Cart extends React.Component {
           .where("email", "==", user.email)
           .onSnapshot((snap) => {
             snap.docChanges().forEach((change) => {
-              console.log("change", change.doc.data());
               this.setState({
                 cart: change.doc.data().cart,
                 currentUser: change.doc.data()
+              },() => {
+                this.setState({
+                  products: []
+                })
+                this.state.cart.forEach(item => {
+                  firebase.firestore().collection("products").doc(item.id).get().then(doc => {
+                    var product = doc.data();
+                    product.id = doc.id;
+                    console.log(product);
+                    this.setState({
+                      products: [...this.state.products, product]
+                    })
+                  })
+                })
               });
             });
           });
       } else {
-        console.log("here");
         setInterval(() => {
           var cart = JSON.parse(localStorage.getItem("cart"));
         this.setState({
@@ -59,7 +73,6 @@ export default class Cart extends React.Component {
     this.setState({
       selectedCoupon: this.state.coupons[e.target.value],
     });
-    console.log(this.state.selectedCoupon);
   }
 
   removeFromCart = (id) => {
@@ -189,8 +202,16 @@ export default class Cart extends React.Component {
   render() {
     var total = 0;
     var i = 0;
+    console.log(this.state.products);
+    console.log(this.state.cart);
     if (this.state.cart.length > 0) {
-      this.state.cart.map((item) => (total += item.sp * item.cartQuantity));
+      this.state.cart.forEach(data => {
+        this.state.products.map(item => {
+          if(data.id === item.id){
+            total += item.sp * data.quantity
+          }
+        })
+      })
     }
     if (this.state.selectedCoupon !== "") {
       if (this.state.selectedCoupon.type === "money") {
@@ -224,6 +245,7 @@ export default class Cart extends React.Component {
                       this.handleminus(item.id);
                     }}
                     id={index}
+                    show={true}
                   />
                 </div>
               ))

@@ -152,7 +152,7 @@
 }
 
 .checkout .right .items-container{
-  max-height: 40vh;
+  max-height: 41vh;
   width: 90%;
   margin: 30px auto 0;
   overflow-y: scroll;
@@ -167,6 +167,10 @@
   align-items: flex-start;
   height: 70px;
   border-bottom: 1px solid lightgrey; 
+}
+
+.checkout .right .items-container .items{
+  margin-left: 0;
 }
 
 .checkout .right .items-container .item img{

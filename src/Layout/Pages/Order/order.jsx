@@ -37,7 +37,6 @@ export default class Order extends React.Component {
   }
 
   render() {
-    console.log(this.state.product);
     return (
       <div className="container">
         <div className="content">
@@ -59,7 +58,7 @@ export default class Order extends React.Component {
                     type="text"
                     placeholder="Order number"
                   ></input>
-                  <button name="button" type="submit" class="btn">
+                  <button className="button" type="submit" class="btn">
                     Log in
                   </button>
                 </div>
@@ -141,7 +140,7 @@ export default class Order extends React.Component {
           <div className="items-container">
             {this.state.order &&
               this.state.order.products.map((item, index) => (
-                <CartCard item={item} />
+                <CartCard item={item} key={index} show={false}/>
               ))}
           </div>
           <div className="order-details">

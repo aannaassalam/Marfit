@@ -3,6 +3,7 @@ import "./Checkout.css";
 import firebase from "firebase";
 import Login from "../../Components/login/Login";
 import toaster from "toasted-notes";
+import CartCard from "../../Components/Cart-card/Cart-card";
 
 export default class Checkout extends React.Component {
   constructor(props) {
@@ -25,6 +26,7 @@ export default class Checkout extends React.Component {
       pincode: "",
       points: "",
       userID: "",
+      products: []
     };
   }
 
@@ -49,6 +51,16 @@ export default class Checkout extends React.Component {
                   userID: doc.id,
                 },
                 () => {
+                  this.state.cart.forEach(item => {
+                    firebase.firestore().collection("products").doc(item.id).get().then(doc => {
+                      var product = doc.data();
+                      product.id = doc.id;
+                      this.setState({
+                        products: [...this.state.products, product]
+                      })
+                    })
+                  })
+
                   this.state.currentUser.name.includes(" ")
                     ? this.setState({
                         //first name
@@ -67,7 +79,6 @@ export default class Checkout extends React.Component {
                       });
                 }
               );
-              console.log(doc.data().cart);
             });
           });
       } else {
@@ -142,7 +153,8 @@ export default class Checkout extends React.Component {
               coupon: this.state.coupon,
               total: total,
               shipping: shipping,
-              tag: "user"
+              tag: "user",
+              status: "Pending"
             }).then((res) => {
               firebase.firestore().collection("users").doc(this.state.userID).get().then(doc => {
                 var orders = doc.data().orders;
@@ -190,32 +202,32 @@ export default class Checkout extends React.Component {
   render() {
     var subTotal = 0;
     var shipping = 0;
-    for (var i = 0; i < this.state.cart.length; i++) {
-      subTotal += this.state.cart[i].sp * this.state.cart[i].cartQuantity;
-      shipping +=
-        this.state.cart[i].shippingCharge * this.state.cart[i].cartQuantity;
-    }
-    console.log(this.state.currentUser.length);
-    var total = shipping + subTotal - this.state.points;
-    var value = "";
-    var date = new Date();
-    if (this.state.coupon !== "") {
-      if (
-        this.state.coupon.start.toDate() < date &&
-        this.state.coupon.end.toDate() > date
-      ) {
-        if (this.state.coupon.type === "money") {
-          total -= this.state.coupon.value;
-          value = this.state.coupon.value;
-        } else {
-          value = total * (this.state.coupon.value / 100);
-          total -= value;
-        }
+    var value = 0;
+    var total = 0;
+      for (var i = 0; i < this.state.products.length; i++) {
+        subTotal += this.state.products[i].sp * this.state.cart[i].quantity;
+        shipping +=
+          this.state.products[i].shippingCharge * this.state.cart[i].quantity;
       }
-    } else {
-      value = 0;
-    }
-
+      total = shipping + subTotal - this.state.points;
+      var date = new Date();
+      if (this.state.coupon !== "") {
+        if (
+          this.state.coupon.start.toDate() < date &&
+          this.state.coupon.end.toDate() > date
+        ) {
+          if (this.state.coupon.type === "money") {
+            total -= this.state.coupon.value;
+            value = this.state.coupon.value;
+          } else {
+            value = total * (this.state.coupon.value / 100);
+            total -= value;
+          }
+        }
+      } else {
+        value = 0;
+      }
+      
     return (
       <div className="checkout">
         <div className="left">
@@ -350,16 +362,7 @@ export default class Checkout extends React.Component {
         <div className="right">
           <div className="items-container">
             {this.state.cart.map((item, index) => (
-              <div className="item" key={index}>
-                <img src={item.images[0]} alt="" />
-                <div className="item-info">
-                  <p>{item.title}</p>
-                  <div className="price-cont">
-                    <p>&#8377; {item.sp}</p>
-                    <p>Quantity: {item.cartQuantity}</p>
-                  </div>
-                </div>
-              </div>
+              <CartCard item={item} show={false} quantity={item.quantity} />
             ))}
           </div>
           <div className="order-details">

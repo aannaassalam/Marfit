@@ -24,50 +24,62 @@ export default class CartCard extends React.Component {
   }
 
   render() {
-    console.log(this.state.product);
     return (
-      <div className="items">
-        <a
-          style={{ textDecoration: "none", color: "black" }}
-          href={
-            "/Category/" +
-            this.state.product.category +
-            "/" +
-            this.state.product.subCategory +
-            "/" +
-            this.state.product.title
-          }
-        >
-          <img src={this.state.product && this.state.product.images[0]} />
-        </a>
-        <div className="description">
-          <p className="title">{this.state.product.title}</p>
-          <p className="price">&#8377;{this.state.product.sp}</p>
-          <div className="counter">
-            <span
-              className="symbol"
-              onClick={() => this.props.handleminus()}
+      <>
+        {this.state.product ? (
+          <div className="items">
+            <a
+              style={{ textDecoration: "none", color: "black" }}
+              href={
+                "/Category/" +
+                this.state.product.category +
+                "/" +
+                this.state.product.subCategory +
+                "/" +
+                this.state.product.title
+              }
             >
-              -
-            </span>
-            <span>{this.props.item.quantity}</span>
-            <span
-              className="symbol"
-              onClick={() => this.props.handleplus()}
-            >
-              +
-            </span>
+              <img src={this.state.product && this.state.product.images[0]} />
+            </a>
+            <div className="description">
+              <p className="title">{this.state.product.title}</p>
+              <div className="price-cont">
+                <p className="price">&#8377;{this.state.product.sp}</p>
+                {this.props.quantity ? (
+                  <p className="quan">Quantity : {this.props.quantity}</p>
+                ) : null}
+              </div>
+              {this.props.show ? (
+                <>
+                  <div className="counter">
+                    <span
+                      className="symbol"
+                      onClick={() => this.props.handleminus()}
+                    >
+                      -
+                    </span>
+                    <span>{this.props.item.quantity}</span>
+                    <span
+                      className="symbol"
+                      onClick={() => this.props.handleplus()}
+                    >
+                      +
+                    </span>
+                  </div>
+                  <div
+                    onClick={() => {
+                      this.props.removeFromCart(this.props.item.id);
+                    }}
+                    className="remove-link"
+                  >
+                    REMOVE
+                  </div>
+                </>
+              ) : null}
+            </div>
           </div>
-          <div
-            onClick={() => {
-              this.props.removeFromCart(this.props.item.id);
-            }}
-            className="remove-link"
-          >
-            REMOVE
-          </div>
-        </div>
-      </div>
+        ) : null}
+      </>
     );
   }
 }

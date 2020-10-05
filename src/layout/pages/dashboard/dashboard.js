@@ -48,15 +48,23 @@ class Dashboard extends React.Component {
       alt: "",
       editProifleLoading: false,
       orders: [],
-      address: [],
+      addresses: [],
       loading: true,
       wishlist: [],
       copy: false,
-      fetchedAddresses: [],
       addTab: false,
       points: "",
       orderID: [],
       orderedProduct: [],
+      pincode: "",
+      city: "",
+      country: "",
+      state: "",
+      firstName: "",
+      lastName: "",
+      appartment: "",
+      address: "",
+      email: "",
     };
   }
 
@@ -73,12 +81,13 @@ class Dashboard extends React.Component {
                 {
                   currentUser: change.doc.data(),
                   points: change.doc.data().points,
-                  fetchedAddresses: change.doc.data().addresses,
+                  addresses: change.doc.data().addresses,
                   loading: false,
                   orderID: change.doc.data().orders,
                 },
                 () => {
                   this.state.orderID.forEach((item) => {
+                    console.log("orderID", item);
                     firebase
                       .firestore()
                       .collection("orders")
@@ -86,16 +95,18 @@ class Dashboard extends React.Component {
                       .get()
                       .then((doc) => {
                         var products = doc.data().products;
+                        console.log("products", products);
                         var finalProduct = [];
                         products.forEach((item) => {
+                          console.log("item", item);
                           firebase
                             .firestore()
                             .collection("products")
                             .doc(item.id)
                             .get()
                             .then((prod) => {
-                              var product = {};
-                              product = prod.data();
+                              var product = prod.data();
+                              console.log("product", product);
                               product.productID = item.id;
                               product.quantity = item.quantity;
                               finalProduct.push(product);
@@ -174,9 +185,7 @@ class Dashboard extends React.Component {
   };
 
   handleDelete(index) {
-    console.log(index);
-    var addresses = this.state.fetchedAddresses;
-    console.log(addresses);
+    var addresses = this.state.addresses;
     var newAddresses = addresses.filter(
       (address) => address !== addresses[index]
     );
@@ -196,7 +205,7 @@ class Dashboard extends React.Component {
             })
             .then(() => {
               this.setState({
-                fetchedAddress: newAddresses,
+                addresses: newAddresses,
               });
             });
         });
@@ -204,10 +213,31 @@ class Dashboard extends React.Component {
   }
 
   handleAdd() {
-    var addresses = this.state.fetchedAddresses;
-    if (this.state.address.length > 0) {
-      document.getElementById("address").value = "";
-      addresses.push(this.state.address);
+    if (
+      this.state.address.length > 0 &&
+      this.state.firstName.length > 0 &&
+      this.state.lastName.length > 0 &&
+      this.state.phone.length > 0 &&
+      this.state.city.length > 0 &&
+      this.state.state.length > 0 &&
+      this.state.country.length > 0 &&
+      this.state.pincode.length > 0 &&
+      this.state.email.length > 0
+    ) {
+      var addresses = {};
+      addresses.email = this.state.email;
+      addresses.address = this.state.address;
+      addresses.firstName = this.state.firstName;
+      addresses.lastName = this.state.lastName;
+      addresses.country = this.state.country;
+      addresses.appartment  = this.state.appartment;
+      addresses.state = this.state.state;
+      addresses.city = this.state.city;
+      addresses.pincode = this.state.pincode;
+      addresses.phone = this.state.phone;
+      this.setState({
+        addresses: [...this.state.addresses, addresses]
+      })
       firebase
         .firestore()
         .collection("users")
@@ -220,11 +250,20 @@ class Dashboard extends React.Component {
               .collection("users")
               .doc(doc.id)
               .update({
-                addresses: addresses,
+                addresses: this.state.addresses,
               })
               .then(() => {
                 this.setState({
-                  fetchedAddresses: addresses,
+                  firstName: "",
+                  lastName: "",
+                  phone: "",
+                  email: "",
+                  country: "",
+                  address: "",
+                  state: "",
+                  city: "",
+                  pincode: "",
+                  appartment: "",
                   addTab: false,
                 });
               });
@@ -234,7 +273,6 @@ class Dashboard extends React.Component {
   }
 
   render() {
-    console.log(this.state.orders);
     return (
       <>
         {this.state.loading ? (
@@ -518,7 +556,7 @@ class Dashboard extends React.Component {
                     ) : (
                       <div className="order-container">
                         {this.state.orders.map((item) =>
-                          item.products.map((data) => (
+                          item.products.map((data, index) => (
                             <Link
                               to={{
                                 pathname: "/Dashboard/Orders/" + item.orderID,
@@ -526,6 +564,7 @@ class Dashboard extends React.Component {
                                 quantity: data.quantity,
                               }}
                               className="orderList"
+                              key={index}
                             >
                               <div className="part1">
                                 <img src={data.images[0]} alt="img" />
@@ -542,7 +581,9 @@ class Dashboard extends React.Component {
                               <div className="part3">
                                 <div className="one">
                                   <div className="indictionCircle"></div>
-                                  <p className="deliveryState">Delivered</p>
+                                  <p className="deliveryState">
+                                    {item.status}
+                                  </p>
                                 </div>
                                 <p className="deliveryDate">
                                   Delivered on :{" "}
@@ -596,60 +637,157 @@ class Dashboard extends React.Component {
                     <h1>Your Address List</h1>
                     <div className="divider"></div>
                     <div className="address-cont">
-                      {this.state.fetchedAddresses.map((address, index) => (
-                        <div className="address" key={index}>
-                          <div className="paras">
-                            <p>Address {index + 1} :</p>
-                            <p>{address}</p>
-                          </div>
+                      {this.state.addTab ? (
+                        <>
+                          <i
+                            className="fas fa-arrow-left"
+                            onClick={() => {
+                              this.setState({ addTab: false });
+                            }}
+                          ></i>
                           <div
-                            className="minus"
-                            onClick={() => {
-                              this.handleDelete(index);
-                            }}
+                            className={
+                              this.state.addTab ? "addtab active" : "addtab"
+                            }
                           >
-                            <i className="fas fa-minus-circle"></i>
+                            <div className="inputs">
+                              <div className="region">
+                                <input
+                                  type="text"
+                                  placeholder="First name"
+                                  name="firstName"
+                                  id="firstName"
+                                  required
+                                  value={this.state.firstName}
+                                  onChange={this.handleChange}
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Last name"
+                                  name="lastName"
+                                  id="lastName"
+                                  required
+                                  value={this.state.lastName}
+                                  onChange={this.handleChange}
+                                />
+                              </div>
+                              <input
+                                type="text"
+                                placeholder="Email"
+                                name="email"
+                                id="email"
+                                required
+                                value={this.state.email}
+                                onChange={this.handleChange}
+                              />
+                              <input
+                                type="text"
+                                placeholder="Address"
+                                name="address"
+                                id="address"
+                                required
+                                value={this.state.address}
+                                onChange={this.handleChange}
+                              />
+                              <input
+                                type="text"
+                                placeholder="Appartment, suite, etc. (optional)"
+                                name="appartment"
+                                id="appartment"
+                                value={this.state.apartment}
+                                onChange={this.handleChange}
+                              />
+                              <div className="region">
+                                <input
+                                  type="text"
+                                  placeholder="Country / Nation"
+                                  name="country"
+                                  required
+                                  id="country"
+                                  value={this.state.country}
+                                  onChange={this.handleChange}
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="State"
+                                  name="state"
+                                  required
+                                  id="state"
+                                  value={this.state.state}
+                                  onChange={this.handleChange}
+                                />
+                              </div>
+                              <div className="region">
+                                <input
+                                  type="text"
+                                  placeholder="City"
+                                  name="city"
+                                  required
+                                  id="city"
+                                  value={this.state.city}
+                                  onChange={this.handleChange}
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Pincode"
+                                  name="pincode"
+                                  required
+                                  id="pincode"
+                                  value={this.state.pincode}
+                                  onChange={this.handleChange}
+                                />
+                              </div>
+                              <input
+                                type="text"
+                                name="phone"
+                                id="phone"
+                                placeholder="Phone"
+                                value={this.state.phone}
+                                onChange={this.handleChange}
+                              />
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  this.handleAdd();
+                                }}
+                              >
+                                <p>Add</p>
+                              </button>
+                            </div>
                           </div>
-                        </div>
-                      ))}
-                    </div>
-                    {this.state.addTab ? (
-                      <div className="addtab">
-                        <div className="inputs">
-                          <input
-                            type="text"
-                            name="address"
-                            id="address"
-                            onChange={this.handleChange}
-                            placeholder="Address"
-                          />
-                          <button
-                            type="button"
+                        </>
+                      ) : (
+                        <>
+                          {this.state.addresses && this.state.addresses.map((address, index) => (
+                            <div className="address" key={index}>
+                              <div className="paras">
+                                <p>Address {index + 1} :</p>
+                                <p>{address.firstName} {address.lastName}</p>
+                                <p>{address.address}</p>
+                              </div>
+                              <div
+                                className="minus"
+                                onClick={() => {
+                                  this.handleDelete(index);
+                                }}
+                              >
+                                <i className="fas fa-minus-circle"></i>
+                              </div>
+                            </div>
+                          ))}
+
+                          <div
+                            className="newAddress"
                             onClick={() => {
-                              this.handleAdd();
+                              this.setState({ addTab: true });
                             }}
                           >
-                            Add
-                          </button>
-                        </div>
-                        <i
-                          className="fas fa-times"
-                          onClick={() => {
-                            this.setState({ addTab: false });
-                          }}
-                        ></i>
-                      </div>
-                    ) : (
-                      <div
-                        className="newAddress"
-                        onClick={() => {
-                          this.setState({ addTab: true });
-                        }}
-                      >
-                        <i className="fas fa-plus-circle"></i>
-                        <p>ADD NEW ADDRESS</p>
-                      </div>
-                    )}
+                            <i className="fas fa-plus-circle"></i>
+                            <p>ADD NEW ADDRESS</p>
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </>
                 ) : null}
                 {this.state.tab === "Refer" ? (
