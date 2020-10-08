@@ -2,9 +2,11 @@ import React from "react";
 import "./Card.css";
 import firebase from "firebase";
 import toaster from "toasted-notes";
+import Lottie from "lottie-react-web";
 import Order from "../../Pages/Order/order";
 import { Link } from "react-router-dom";
 import { cssNumber } from "jquery";
+import Loading from "../../../assets/loading.json";
 
 export default class Card extends React.Component {
   constructor(props) {
@@ -19,7 +21,8 @@ export default class Card extends React.Component {
   }
 
   componentDidMount() {
-    firebase
+    if(typeof(this.props.item) === "object"){
+      firebase
       .firestore()
       .collection("products")
       .doc(this.props.item.id)
@@ -47,8 +50,8 @@ export default class Card extends React.Component {
                         currentUser.email = user.email;
                         currentUser.id = doc.id;
                         this.setState({
-                          currentUser: currentUser
-                        })
+                          currentUser: currentUser,
+                        });
                         wishlist.forEach((item) => {
                           if (item === this.state.item.id) {
                             this.setState({
@@ -66,6 +69,56 @@ export default class Card extends React.Component {
           );
         }
       });
+    }else{
+      firebase
+      .firestore()
+      .collection("products")
+      .doc(this.props.item)
+      .onSnapshot((product) => {
+        if (product.exists) {
+          var p = product.data();
+          p.id = product.id;
+          this.setState(
+            {
+              item: p,
+              loading: false,
+            },
+            () => {
+              firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                  firebase
+                    .firestore()
+                    .collection("users")
+                    .where("email", "==", user.email)
+                    .get()
+                    .then((snap) =>
+                      snap.forEach((doc) => {
+                        var wishlist = doc.data().wishlist;
+                        var currentUser = {};
+                        currentUser.email = user.email;
+                        currentUser.id = doc.id;
+                        this.setState({
+                          currentUser: currentUser,
+                        });
+                        wishlist.forEach((item) => {
+                          if (item === this.state.item) {
+                            this.setState({
+                              isWished: true,
+                            });
+                          }
+                        });
+                      })
+                    );
+                } else {
+                  this.setState({ currentUser: "" });
+                }
+              });
+            }
+          );
+        }
+      });
+    }
+    
   }
 
   addToWishlist = () => {
@@ -144,7 +197,12 @@ export default class Card extends React.Component {
     return (
       <div className="card-cont">
         {this.state.loading ? (
-          <h1>loading</h1>
+          <Lottie
+            options={{ animationData: Loading }}
+            width={100}
+            height={100}
+            style={{ position: "absolute", top: 0 }}
+          />
         ) : (
           <>
             <div className="img-container">
@@ -152,9 +210,9 @@ export default class Card extends React.Component {
                 style={{ width: "100%", height: "100%" }}
                 href={
                   "/Category/" +
-                  this.props.id1 +
+                  this.state.item.category +
                   "/" +
-                  this.props.id2 +
+                  this.state.item.subCategory +
                   "/" +
                   this.state.item.title
                 }
@@ -162,7 +220,8 @@ export default class Card extends React.Component {
                 <img src={this.state.item.images[0]} alt="Bag-Icon" />
               </a>
             </div>
-            {this.state.currentUser && this.state.currentUser.email.length > 0 ? (
+            {this.state.currentUser &&
+            this.state.currentUser.email.length > 0 ? (
               <>
                 {this.state.isWished ? (
                   <div
@@ -185,11 +244,11 @@ export default class Card extends React.Component {
             <a
               href={
                 "/Category/" +
-                this.props.id1 +
+                this.state.item.category +
                 "/" +
-                this.props.id2 +
+                this.state.item.subCategory +
                 "/" +
-                this.props.item.title
+                this.state.item.title
               }
               className="short-description"
             >

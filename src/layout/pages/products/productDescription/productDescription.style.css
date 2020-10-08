@@ -360,7 +360,7 @@
 }
 
 .product-desc .description-section .product-details {
-  margin-top: 25px;
+  margin-top: 50px;
   border-bottom: 2px solid lightgray;
 }
 
@@ -382,17 +382,21 @@
 }
 
 .product-desc .description-section .product-details ul li {
-  width: 40%;
+  width: 70%;
+  height: 40px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  margin: 15px 0;
+  /* margin: 15px 0; */
 }
 
 .product-desc .description-section .product-details ul li p {
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 500;
   line-height: 19.6px;
+  padding: 0 .5rem;
+  width: 50%;
 }
 
 .product-desc .description-section .product-details ul li .darkgrey {

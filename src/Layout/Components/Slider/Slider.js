@@ -39,7 +39,7 @@ export default class Slider extends React.Component {
         <div className="slider">
           <div className="swiper-container">
             <div className="swiper-wrapper">
-              {this.props.data.map((item, index) => (
+              {this.props.data && this.props.data.map((item, index) => (
                 <div className="swiper-slide" key={index}>
                   <Card item={item} />
                 </div>

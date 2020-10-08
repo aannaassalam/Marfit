@@ -574,47 +574,15 @@ export default class ProductDesc extends React.Component {
                   <div className="product-details">
                     <h3>Product Details</h3>
                     <p className="product-summary">
-                      Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                      Veniam doloremque quia quo sit nulla soluta nemo rerum
-                      aliquam maiores dolor odit animi eligendi ipsam qui
-                      officiis consectetur aliquid, quae repellat dolores enim.
-                      Fugiat minima accusamus quis vitae quibusdam adipisci
-                      laborum eum corrupti dolores ab porro qui, voluptatem
-                      asperiores distinctio voluptatum!
+                      {this.state.product.description}
                     </p>
                     <ul>
-                      <li>
-                        <p className="darkgrey">Number of Contents</p>
-                        <p className="text">1 backpack</p>
+                      {this.state.product.specifications && this.state.product.specifications.map(spec => (
+                        <li>
+                          <p className="darkgrey">{spec.title}</p>
+                          <p className="text">{spec.content}</p>
                       </li>
-                      <li>
-                        <p className="darkgrey">Number of Contents</p>
-                        <p className="text">1 backpack</p>
-                      </li>
-                      <li>
-                        <p className="darkgrey">Number of Contents</p>
-                        <p className="text">1 backpack</p>
-                      </li>
-                      <li>
-                        <p className="darkgrey">Number of Contents</p>
-                        <p className="text">1 backpack</p>
-                      </li>
-                      <li>
-                        <p className="darkgrey">Number of Contents</p>
-                        <p className="text">1 backpack</p>
-                      </li>
-                      <li>
-                        <p className="darkgrey">Number of Contents</p>
-                        <p className="text">1 backpack</p>
-                      </li>
-                      <li>
-                        <p className="darkgrey">Number of Contents</p>
-                        <p className="text">1 backpack</p>
-                      </li>
-                      <li>
-                        <p className="darkgrey">Number of Contents</p>
-                        <p className="text">1 backpack</p>
-                      </li>
+                      ))}
                     </ul>
                   </div>
                   <div className="rating">

@@ -153,4 +153,5 @@
   flex-direction: row;
   flex-wrap: wrap;
   padding: 0 0 0 1rem;
+  overflow-y: scroll;
 }
