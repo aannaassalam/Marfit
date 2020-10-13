@@ -1,0 +1,44 @@
+.add {
+  position: relative;
+  width: 100%;
+  height: fit-content;
+  margin-top: 15px;
+  box-shadow: 0 3px 5px darkgray;
+}
+
+.add img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* .add .add-button{
+    background-color: white;
+    color: black;
+    position: absolute;
+    width: 200px;
+    height: 50px;
+    bottom: 36%;
+    right: 19%;
+    font-size: 20px;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+}
+
+@media (max-width: 525px){
+    .add{
+        height: 35vh;
+    }
+
+    .add img{
+        object-position: right
+    }
+
+    .add .add-button{
+        width: 120px; 
+        height: 40px;
+    }
+} */

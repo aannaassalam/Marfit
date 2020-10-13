@@ -1,0 +1,94 @@
+.orderList {
+  width: 98%;
+  padding: 0.5rem 1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  height: 100px;
+  border: 1px solid lightgray;
+  margin-bottom: 10px;
+  transition: box-shadow 0.3s;
+  cursor: pointer;
+  text-decoration: none;
+  color: #000;
+}
+
+.orderList:hover {
+  box-shadow: 2px 3px 4px rgba(0, 0, 0, 0.15);
+  transition: box-shadow 0.3s;
+}
+
+.orderList .part1 {
+  width: 33%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+}
+
+.orderList .part1 h5 {
+  font-size: 1rem;
+}
+
+.orderList .part1 h5 p {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.orderList .part1 img {
+  height: 70%;
+}
+
+.orderList .part1 .part1-detail {
+  padding: 0.3rem 1rem 0.5rem;
+}
+
+.orderList .part1 .part1-detail p {
+  font-size: 0.7rem;
+  color: darkgray;
+  padding: 0.2rem 0 0;
+}
+
+.orderList .part2 {
+  width: 33%;
+  display: flex;
+  justify-content: center;
+}
+
+.orderList .part2 p {
+  font-size: 0.95rem;
+  font-weight: bold;
+}
+
+.orderList .part3 {
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+  padding-left: 4rem;
+}
+
+.orderList .part3 .one {
+  display: flex;
+  padding: 0 0 0.5rem;
+  align-items: center;
+}
+
+.orderList .part3 .one .indictionCircle {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: green;
+}
+
+.orderList .part3 .one .deliveryState {
+  font-size: 0.8rem;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.orderList .part3 .deliveryDate {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: darkgray;
+}

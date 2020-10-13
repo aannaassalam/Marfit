@@ -1,0 +1,118 @@
+.mini-container {
+  height: 6vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: 0 3px 6px 0 #dee0e2;
+  background-color: #fff;
+}
+
+.mini-container .tray {
+  width: 100%;
+  height: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.mini-container .tray::-webkit-scrollbar{
+  width: 0;
+  height: 0;
+}
+
+.mini-container .tray .mini-content {
+  font-size: 16px;
+  color: black;
+  font-weight: bold;
+  text-decoration: none;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  cursor: pointer;
+  margin: 0 15px;
+}
+/* 
+.mini-container .tray a{
+  text-decoration: none;
+} */
+
+.mini-container .tray .mini-content i {
+  margin-left: 5px;
+}
+
+.mini-container .tray .mini-content:hover .category-options {
+  display: flex;
+}
+
+.mini-container .tray .mini-content .fa-chevron-down {
+  transition: transform 0.2s;
+  font-size: 10px;
+}
+
+.mini-container .tray .mini-content:hover .fa-chevron-down {
+  transform: rotate(180deg);
+}
+
+.mini-container .tray .mini-content .category-options {
+  background-color: #fff;
+  position: absolute;
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  top: 6vh;
+  padding: 0.2rem 0;
+  border: 1px solid lightgray;
+  width: 150px;
+  z-index: 100;
+}
+
+.mini-container .tray .mini-content .category-options::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  background-color: #fff;
+  transform: rotate(45deg);
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  border: 1px solid lightgray;
+  border-right: none;
+  border-bottom: none;
+  z-index: -1;
+}
+
+.mini-container .tray .mini-content .category-options a {
+  color: #000;
+  font-size: 16px;
+  font-weight: 500;
+  width: 100%;
+  padding: 8px 17px;
+  font-weight: 500;
+}
+
+.mini-container .tray .mini-content .category-options a:hover {
+  color: #fb641b;
+  background-color: lightgrey;
+  /* font-weight: bold; */
+}
+
+.mini-container .tray .new {
+  color: #fb641b;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  margin: 0 15px;
+  cursor: pointer;
+}
+

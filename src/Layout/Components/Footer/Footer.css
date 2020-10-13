@@ -1,0 +1,310 @@
+.footer {
+  width: 95%;
+  background-color: black;
+  margin-left: auto;
+  border-top-left-radius: 45px;
+  padding: 60px;
+  padding-bottom: 30px;
+  margin-top: 50px;
+  height: 77vh;
+}
+
+.footer .flex-container {
+  height: 90%;
+  display: flex;
+  flex-direction: row;
+  /* margin-bottom: 63px; */
+  /* border-bottom: 3px solid white; */
+}
+
+.footer .flex-container .container-1 {
+  color: grey;
+  width: 60%;
+  margin-bottom: 5px;
+  height: 70%;
+}
+
+.footer .flex-container .container-1 .marfit-detail img {
+  width: 20%;
+}
+
+.footer .flex-container .container-1 .marfit-detail p {
+  width: 65%;
+  font-size: 16px;
+  margin: 15px 0 25px;
+}
+
+.footer .flex-container .container-1 .company-terms {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 50%;
+  width: 80%;
+  /* margin-left: -25px; */
+}
+
+.footer .flex-container .container-1 .company-terms .company-items {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  /* border: 1px solid white; */
+  height: 100%;
+}
+
+.footer .flex-container .container-1 .company-terms .company-items h3 {
+  color: whitesmoke;
+  font-size: 17px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+
+.footer .flex-container .container-1 .company-terms .company-items a,
+.footer .flex-container .container-1 .company-terms .company-items p {
+  color: grey;
+  text-decoration: none;
+  font-size: 16px;
+}
+
+.footer .flex-container .container-1 .company-terms .company-items p i {
+  margin-right: 4px;
+}
+
+.footer .flex-container .container-2 {
+  width: 40%;
+}
+
+.footer .flex-container .container-2 .label {
+  font-style: italic;
+  color: white;
+  font-size: 14px;
+  font-weight: 500;
+  word-spacing: 2px;
+  margin-bottom: 20px;
+}
+
+.footer .flex-container .container-2 input {
+  width: 100%;
+  padding: 15px;
+  font-size: 15px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+}
+
+.footer .flex-container .container-2 .icons-pack {
+  display: flex;
+  flex-direction: row;
+  width: 30%;
+  align-items: center;
+  justify-content: space-between;
+  margin: 20px 0 30px;
+}
+
+.footer .flex-container .container-2 .icons-pack a {
+  text-decoration: none;
+}
+
+.footer .flex-container .container-2 .icons-pack a i {
+  color: white;
+  font-size: 35px;
+}
+
+.footer .flex-container .container-2:nth-last-child(1) {
+  color: white;
+  font-size: 17px;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.footer .flex-container .container-2 img {
+  margin-top: 15px;
+  width: 60%;
+}
+
+.footer .copyright {
+  height: 16%;
+  padding: 17px;
+  color: white;
+  border-top: 3px solid white;
+}
+
+.footer .copyright p {
+  margin: 7px;
+  font-size: 16px;
+  text-align: center;
+}
+
+@media (max-width: 1024px) {
+  .footer {
+    height: 40vh;
+  }
+
+  .footer .flex-container .container-1 .company-terms {
+    width: 90%;
+  }
+
+  .footer .flex-container .container-1 .company-terms .company-items h3 {
+    font-size: 16px;
+  }
+
+  .footer .flex-container .container-1 .company-terms .company-items a,
+  .footer .flex-container .container-1 .company-terms .company-items p {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 786px) {
+  .footer {
+    width: 100%;
+    border-top-left-radius: 0;
+    height: 50vh;
+  }
+
+  .footer .flex-container .container-1 .marfit-detail img {
+    width: 35%;
+  }
+
+  .footer .flex-container .container-1 .marfit-detail p {
+    font-size: 12px;
+    width: 85%;
+  }
+
+  .footer .flex-container .container-1 .company-terms {
+    width: 90%;
+  }
+
+  .footer .flex-container .container-1 .company-terms .company-items h3 {
+    font-size: 13px;
+  }
+
+  .footer .flex-container .container-1 .company-terms .company-items a,
+  .footer .flex-container .container-1 .company-terms .company-items p {
+    font-size: 11px;
+  }
+
+  .footer .flex-container .container-2 .icons-pack {
+    width: 50%;
+  }
+
+  .footer .copyright {
+    padding: 13px;
+  }
+
+  .footer .copyright p {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 468px) {
+  .footer {
+    padding: 40px 30px 0;
+    height: 100%;
+  }
+
+  .footer .flex-container {
+    flex-direction: column;
+  }
+
+  .footer .flex-container .container-1,
+  .footer .flex-container .container-2 {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+
+  .footer .flex-container .container-1 .marfit-detail img {
+    width: 23%;
+    text-align: right;
+  }
+
+  .footer .flex-container .container-1 .marfit-detail p {
+    font-size: 0.99rem;
+    width: 100%;
+  }
+
+  .footer .flex-container .container-1 .company-terms {
+    flex-direction: column;
+  }
+
+  .footer .flex-container .container-1 .company-terms .company-items {
+    margin-bottom: 20px;
+    align-items: space-between;
+  }
+
+  .footer .flex-container .container-1 .company-terms .company-items h3 {
+    font-size: 1.2rem;
+  }
+
+  .footer .flex-container .container-1 .company-terms .company-items a,
+  .footer .flex-container .container-1 .company-terms .company-items p {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+  }
+
+  .footer .flex-container .container-1 .company-terms .company-items p i {
+    margin-right: 0.5rem;
+  }
+
+  .footer .flex-container .container-2 {
+    text-align: center;
+  }
+
+  .footer .flex-container .container-2 .icons-pack {
+    width: 50%;
+    margin: 1rem auto;
+  }
+
+  .footer .copyright {
+    padding: 20px 0;
+  }
+
+  .footer .copyright p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .footer {
+    padding: 40px 30px 0;
+    height: 100%;
+  }
+
+  .footer .flex-container .container-1 .marfit-detail img {
+    width: 23%;
+    text-align: right;
+  }
+
+  .footer .flex-container .container-1 .marfit-detail p {
+    font-size: 0.99rem;
+  }
+
+  .footer .flex-container .container-1 .company-terms {
+    flex-direction: column;
+  }
+
+  .footer .flex-container .container-1 .company-terms .company-items {
+    margin-bottom: 20px;
+    align-items: space-between;
+  }
+
+  .footer .flex-container .container-1 .company-terms .company-items h3 {
+    font-size: 1.2rem;
+  }
+
+  .footer .flex-container .container-1 .company-terms .company-items a,
+  .footer .flex-container .container-1 .company-terms .company-items p {
+    font-size: 1rem;
+    margin: 0.5rem 0;
+  }
+
+  .footer .flex-container .container-1 .company-terms .company-items p i {
+    margin-right: 0.5rem;
+  }
+
+  .footer .copyright {
+    padding: 20px 0;
+  }
+
+  .footer .copyright p {
+    font-size: 1rem;
+  }
+}
