@@ -38,6 +38,7 @@ export default class MiniNav extends React.Component {
             />
           ) : (
             <>
+            <a href="/NewArrivals" className="new">New Arrivals</a>
               {this.state.categories.map((cat, index) => {
                 return (
                   <div className="mini-content" key={index}>
@@ -57,7 +58,7 @@ export default class MiniNav extends React.Component {
                   </div>
                 );
               })}
-              <a href="/NewArrivals" className="new">New Arrivals</a>
+              <a href="/Sale" className="sale">Sale</a>
             </>
           )}
           {/* <a href="/Category/Sale">Sale</a> */}

@@ -39,7 +39,7 @@ export default class NewArrival extends Component {
 
   render() {
     return (
-      <div className="Viewall">
+      <div className="NewArrival">
         {this.state.loading ? (
           <div className="load">
             <Lottie
@@ -59,7 +59,7 @@ export default class NewArrival extends Component {
               </div>
               <div className="horizontal"></div>
             </div>
-            <div className="ViewallProducts">
+            <div className="NewArrivalProducts">
               {this.state.products.map((item, index) => {
                 return <Card item={item} key={index} />;
               })}

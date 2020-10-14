@@ -1,4 +1,4 @@
-.items{
+.Orderitems{
     height: 110px;
     /* background-color: red; */
     width: 90%;
@@ -7,24 +7,25 @@
     justify-content: space-between;
     margin: 20px auto;
     margin-bottom: 0;
+    margin-left: 0;
     user-select: none;
     text-decoration: none;
     color: #000;
     /* position: relative; */
 }
 
-.items a{
+.Orderitems a{
     width: 25%;
     height: 100%;
 }
 
-.items a img{
+.Orderitems a img{
     width: 100%;
     height: 100%;
     object-fit: contain;
 }
 
-.items .description{
+.Orderitems .description{
     width: 70%;
     height: 87%;
     align-self: flex-end;
@@ -35,25 +36,25 @@
     position: relative;
 }
 
-.items .description p{
+.Orderitems .description p{
     font-size: 14px;
     font-weight: 600;
 }
 
-.items .description .price-cont{
+.Orderitems .description .price-cont{
     display: flex;
     justify-content: space-between;
     width: 100%;
     align-items: center;
 }
 
-.items .description .price{
+.Orderitems .description .price{
     font-weight: bold;
     font-size: 15px;
     margin-top: 10px;
 }
 
-.items .description a{
+.Orderitems .description a{
     position: absolute;
     bottom: 3px;
     right: 5px;
@@ -62,7 +63,7 @@
     font-weight: 500;
 }
 
-.items .description .counter{
+.Orderitems .description .counter{
     height: 25%;
     border: 1px solid grey;
     width: 30%;
@@ -74,7 +75,7 @@
     margin-top: 20px;
 }
 
-.items .description .counter .symbol{
+.Orderitems .description .counter .symbol{
     font-size: 18px;
     height: fit-content;
     padding-bottom: 2px;
@@ -84,7 +85,7 @@
     align-items: center;
 }
 
-.items .description .remove-link{
+.Orderitems .description .remove-link{
     position: absolute;
     right: 5px;
     bottom: 10px;

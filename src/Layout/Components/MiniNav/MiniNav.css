@@ -34,7 +34,7 @@
   align-items: center;
   height: 100%;
   cursor: pointer;
-  margin: 0 15px;
+  margin: 0 20px;
 }
 /* 
 .mini-container .tray a{
@@ -94,11 +94,12 @@
   width: 100%;
   padding: 8px 17px;
   font-weight: 500;
+  text-align: center;
 }
 
 .mini-container .tray .mini-content .category-options a:hover {
   color: #fb641b;
-  background-color: lightgrey;
+  background-color: #e5e5e5;
   /* font-weight: bold; */
 }
 
@@ -112,6 +113,20 @@
   justify-content: center;
   align-items: center;
   height: 100%;
+  margin: 0 15px;
+  cursor: pointer;
+}
+
+.mini-container .tray .sale {
+  color: #fb641b;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80%;
   margin: 0 15px;
   cursor: pointer;
 }

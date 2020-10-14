@@ -218,7 +218,7 @@ export default class Card extends React.Component {
                   "/" +
                   this.state.item.subCategory +
                   "/" +
-                  this.state.item.title
+                  this.state.item.id
                 }
               >
                 <img src={this.state.item.images[0]} alt="Bag-Icon" />
@@ -252,7 +252,7 @@ export default class Card extends React.Component {
                 "/" +
                 this.state.item.subCategory +
                 "/" +
-                this.state.item.title
+                this.state.item.id
               }
               className="short-description"
             >

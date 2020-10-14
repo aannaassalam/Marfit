@@ -269,9 +269,9 @@
 }
 
 .sidebar .items-container {
-  max-height: 53vh;
+  max-height: 57vh;
   width: 90%;
-  margin: 30px auto 0;
+  margin: 10px auto;
   overflow-y: scroll;
   scrollbar-width: thin;
 }

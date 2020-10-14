@@ -25,23 +25,15 @@ class OrdersComp extends Component {
       .collection("orders")
       .doc(this.props.item)
       .onSnapshot((order) => {
-        firebase
-          .firestore()
-          .collection("products")
-          .doc(order.data().products[0].id)
-          .get()
-          .then((product) => {
-            console.log(product.data().images[0]);
             this.setState({
-              orderimg: product.data().images[0],
-              ordertitle: product.data().title,
+              orderimg: order.data().products[0].images[0],
+              ordertitle: order.data().products[0].title,
               orderdate: order.data().date,
               ordertotal: order.data().total,
               orderstatus: order.data().status,
               totalproducts: order.data().products.length - 1,
               loading: false
             });
-          });
       });
   }
 

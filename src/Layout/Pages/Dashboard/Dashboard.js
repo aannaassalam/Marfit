@@ -10,7 +10,9 @@ import emptywish from "./10000-empty-box.json";
 import Card from "../../Components/Card/Card";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import refer from "../../../assets/refer.json";
+import redeem from "./lf30_editor_klzh9wdx.json";
 import OrdersComp from "../../Components/OrdersComp/OrdersComp";
+import circular from "../../../assets/circular loading.json";
 import moment from "moment";
 import { Link } from "react-router-dom";
 
@@ -46,6 +48,7 @@ class Dashboard extends React.Component {
       dob: "",
       gender: "",
       phone: "",
+      circular: false,
       alt: "",
       editProifleLoading: false,
       orders: [],
@@ -65,6 +68,7 @@ class Dashboard extends React.Component {
       appartment: "",
       address: "",
       email: "",
+      redeem: "",
     };
   }
 
@@ -77,15 +81,13 @@ class Dashboard extends React.Component {
           .where("email", "==", user.email)
           .onSnapshot((snap) => {
             snap.docChanges().forEach((change) => {
-              this.setState(
-                {
-                  currentUser: change.doc.data(),
-                  points: change.doc.data().points,
-                  addresses: change.doc.data().addresses,
-                  loading: false,
-                  orders: change.doc.data().orders,
-                }
-              );
+              this.setState({
+                currentUser: change.doc.data(),
+                points: change.doc.data().points,
+                addresses: change.doc.data().addresses,
+                loading: false,
+                orders: change.doc.data().orders,
+              });
             });
           });
       } else {
@@ -237,6 +239,73 @@ class Dashboard extends React.Component {
     }
   }
 
+  handleRedeem = () => {
+    this.setState({
+      circular: true,
+    });
+    firebase
+      .firestore()
+      .collection("gift cards")
+      .onSnapshot((snap) => {
+        snap.docChanges().forEach((changes) => {
+          if (this.state.redeem === changes.doc.data().name) {
+            console.log(1);
+            if (!changes.doc.data().redeem) {
+              console.log(2)
+              firebase
+                .firestore()
+                .collection("users")
+                .where("email", "==", this.state.currentUser.email)
+                .get()
+                .then((snap) => {
+                  snap.forEach((doc) => {
+                    var points = doc.data().points + changes.doc.data().value;
+                    firebase
+                      .firestore()
+                      .collection("users")
+                      .doc(doc.id)
+                      .update({
+                        points: points,
+                      })
+                      .then(() => {
+                        console.log(3);
+                        firebase
+                          .firestore()
+                          .collection("gift cards")
+                          .doc(changes.doc.id)
+                          .update({
+                            redeem: true,
+                          })
+                          .then(() => {
+                            console.log(4);
+                            toaster.notify(
+                              "Redeem of " +
+                                changes.doc.data().value +
+                                " points is Successfull"
+                            );
+                            this.setState({
+                              circular: false,
+                            });
+                          });
+                      });
+                  });
+                });
+            }else{
+              toaster.notify("You already claimed this offer");
+              this.setState({
+                circular: false
+              })
+            }
+          } else {
+            toaster.notify("Invalid gift card code");
+            this.setState({
+              circular: false,
+            });
+          }
+        });
+      });
+  };
+
   render() {
     console.log(this.state.orders);
     return (
@@ -315,6 +384,16 @@ class Dashboard extends React.Component {
                     onClick={() => this.setState({ tab: "Refer" })}
                   >
                     Refer & Earn
+                  </div>
+                )}
+                {this.state.tab === "Redeem" ? (
+                  <div className="menu-active">Redeem</div>
+                ) : (
+                  <div
+                    className="menu"
+                    onClick={() => this.setState({ tab: "Redeem" })}
+                  >
+                    Redeem
                   </div>
                 )}
               </div>
@@ -522,9 +601,8 @@ class Dashboard extends React.Component {
                     ) : (
                       <div className="order-container">
                         {this.state.orders.map((item, index) => {
-                          return (
-                            <OrdersComp item={item} key={index}/>
-                        )})}
+                          return <OrdersComp item={item} key={index} />;
+                        })}
                       </div>
                     )}
                   </>
@@ -782,6 +860,60 @@ class Dashboard extends React.Component {
                           <FacebookIcon size={32} round />
                         </FacebookShareButton>
                       </div> */}
+                      </div>
+                    </div>
+                  </>
+                ) : null}
+                {this.state.tab === "Redeem" ? (
+                  <>
+                    <h1>Redeem</h1>
+                    <div className="divider"></div>
+                    <div className="redeem-cont">
+                      <div className="redeemCard">
+                        <Lottie
+                          options={{ animationData: redeem }}
+                          width={500}
+                          height={500}
+                          style={{ position: "absolute", top: "-130px" }}
+                        />
+                      </div>
+                      <div className="redeemCode">
+                        <div className="redeemInput">
+                          <input
+                            type="text"
+                            id="redeem"
+                            onChange={this.handleChange}
+                            placeholder="XXXX-XXXX-XXXX"
+                            maxLength={10}
+                          />
+                          {this.state.circular ? (
+                            <button
+                              type="button"
+                              disabled
+                              className="redeem active"
+                            >
+                              <Lottie
+                                options={{ animationData: circular }}
+                                width={30}
+                                height={30}
+                              />
+                            </button>
+                          ) : (
+                            <button
+                              type="button"
+                              className={
+                                this.state.redeem.length > 0
+                                  ? "redeem active"
+                                  : "redeem"
+                              }
+                              onClick={() => {
+                                this.handleRedeem();
+                              }}
+                            >
+                              Redeem
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </>

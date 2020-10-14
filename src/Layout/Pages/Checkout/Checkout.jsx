@@ -64,6 +64,7 @@ export default class Checkout extends React.Component {
                         .then((doc) => {
                           var product = doc.data();
                           product.id = doc.id;
+                          product.quantity = item.quantity;
                           this.setState({
                             products: [...this.state.products, product],
                           });
@@ -156,19 +157,16 @@ export default class Checkout extends React.Component {
             //   })
             // .then(() => {
             console.log("done");
-            var product = [];
-            this.state.cart.forEach((item) => {
-              var tempItem = {};
-              tempItem.quantity = item.quantity;
-              tempItem.id = item.id;
-              tempItem.rate = false;
-              product.push(tempItem);
+            var products = [];
+            this.state.products.forEach((product) => {
+              product.rate = false;
+              products.push(product);
             });
             firebase
               .firestore()
               .collection("orders")
               .add({
-                products: product,
+                products: products,
                 date: new Date(),
                 points: this.state.points,
                 user: this.state.userID,

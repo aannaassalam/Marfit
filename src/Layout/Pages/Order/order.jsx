@@ -1,7 +1,7 @@
 import React from "react";
 import "./order.css";
 import firebase from "firebase";
-import CartCard from "../../Components/Cart-card/Cart-card";
+import OrderCard from "../../Components/OrderCard/OrderCard";
 import loading from "../../../assets/loading.json";
 import circleLoading from "../../../assets/circular loading.json";
 import Lottie from "lottie-react-web";
@@ -292,11 +292,9 @@ export default class Order extends React.Component {
               <div className="items-container">
                 {this.state.order &&
                   this.state.order.products.map((item, index) => (
-                    <CartCard
+                    <OrderCard
                       item={item}
                       key={index}
-                      show={false}
-                      quantity={item.quantity}
                     />
                   ))}
               </div>
@@ -336,18 +334,13 @@ export default class Order extends React.Component {
                         ) {
                           return (
                             <>
-                              <CartCard
+                              <OrderCard
                                 item={
                                   this.state.rateProducts[
                                     this.state.reviewProductCount
                                   ]
                                 }
-                                show={false}
-                                quantity={
-                                  this.state.rateProducts[
-                                    this.state.reviewProductCount
-                                  ].quantity
-                                }
+                                key={index}
                               />
                               <div className="rating">
                                 <div className="stars">
