@@ -91,10 +91,17 @@
   color: red;
 }
 
+@media(max-width: 768px){
+  .card-cont {
+    height: 250px;
+    width: 210px;
+  }
+}
+
 @media only screen and (max-width: 580px){
   .card-cont{
     /* transform: scale(0.3); */
-    width: 46% !important;
+    width: 45% !important;
     margin-right: 0.6rem !important;
   }
 }

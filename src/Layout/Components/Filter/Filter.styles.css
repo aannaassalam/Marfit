@@ -1,5 +1,5 @@
 .filter-container {
-  width: 25%;
+  width: 100%;
   background-color: #fff;
   display: flex;
   flex-direction: column;
@@ -198,3 +198,14 @@
   color: #787878;
   font-weight: normal;
 }
+/* 
+@media(max-width: 768px){
+  .filter-container {
+    width: 35%;
+  }
+}
+@media(max-width: 680px){
+  .filter-container{
+    display: none;
+  }
+} */

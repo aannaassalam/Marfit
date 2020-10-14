@@ -45,8 +45,10 @@ class ProductList extends React.Component {
       month: 3,
       min: 100,
       max: 5000,
+      filter: false
     };
   }
+  
   componentDidMount() {
     firebase
       .firestore()
@@ -210,6 +212,12 @@ class ProductList extends React.Component {
       }
     );
   };
+
+  handleShowFilter=() =>{
+    this.setState({
+      filter:!this.state.filter
+    })
+  }
 
   handleRentRange = (min, max) => {
     var products = this.state.productList;
@@ -444,6 +452,10 @@ class ProductList extends React.Component {
                         <img src={filter} alt="filter-logo" />
                         <p>Filters</p>
                       </div>
+                      <div className="filter-inPhone" onClick={this.handleShowFilter}>
+                        <img src={filter} alt="filter-logo" />
+                        <p>Filter</p>
+                      </div>
                       <div className="reset">
                         <button onClick={this.handleReset}>Reset</button>
                       </div>
@@ -455,6 +467,7 @@ class ProductList extends React.Component {
 
                   {/* Product List catalogue */}
                   <div className="catalogue">
+                    <div className="filter">
                     <Filter
                       handleMonths={(e) => this.handleMonths(e)}
                       category={this.state.category}
@@ -474,6 +487,29 @@ class ProductList extends React.Component {
                       max={this.state.max}
                       month={this.state.month}
                     />
+                    </div>
+                    <div className={this.state.filter?"mobile-filter-active":"mobile-filter"}>
+                    <Filter
+                      handleMonths={(e) => this.handleMonths(e)}
+                      category={this.state.category}
+                      subCat={this.props.match.params.id2}
+                      type={this.state.type}
+                      handleProductAddType={(e) => this.handleProductAddType(e)}
+                      handleProductRemoveType={(e) =>
+                        this.handleProductRemoveType(e)
+                      }
+                      handleRentRange={(min, max) =>
+                        this.handleRentRange(min, max)
+                      }
+                      handleProductInStock={this.handleProductInStock}
+                      handleProductOutStock={this.handleProductOutStock}
+                      outStock={this.state.outStock}
+                      min={this.state.min}
+                      max={this.state.max}
+                      month={this.state.month}
+                    />
+                    </div>
+
                     <div className="card-list-container">
                       <div className="card-list">
                         {this.state.filterProductList.length > 0 ? (
