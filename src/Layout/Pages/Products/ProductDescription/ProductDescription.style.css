@@ -636,4 +636,7 @@
     height: 28px;
     padding: 0.1rem;
   }
+  .categorylist-breadcrumb{
+    display: none;
+  }
 }

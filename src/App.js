@@ -24,7 +24,7 @@ function App() {
     <div className="App">
       <Couponbar />
       <Navbar />
-      {/* <MiniNav /> */}
+      <MiniNav />
       <AnimatePresence>
         <Switch location={location} key={location.pathname}>
           <Route exact path="/" component={Home} />
