@@ -453,6 +453,9 @@
   width: 80%;
   margin: 30px 0;
 }
+.product-desc .description-section .rating .rating-header .rating-body{
+  display: flex;
+}
 
 .product-desc .description-section .rating .rating-header h3 {
   font-size: 24px;
@@ -465,7 +468,8 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  width: 10%;
+  /* width: 45%; */
+  padding: 0.7rem;
   border-radius: 50px;
   background-color: #26a541;
   color: #fff;
@@ -553,4 +557,83 @@
   font-size: 12px;
   color: #878787;
   margin-right: 10px;
+}
+
+@media(max-width: 768px){
+  .product-container{
+    height: auto;
+  }
+  .product-desc {
+    flex-direction: column;
+    /* position: relative; */
+  }
+  .product-desc .all-product-image {
+    width: 100%;
+  }
+  .product-desc .description-section {
+    width: 100%;
+  }
+  .product-desc .description-section {
+    overflow-y: visible;
+  }
+  .product-desc .all-product-image .buying-options {
+    position: fixed;
+    /* position: sticky;
+    bottom: 0px; */
+    /* background: #fff; */
+    padding-bottom: 20px;
+    padding-top: 20px;
+    justify-content: center;
+  }
+  .product-desc .all-product-image .buying-options .option{
+    width: 40%;
+    height: 52px;
+  }
+  .product-desc .all-product-image .carousal-section {
+    flex-direction: column-reverse;
+  }
+  .product-desc .all-product-image .carousal-section .product-images {
+    width: 100%;
+    display: flex;
+    padding-top: 3rem;
+  }
+  .product-desc .all-product-image .carousal-section .product-image {
+    width: 100%;
+  }
+}
+
+@media(max-width: 680px){
+  .product-desc{
+    margin: 0px;
+    width: 100%;
+  }
+  .product-container{
+    display: flex;
+    justify-content: center;
+  }
+  .product-desc .description-section {
+    padding: 1rem;
+  }
+  .product-desc .description-section .other-details {
+    width: 100%;
+    height: 165px;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .product-desc .description-section .rating .rating-header {
+    flex-direction: column;
+  }
+  .product-desc .description-section .rating .rating-header .rating-body .stars {
+    width: 18%;
+    padding: 0.7rem;
+  }
+  .product-desc .description-section .rating .rating-body{
+    display: flex;
+    flex-direction: row;
+  }
+  .product-desc .description-section .rating .review-list .reviews .upper .stars-mini {
+    width: 14%;
+    height: 28px;
+    padding: 0.1rem;
+  }
 }

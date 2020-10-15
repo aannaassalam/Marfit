@@ -643,11 +643,13 @@ export default class ProductDesc extends React.Component {
                     <div className="rating">
                       <div className="rating-header">
                         <h3>Ratings & Review</h3>
+                      <div className="rating-body">
                         <div className="stars">
                           <p>5</p>
                           <i className="fas fa-star"></i>
-                        </div>
+                      </div>
                         <p className="rating-size">38 ratings & 9 reviews</p>
+                        </div>
                       </div>
                       <div className="review-list">
                         <div className="reviews">
