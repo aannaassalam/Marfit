@@ -113,6 +113,81 @@
   width: 48%;
 }
 
+.checkout .left .info .addressInput .address {
+  width: 99%;
+  height: 80px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid lightgrey;
+  padding: 0 1rem;
+}
+
+.checkout .left .info .addressInput .address.selected{
+  border: 1px solid #FB641B;
+  border-radius: 10px;
+}
+
+.checkout .left .info .addressInput .address.address.selected .circle{
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background-color: #FB641B;
+}
+
+.checkout .left .info .addressInput .address .paras {
+  width: 80%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: flex-start;
+}
+
+.checkout .left .info .addressInput .address .paras p {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.checkout .left .info .addressInput .address .paras p:nth-child(2),
+.checkout .left .info .addressInput .address .paras p:nth-child(3) {
+  margin-left: 15px;
+  font-weight: 600;
+  margin-bottom: initial;
+}
+
+.checkout .left .info .addressInput .addAddress{
+  height: 70px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 1.5rem;
+  cursor: pointer;
+}
+
+.checkout .left .info .addressInput .addAddress .plus{
+  height: 25px;
+  width: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: green;
+  border-radius: 50%;
+}
+
+.checkout .left .info .addressInput .addAddress .plus i{
+  font-size: 14px;
+  color: #fff;
+}
+
+.checkout .left .info .addressInput .addAddress p{
+  margin-left: 15px;
+  font-size: 15px;
+  font-weight: 500;
+}
+
 .checkout .left .placeOrder{
   width: 60%;
   margin: 30px auto;

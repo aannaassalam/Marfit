@@ -61,7 +61,6 @@ export default class MiniNav extends React.Component {
               <a href="/Sale" className="sale">Sale</a>
             </>
           )}
-          {/* <a href="/Category/Sale">Sale</a> */}
         </div>
       </div>
     );

@@ -102,7 +102,7 @@
   }
 
   .card .card-title .card-title-mini p {
-    font-size: 14px;
+    font-size: 16px;
   }
 
   .card .card-title a {
@@ -118,6 +118,10 @@
 
   .card .card-title .card-title-mini .lines .horizontal {
     width: 25px;
+  }
+  
+  .card .slider .swiper-container .swiper-wrapper .swiper-slide{
+    height: auto;
   }
 }
 

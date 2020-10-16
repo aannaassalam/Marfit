@@ -4,7 +4,7 @@
     flex-direction: row;
     align-items: center;
     width: 100%;
-    height: 70vh;
+    height: 500px;
 }
 
 .about img{
@@ -37,10 +37,16 @@
     text-align: center;
 }
 
-@media (max-width: 768px){
+@media(max-width: 768px){
+    .about{
+        height: 400px;
+    }
+}
+
+@media (max-width: 680px){
     .about{
         flex-direction: column;
-        height: 100vh;
+        height: 800px;
     }
     
     .about img{

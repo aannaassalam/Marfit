@@ -26,6 +26,8 @@ export default class Navbar extends React.Component {
       hamburgerActive: false,
       showMenu: false,
       searchbtn: false,
+      products: [],
+      searchedItems: []
     };
   }
 
@@ -52,6 +54,15 @@ export default class Navbar extends React.Component {
       }
       
     });
+    firebase.firestore().collection("products").onSnapshot(snap => {
+      snap.docChanges().forEach(changes => {
+        var product = changes.doc.data();
+        product.id = changes.doc.id;
+        this.setState({
+          products: [...this.state.products, product]
+        })
+      })
+    })
   }
 
   handleCart = () => {
@@ -59,6 +70,17 @@ export default class Navbar extends React.Component {
       showCart: true,
     });
   };
+
+  handleSearch = (e) => {
+    this.state.products.map(product => {
+      if(product.title.toLowerCase().includes(e.target.value.toLowerCase())){
+        this.setState({
+          searchedItems: [...this.state.searchedItems, product]
+        })
+        console.log(product);
+      }
+    })
+  }
 
   handleCartClose = () => {
     this.setState({
@@ -116,11 +138,34 @@ export default class Navbar extends React.Component {
                 name="search"
                 id="search"
                 placeholder="What are you looking for ?"
+                onChange={this.handleSearch}
               />
             </div>
             <button>
               <i className="fa fa-search"></i>
             </button>
+            <div className="searchResult">
+              { 
+                this.state.searchedItems.length > 0 
+                ?
+                this.state.searchedItems.map(item => {
+                  console.log(item)
+                  return(
+                  <div className="result">
+                    <img src={item.images[0]} alt="item image"/>
+                    <div className="resultTitle">
+                      <p>{item.title}</p>
+                      <p>in {item.category}</p>
+                    </div>
+                  </div>
+                  )
+                })
+                :
+                <div className="errorMsg">
+                  <p>No item matched with your search</p>
+                </div>
+              }
+            </div>
           </div>
           <div
             className={

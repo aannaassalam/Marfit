@@ -17,6 +17,7 @@ export default class Checkout extends React.Component {
       currentUser: "",
       loginStatus: "",
       email: "",
+      addresses: [],
       address: "",
       phone: "",
       state: "",
@@ -30,6 +31,8 @@ export default class Checkout extends React.Component {
       userID: "",
       loading: true,
       products: [],
+      selectedAddress: null,
+      addAddress: false
     };
   }
 
@@ -43,12 +46,18 @@ export default class Checkout extends React.Component {
           .get()
           .then((snap) => {
             snap.forEach((doc) => {
+              console.log(doc.data())
+              if(doc.data().addresses.length === 0){
+                this.setState({
+                  addAddress: true
+                })
+              }
               this.setState(
                 {
                   cart: doc.data().cart,
                   currentUser: doc.data(),
                   email: doc.data().email,
-                  address: doc.data().address,
+                  addresses: doc.data().addresses,
                   phone: doc.data().phone,
                   points: doc.data().points,
                   userID: doc.id,
@@ -89,6 +98,8 @@ export default class Checkout extends React.Component {
                           firstName: this.state.currentUser.name,
                           loading: false,
                         });
+
+                        
                   } else {
                     window.location.href = "/";
                   }
@@ -127,6 +138,15 @@ export default class Checkout extends React.Component {
   }
 
   handlePay = (total, subtotal, shipping) => {
+    console.log(this.state.email);
+    console.log(this.state.country);
+    console.log(this.state.state);
+    console.log(this.state.phone);
+    console.log(this.state.address);
+    console.log(this.state.city);
+    console.log(this.state.pincode);
+    console.log(this.state.firstName);
+    console.log(this.state.lastName);
     if (
       this.state.email.length > 0 &&
       this.state.country.length > 0 &&
@@ -217,7 +237,12 @@ export default class Checkout extends React.Component {
       const rzp1 = new window.Razorpay(options);
       rzp1.open();
     } else {
-      toaster.notify("Please Fill in all the fields");
+      if(!this.state.addAddress){
+        toaster.notify("Please select any address");
+      }
+      else{
+        toaster.notify("Please Fill in all the fields");
+      }
     }
   };
 
@@ -227,6 +252,24 @@ export default class Checkout extends React.Component {
       [name]: value,
     });
   };
+
+  handleAddress = (index) => {
+    var address = this.state.addresses[index];
+    console.log(address);
+    this.setState({
+      phone: address.phone,
+      state: address.state,
+      country: address.country,
+      firstName: address.firstName,
+      lastName: address.lastName,
+      apartment: address.appartment,
+      city: address.city,
+      pincode: address.pincode,
+      email: address.email,
+      address: address.address,
+      selectedAddress: index
+    })
+  }
 
   render() {
     var subTotal = 0;
@@ -257,6 +300,9 @@ export default class Checkout extends React.Component {
       value = 0;
     }
 
+    console.log(this.state.address);
+    console.log(this.state.addresses);
+
     return (
       <div className="checkout">
         {this.state.loading ? (
@@ -280,7 +326,53 @@ export default class Checkout extends React.Component {
               )}
 
               <main className="info">
-                <div className="contact">
+                {
+                  !this.state.addAddress ? 
+                    <div className="addressInput">
+                      {this.state.addresses.map((address, index) => {
+                              if(this.state.selectedAddress === index){
+                                return(
+                                <div className="address selected" key={index} onClick={() => this.handleAddress(index)}>
+                                  <div className="paras">
+                                    <p>Address {index + 1} :</p>
+                                    <p>
+                                      {address.firstName} {address.lastName}
+                                    </p>
+                                    <p>{address.address}</p>
+                                  </div>
+                                  <div className="circle">
+                                  </div>
+                                </div>
+                                )
+                              }else{
+                                return(
+                                  <div className="address" key={index} onClick={() => this.handleAddress(index)}>
+                                <div className="paras">
+                                  <p>Address {index + 1} :</p>
+                                  <p>
+                                    {address.firstName} {address.lastName}
+                                  </p>
+                                  <p>{address.address}</p>
+                                </div>
+                                <div className="circle">
+                                </div>
+                              </div>
+                                )
+                              }
+                            })}
+                            <div className="addAddress" onClick={() => this.setState({
+                              addAddress: true
+                            })}>
+                              <div className="plus">
+                                <i className="fas fa-plus"></i>
+                              </div>
+                              <p>Add New Address</p>
+                            </div>
+                    </div>
+                  :
+
+                  <>
+                  <div className="contact">
                   <div className="contact-label">
                     <p className="heading">Contact information</p>
                   </div>
@@ -381,6 +473,8 @@ export default class Checkout extends React.Component {
                     onChange={this.handleChange}
                   />
                 </div>
+                </>
+                }
               </main>
               <div className="placeOrder">
                 <a>

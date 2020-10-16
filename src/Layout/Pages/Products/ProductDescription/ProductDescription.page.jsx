@@ -40,7 +40,7 @@ export default class ProductDesc extends React.Component {
       cart: [],
       product: {},
       simProducts: [],
-      sizeSelected: 1,
+      sizeSelected: "XS",
       usersQuantity: 1,
       currentUser: "",
       loading: true,
@@ -149,7 +149,7 @@ export default class ProductDesc extends React.Component {
               var tempCart = {};
               tempCart.id = this.state.product.id;
               tempCart.quantity = this.state.usersQuantity;
-              tempCart.size = this.state.size;
+              tempCart.size = this.state.sizeSelected;
               cart.push(tempCart);
               console.log(cart);
               firebase
@@ -523,60 +523,60 @@ export default class ProductDesc extends React.Component {
                         <div className="size">
                           <p
                             className={
-                              this.state.sizeSelected === 1
+                              this.state.sizeSelected === "XS"
                                 ? "sizeSelected"
                                 : null
                             }
                             onClick={() => {
-                              this.setState({ sizeSelected: 1 });
+                              this.setState({ sizeSelected: "XS" });
                             }}
                           >
                             XS
                           </p>
                           <p
                             className={
-                              this.state.sizeSelected === 2
+                              this.state.sizeSelected === "S"
                                 ? "sizeSelected"
                                 : null
                             }
                             onClick={() => {
-                              this.setState({ sizeSelected: 2 });
+                              this.setState({ sizeSelected: "S" });
                             }}
                           >
                             S
                           </p>
                           <p
                             className={
-                              this.state.sizeSelected === 3
+                              this.state.sizeSelected === "M"
                                 ? "sizeSelected"
                                 : null
                             }
                             onClick={() => {
-                              this.setState({ sizeSelected: 3 });
+                              this.setState({ sizeSelected: "M" });
                             }}
                           >
                             M
                           </p>
                           <p
                             className={
-                              this.state.sizeSelected === 4
+                              this.state.sizeSelected === "L"
                                 ? "sizeSelected"
                                 : null
                             }
                             onClick={() => {
-                              this.setState({ sizeSelected: 4 });
+                              this.setState({ sizeSelected: "L" });
                             }}
                           >
                             L
                           </p>
                           <p
                             className={
-                              this.state.sizeSelected === 5
+                              this.state.sizeSelected === "XL"
                                 ? "sizeSelected"
                                 : null
                             }
                             onClick={() => {
-                              this.setState({ sizeSelected: 5 });
+                              this.setState({ sizeSelected: "XL" });
                             }}
                           >
                             XL
