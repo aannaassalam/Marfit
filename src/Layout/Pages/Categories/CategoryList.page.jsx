@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import "./CategoryList.style.css";
-
+import Loader from "../../Components/Loader/Loader";
 import SubCategoryList from "./Sections/Subcategory/Subcategory";
 import MostRated from "./Sections/MostRated/MostRated";
 import Lottie from "lottie-react-web";
@@ -110,21 +110,7 @@ class CategoryList extends React.Component {
     return (
       <>
         {this.state.loading ? (
-          <div
-            style={{
-              width: "100%",
-              height: "100vh",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Lottie
-              options={{ animationData: loading }}
-              width={150}
-              height={150}
-            />
-          </div>
+          <Loader />
         ) : (
           <motion.div
             initial="initial"

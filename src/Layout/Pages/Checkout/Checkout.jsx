@@ -5,6 +5,7 @@ import Login from "../../Components/Login/Login";
 import toaster from "toasted-notes";
 import loading from "../../../assets/loading.json";
 import Lottie from "lottie-react-web";
+import Loader from "../../Components/Loader/Loader";
 import CartCard from "../../Components/Cart-card/Cart-card";
 
 export default class Checkout extends React.Component {
@@ -109,16 +110,33 @@ export default class Checkout extends React.Component {
           });
       } else {
         this.setState({
-          cart: JSON.parse(localStorage.getItem("cart")),
+          cart: JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [],
           currentUser: "",
-          loading: false,
+          userID: "",
+          addAddress: true
         },() => {
-          if(this.state.cart.length < 0){
+          if(this.state.cart.length > 0){
+            this.state.cart.forEach((item) => {
+              firebase
+                .firestore()
+                .collection("products")
+                .doc(item.id)
+                .get()
+                .then((doc) => {
+                  var product = doc.data();
+                  product.id = doc.id;
+                  product.quantity = item.quantity;
+                  this.setState({
+                    products: [...this.state.products, product],
+                    loading: false,
+                  });
+                });
+            });
+          }else{
             window.location.href = "/";
           }
-        });
-      }
-    });
+        })
+      }});
     firebase
       .firestore()
       .collection("settings")
@@ -138,15 +156,6 @@ export default class Checkout extends React.Component {
   }
 
   handlePay = (total, subtotal, shipping) => {
-    console.log(this.state.email);
-    console.log(this.state.country);
-    console.log(this.state.state);
-    console.log(this.state.phone);
-    console.log(this.state.address);
-    console.log(this.state.city);
-    console.log(this.state.pincode);
-    console.log(this.state.firstName);
-    console.log(this.state.lastName);
     if (
       this.state.email.length > 0 &&
       this.state.country.length > 0 &&
@@ -162,9 +171,7 @@ export default class Checkout extends React.Component {
         name: "Marfit",
         amount: total * 100,
         handler: async (response) => {
-          console.log("succ");
           try {
-            console.log("ess");
             // firebase
             //   .firestore()
             //   .collection("payments")
@@ -176,7 +183,6 @@ export default class Checkout extends React.Component {
             //     amount: this.state.amount,
             //   })
             // .then(() => {
-            console.log("done");
             var products = [];
             this.state.products.forEach((product) => {
               product.rate = false;
@@ -191,6 +197,12 @@ export default class Checkout extends React.Component {
                 points: this.state.points,
                 user: this.state.userID,
                 address: this.state.address,
+                appartment: this.state.appartment,
+                city: this.state.city,
+                country: this.state.country,
+                pincode: this.state.pincode,
+                phone: this.state.phone,
+                state: this.state.state,
                 coupon: this.state.coupon,
                 total: total,
                 shipping: shipping,
@@ -198,7 +210,8 @@ export default class Checkout extends React.Component {
                 status: "Pending",
               })
               .then((res) => {
-                firebase
+                if(this.state.currentUser.length > 0){
+                  firebase
                   .firestore()
                   .collection("users")
                   .doc(this.state.userID)
@@ -216,13 +229,29 @@ export default class Checkout extends React.Component {
                         points: 0,
                       })
                       .then(() => {
-                        window.location.href = "/";
+                        window.location.href = "/Orders/" + res.id;
                       });
                   });
+                }else{
+                    firebase
+                      .firestore()
+                      .collection("users")
+                      .add({
+                        orders: [res.id],
+                        email: this.state.email,
+                        phone: this.state.phone,
+                        firstName: this.state.firstName,
+                        lastName: this.state.lastName
+                      })
+                      .then(() => {
+                        localStorage.removeItem("cart");
+                        window.location.href = "/Orders/" + res.id;
+                      });
+                }
               });
             // });
           } catch (err) {
-            console.log(err);
+            toaster.notify("Oops! Something went wrong");
           }
         },
         prefill: {
@@ -255,7 +284,6 @@ export default class Checkout extends React.Component {
 
   handleAddress = (index) => {
     var address = this.state.addresses[index];
-    console.log(address);
     this.setState({
       phone: address.phone,
       state: address.state,
@@ -306,11 +334,7 @@ export default class Checkout extends React.Component {
     return (
       <div className="checkout">
         {this.state.loading ? (
-          <Lottie
-            options={{ animationData: loading }}
-            width={100}
-            height={100}
-          />
+          <Loader />
         ) : (
           <>
             <div className="left">
@@ -370,7 +394,6 @@ export default class Checkout extends React.Component {
                             </div>
                     </div>
                   :
-
                   <>
                   <div className="contact">
                   <div className="contact-label">

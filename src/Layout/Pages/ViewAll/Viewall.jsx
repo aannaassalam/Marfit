@@ -4,6 +4,7 @@ import firebase from "firebase";
 import Lottie from "lottie-react-web";
 import loading from "../../../assets/loading.json";
 import "./ViewAll.css";
+import Loader from "../../Components/Loader/Loader";
 
 export default class Viewall extends Component {
   constructor(props) {
@@ -65,15 +66,9 @@ export default class Viewall extends Component {
     return (
       <div className="Viewall">
         {this.state.loading ? (
-          <div className="load">
-            <Lottie
-              options={{ animationData: loading }}
-              width={100}
-              height={100}
-            />
-          </div>
+          <Loader />
         ) : (
-          <>
+          <Loader>
             <p>{this.state.data.title}</p>
             <div className="lines">
               <div className="horizontal"></div>
@@ -88,7 +83,7 @@ export default class Viewall extends Component {
                 return <Card item={item} />;
               })}
             </div>
-          </>
+          </Loader>
         )}
       </div>
     );

@@ -1,14 +1,37 @@
 import React from "react";
 import Banner from "./Sections/Banner/Banner";
+import { motion } from "framer-motion";
 import FeatureItems from "./Sections/FeatureItems/FeatureItems";
 import Slider from "../../Components/Slider/Slider";
 import Add from "./Sections/Add/Add";
 import About from "./Sections/About/About";
 import Lottie from "lottie-react-web";
 import loading from "../../../assets/loading.json";
+import Loader from "../../Components/Loader/Loader";
 import "./Home.css";
 import firebase from "firebase";
 
+
+const pageVariants = {
+  initial: {
+    opacity: 0,
+    x: "-100vw",
+  },
+  in: {
+    opacity: 1,
+    x: 0,
+  },
+  out: {
+    opacity: 0,
+    x: 0,
+  },
+};
+
+const pageTransition = {
+  type: "spring",
+  damping: 20,
+  stiffness: 100,
+};
 export default class Home extends React.Component {
   constructor(props) {
     super(props);
@@ -38,19 +61,18 @@ export default class Home extends React.Component {
   }
 
   render() {
-    console.log(this.state.sliders);
     return (
       <div className="main">
         {this.state.loading ? (
-          <div className="load">
-          <Lottie
-            options={{ animationData: loading }}
-            width={100}
-            height={100}
-          />
-          </div>
+          <Loader />
         ) : (
-          <>
+          <motion.div
+              initial="initial"
+              animate="in"
+              exit="out"
+              variants={pageVariants}
+              transition={pageTransition}
+            >
             <Banner />
             <FeatureItems />
             <Slider
@@ -79,7 +101,7 @@ export default class Home extends React.Component {
                   view={this.state.viewAll}
                 />
               ))}
-          </>
+            </motion.div>
         )}
 
         {/* 

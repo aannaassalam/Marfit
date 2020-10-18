@@ -6,6 +6,7 @@ import loading from "../../../assets/loading.json";
 import circleLoading from "../../../assets/circular loading.json";
 import Lottie from "lottie-react-web";
 import toaster from "toasted-notes";
+import Loader from "../../Components/Loader/Loader";
 
 export default class Order extends React.Component {
   constructor(props) {
@@ -153,11 +154,7 @@ export default class Order extends React.Component {
     return (
       <div className="container">
         {this.state.loading ? (
-          <Lottie
-            options={{ animationData: loading }}
-            width={100}
-            height={100}
-          />
+          <Loader />
         ) : (
           <div className="container-main">
             <div className="content">
@@ -303,12 +300,16 @@ export default class Order extends React.Component {
                   <p className="sub-title">Shipping</p>
                   <p>+ &#8377; {this.state.order.shipping}</p>
                 </div>
-                <div className="points-sub">
-                  <p className="sub-title">
-                    Points ({this.state.order.points})
-                  </p>
-                  <p>- &#8377; {this.state.order.points}</p>
-                </div>
+                {
+                  this.state.order.points ? 
+                  <div className="points-sub">
+                    <p className="sub-title">
+                      Points ({this.state.order.points})
+                    </p>
+                    <p>- &#8377; {this.state.order.points}</p>
+                  </div>
+                : null
+                }
               </div>
               <div className="total">
                 <p>TOTAL</p>

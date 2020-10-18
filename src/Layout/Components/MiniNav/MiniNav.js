@@ -3,6 +3,7 @@ import "./MiniNav.css";
 import Lottie from "lottie-react-web";
 import loading  from "../../../assets/loading.json";
 import firebase from "firebase";
+import Loader from "../Loader/Loader";
 
 export default class MiniNav extends React.Component {
   constructor(props) {
@@ -31,11 +32,7 @@ export default class MiniNav extends React.Component {
       <div className="mini-container">
         <div className="tray">
           {this.state.loading ? (
-            <Lottie
-              options={{ animationData: loading }}
-              width={50}
-              height={50}
-            />
+            <Loader />
           ) : (
             <>
             <a href="/NewArrivals" className="new">New Arrivals</a>

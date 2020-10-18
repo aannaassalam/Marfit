@@ -3,6 +3,7 @@ import Card from "../../Components/Card/Card";
 import firebase from "firebase";
 import Lottie from "lottie-react-web";
 import loading from "../../../assets/loading.json";
+import Loader from "../../Components/Loader/Loader";
 import "./NewArrival.css";
 
 export default class NewArrival extends Component {
@@ -41,13 +42,7 @@ export default class NewArrival extends Component {
     return (
       <div className="NewArrival">
         {this.state.loading ? (
-          <div className="load">
-            <Lottie
-              options={{ animationData: loading }}
-              width={100}
-              height={100}
-            />
-          </div>
+          <Loader />
         ) : (
           <>
             <p>New Arrivals</p>

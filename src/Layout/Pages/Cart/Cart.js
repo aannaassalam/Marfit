@@ -32,9 +32,6 @@ export default class Cart extends React.Component {
                 cart: change.doc.data().cart,
                 currentUser: change.doc.data()
               },() => {
-                this.setState({
-                  products: []
-                })
                 this.state.cart.forEach(item => {
                   firebase.firestore().collection("products").doc(item.id).get().then(doc => {
                     var product = doc.data();
@@ -50,11 +47,24 @@ export default class Cart extends React.Component {
           });
       } else {
         setInterval(() => {
-          var cart = JSON.parse(localStorage.getItem("cart"));
+          
+        }, 1000);
+        var cart = JSON.parse(localStorage.getItem("cart"));
         this.setState({
           cart: cart ? cart : [],
+        }, () => {
+          this.state.cart.forEach(item => {
+            firebase.firestore().collection("products").doc(item.id).get().then(doc => {
+              var product = doc.data();
+              product.id = doc.id;
+              console.log(product);
+              this.setState({
+                products: [...this.state.products, product]
+              })
+            })
+          })
         });
-        }, 1000);
+          
       }}) 
     firebase
       .firestore()
@@ -201,9 +211,6 @@ export default class Cart extends React.Component {
 
   render() {
     var total = 0;
-    var i = 0;
-    console.log(this.state.products);
-    console.log(this.state.cart);
     if (this.state.cart.length > 0) {
       this.state.cart.forEach(data => {
         this.state.products.map(item => {

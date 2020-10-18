@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import Lottie from "lottie-react-web";
 import empty from "./629-empty-box.json";
 import loading from "../../../../assets/loading.json";
+import Loader from "../../../Components/Loader/Loader";
 import toaster from "toasted-notes";
 import ReactImageMagnify from "react-image-magnify";
 import firebase from "firebase";
@@ -318,21 +319,7 @@ export default class ProductDesc extends React.Component {
     return (
       <>
         {this.state.loading ? (
-          <div
-            style={{
-              width: "100%",
-              height: "100vh",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Lottie
-              options={{ animationData: loading }}
-              width={150}
-              height={150}
-            />
-          </div>
+          <Loader />
         ) : (
           <motion.div
             initial="initial"

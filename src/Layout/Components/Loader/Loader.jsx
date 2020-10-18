@@ -1,6 +1,7 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import "./Loader.css";
 import Lottie from "lottie-react-web";
-import loader from "";
+import loader from "./lf30_editor_r1mhnlux (1).json";
 
 export default class Loader extends Component {
     render() {

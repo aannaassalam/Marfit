@@ -7,6 +7,7 @@ import Filter from "../../../Components/Filter/Filter.component";
 import Card from "../../../Components/Card/Card";
 import firebase from "firebase";
 import Lottie from "lottie-react-web";
+import Loader from "../../../Components/Loader/Loader";
 import loading from "../../../../assets/loading.json";
 import toaster from "toasted-notes";
 import empty from "../629-empty-box.json";
@@ -346,23 +347,8 @@ class ProductList extends React.Component {
     return (
       <>
         {this.state.loading ? (
-          <div
-            style={{
-              width: "100%",
-              height: "100vh",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Lottie
-              options={{ animationData: loading }}
-              width={150}
-              height={150}
-            />
-          </div>
+          <Loader />
         ) : (
-          <>
             <motion.div
               initial="initial"
               animate="in"
@@ -562,7 +548,6 @@ class ProductList extends React.Component {
                 </>
               )}
             </motion.div>
-          </>
         )}
       </>
     );

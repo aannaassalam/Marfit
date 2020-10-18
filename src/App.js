@@ -17,6 +17,7 @@ import Checkout from "./Layout/Pages/Checkout/Checkout";
 import Order from "./Layout/Pages/Order/order";
 import Viewall from "./Layout/Pages/ViewAll/Viewall";
 import NewArrival from "./Layout/Pages/NewArrival/NewArrival";
+import Loader from "./Layout/Components/Loader/Loader";
 
 function App() {
   const location = useLocation();

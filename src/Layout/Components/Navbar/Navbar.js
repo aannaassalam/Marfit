@@ -9,6 +9,7 @@ import Login from "../Login/Login";
 import HamburgerMenu from "../HambugerMenu/HamburgerMenu";
 import firebase from "../../../config/firebaseConfig";
 import loading from "../../../assets/loading.json";
+import Loader from "../Loader/Loader";
 import Lottie from "lottie-react-web";
 import { firestore } from "firebase";
 
@@ -27,7 +28,8 @@ export default class Navbar extends React.Component {
       showMenu: false,
       searchbtn: false,
       products: [],
-      searchedItems: []
+      searchedItems: [],
+      search: ""
     };
   }
 
@@ -72,13 +74,30 @@ export default class Navbar extends React.Component {
   };
 
   handleSearch = (e) => {
-    this.state.products.map(product => {
-      if(product.title.toLowerCase().includes(e.target.value.toLowerCase())){
-        this.setState({
-          searchedItems: [...this.state.searchedItems, product]
+    console.log(e.target.value);
+    this.setState({
+      [e.target.name] : e.target.value,
+      searchedItems: []
+    },() => {
+      var search = [];
+      firebase.firestore().collection("products").onSnapshot(snap => {
+        snap.docChanges().forEach(changes => {
+          var found = false;
+          this.state.searchedItems.forEach(item => {
+            if(item.id === changes.doc.id){
+              found = true;
+            }
+          })
+          if(changes.doc.data().title.toLowerCase().includes(this.state.search.toLowerCase()) && !found){
+            var product = changes.doc.data();
+            product.id = changes.doc.id;
+            search.push(product);
+          }
         })
-        console.log(product);
-      }
+        this.setState({
+          searchedItems: search
+        })
+      })
     })
   }
 
@@ -144,26 +163,29 @@ export default class Navbar extends React.Component {
             <button>
               <i className="fa fa-search"></i>
             </button>
-            <div className="searchResult">
+            <div className={this.state.search.length > 0 ? "searchResult": null}>
               { 
-                this.state.searchedItems.length > 0 
+                this.state.searchedItems.length > 0 && this.state.search.length > 0
                 ?
                 this.state.searchedItems.map(item => {
                   console.log(item)
                   return(
-                  <div className="result">
+                  <a href={"/Category/" + item.category + "/" + item.subCategory + "/" + item.id} className="result">
                     <img src={item.images[0]} alt="item image"/>
                     <div className="resultTitle">
                       <p>{item.title}</p>
                       <p>in {item.category}</p>
                     </div>
-                  </div>
+                  </a>
                   )
                 })
                 :
+                this.state.search.length > 0
+                ?
                 <div className="errorMsg">
                   <p>No item matched with your search</p>
                 </div>
+                :null
               }
             </div>
           </div>
@@ -188,11 +210,7 @@ export default class Navbar extends React.Component {
             </a>
 
             {this.state.loading ? (
-              <Lottie
-                options={{ animationData: loading }}
-                width={50}
-                height={50}
-              />
+              <Loader />
             ) : (
               <>
                 {this.state.loginStatus ? (
