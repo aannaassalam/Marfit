@@ -92,3 +92,32 @@
   font-weight: 600;
   color: darkgray;
 }
+
+@media(max-width: 1024px){
+  .orderList {
+    width: 100%;
+  }
+  .orderList .part1 {
+    width: 100%;
+  }
+  .orderList .part3 {
+    width: 74%;
+  }
+}
+@media(max-width: 740px){
+  .orderList .part1 {
+    width: 84%;
+  }
+  .orderList .part2 {
+    display: none;
+  }
+  .orderList .part3 {
+    display: none;
+  }
+}
+@media(max-width: 320px){
+  .orderList .part1 .part1-detail {
+    padding:0px;
+    margin-left: 10px;
+  }
+}
