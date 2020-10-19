@@ -29,7 +29,8 @@ export default class Navbar extends React.Component {
       searchbtn: false,
       products: [],
       searchedItems: [],
-      search: ""
+      search: "",
+      cartSize:0
     };
   }
 
@@ -46,6 +47,7 @@ export default class Navbar extends React.Component {
               loginStatus: true,
               isAnonymous: user.isAnonymous,
               loading: false,
+              cartSize:doc.data().cart.length
             });
           });
         });
@@ -280,6 +282,7 @@ export default class Navbar extends React.Component {
                 >
                   <i className="fas fa-shopping-cart"></i>
                   <p>CART</p>
+                  <p>{this.state.cartSize}</p>
                 </a>
               </>
             )}

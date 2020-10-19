@@ -10,7 +10,7 @@ import emptywish from "./10000-empty-box.json";
 import Card from "../../Components/Card/Card";
 import { CopyToClipboard } from "react-copy-to-clipboard";
 import refer from "../../../assets/refer.json";
-import redeem from "./lf30_editor_klzh9wdx.json";
+import redeem from "./8287-redeem-points-to-get-gift.json";
 import OrdersComp from "../../Components/OrdersComp/OrdersComp";
 import circular from "../../../assets/circular loading.json";
 import moment from "moment";
@@ -615,7 +615,7 @@ class Dashboard extends React.Component {
                       <div
                         style={{
                           width: "100%",
-                          height: "90%",
+                          height: "80%",
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",
@@ -624,7 +624,7 @@ class Dashboard extends React.Component {
                       >
                         <Lottie
                           options={{ animationData: emptywish }}
-                          width={300}
+                          width={260}
                           height={300}
                         />
                         <a href="/" className="empty">
@@ -872,9 +872,9 @@ class Dashboard extends React.Component {
                       <div className="redeemCard">
                         <Lottie
                           options={{ animationData: redeem }}
-                          width={500}
-                          height={500}
-                          style={{ position: "absolute", top: "-130px" }}
+                          width={350}
+                          height={350}
+                          style={{ position: "absolute", top: "-100px" }}
                         />
                       </div>
                       <div className="redeemCode">

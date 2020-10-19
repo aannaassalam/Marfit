@@ -383,11 +383,18 @@
     margin-top:30px
   }
   .checkout .left .info {
-    width: 75%;
+    width: 80%;
     /* margin-left: 75px; */
     margin-top: 15px;
   }
   .checkout .right .items-container {
     height: 16vh;
   }
+  .checkout .left .info .addressInput .address .paras {
+    width: 100%;
+  }
+  .checkout .left .placeOrder .checkoutbtn{
+    width: 95px;
+  }
 }
+
