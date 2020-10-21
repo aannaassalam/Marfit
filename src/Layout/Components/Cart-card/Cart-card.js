@@ -12,6 +12,7 @@ export default class CartCard extends React.Component {
   }
 
   componentDidMount() {
+    console.log(this.props.item);
     firebase
       .firestore()
       .collection("products")

@@ -23,6 +23,7 @@ export default class Order extends React.Component {
       modal: true,
       btnLoading: false,
       rateProducts: [],
+      userName: ""
     };
   }
 
@@ -35,38 +36,47 @@ export default class Order extends React.Component {
         });
       }
     });
+    // firebase.firestore().collection("users").doc(this.props.match.params.id).get().then(doc => {
+    //   this.setState({
+    //     userName: doc.data().name
+    //   })
+    // })
     firebase
       .firestore()
       .collection("orders")
       .doc(this.props.match.params.id)
       .get()
       .then((doc) => {
-        this.setState(
-          {
-            order: doc.data(),
-            loading: false,
-          },
-          () => {
-            var products = [];
-            this.state.order.products.map((product) => {
-              if (product.rate === false) {
-                products.push(product);
-              }
-            });
-            this.setState(
-              {
-                rateProducts: products,
-              },
-              () => {
-                if (this.state.rateProducts.length < 1) {
-                  this.setState({
-                    modal: false,
-                  });
+        console.log(doc.data())
+        firebase.firestore().collection("users").doc(doc.data().user).get().then(snap => {
+          this.setState(
+            {
+              order: doc.data(),
+              loading: false,
+              userName: snap.data().name
+            },
+            () => {
+              var products = [];
+              this.state.order.products.map((product) => {
+                if (product.rate === false) {
+                  products.push(product);
                 }
-              }
-            );
-          }
-        );
+              });
+              this.setState(
+                {
+                  rateProducts: products,
+                },
+                () => {
+                  if (this.state.rateProducts.length < 1) {
+                    this.setState({
+                      modal: false,
+                    });
+                  }
+                }
+              );
+            }
+          );
+        })
       });
   }
 
@@ -82,6 +92,7 @@ export default class Order extends React.Component {
       btnLoading: true,
     });
     if (this.state.starCount > 0) {
+      console.log(this.state.rateProducts);
       firebase
         .firestore()
         .collection("products")
@@ -94,6 +105,7 @@ export default class Order extends React.Component {
           rate.review = this.state.review;
           rate.email = this.state.userEmail;
           rate.date = new Date();
+          rate.name = this.state.userName;
           ratings.push(rate);
           firebase
             .firestore()

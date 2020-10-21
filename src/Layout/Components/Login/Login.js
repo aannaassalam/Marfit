@@ -130,6 +130,7 @@ export default class Login extends React.Component {
                           });
                           this.props.login(true);
                           this.props.close(false);
+                          window.location.href = "/";
                         })
                         .catch((err) => {
                           toaster.notify(err.message);
@@ -225,6 +226,7 @@ export default class Login extends React.Component {
                     });
                     this.props.login(true);
                     this.props.close(false);
+                    window.location.href= "/";
                   })
                   .catch((err) => {
                     toaster.notify(err.message);
@@ -281,6 +283,7 @@ export default class Login extends React.Component {
                 });
                 this.props.login(true);
                 this.props.close(false);
+                window.location.href = "/";
               })
               .catch((err) => {
                 toaster.notify(err.message);

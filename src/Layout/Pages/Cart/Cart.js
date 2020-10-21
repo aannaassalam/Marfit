@@ -32,6 +32,7 @@ export default class Cart extends React.Component {
                 cart: change.doc.data().cart,
                 currentUser: change.doc.data()
               },() => {
+                console.log(this.state.cart)
                 this.state.cart.forEach(item => {
                   firebase.firestore().collection("products").doc(item.id).get().then(doc => {
                     var product = doc.data();
@@ -211,13 +212,11 @@ export default class Cart extends React.Component {
 
   render() {
     var total = 0;
-    if (this.state.cart.length > 0) {
-      this.state.cart.forEach(data => {
-        this.state.products.map(item => {
-          if(data.id === item.id){
-            total += item.sp * data.quantity
-          }
-        })
+    if (this.state.products.length > 0) {
+        this.state.cart.forEach((data, index) => {
+        if(data.id === this.state.products[index].id){
+          total += this.state.products[index].sp * data.quantity
+        }
       })
     }
     if (this.state.selectedCoupon !== "") {

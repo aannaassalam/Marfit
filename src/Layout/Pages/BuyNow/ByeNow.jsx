@@ -1,5 +1,5 @@
 import React from "react";
-import "./Checkout.css";
+import "./ByeNow.css";
 import firebase from "firebase";
 import Login from "../../Components/Login/Login";
 import toaster from "toasted-notes";
@@ -8,11 +8,10 @@ import Lottie from "lottie-react-web";
 import Loader from "../../Components/Loader/Loader";
 import CartCard from "../../Components/Cart-card/Cart-card";
 
-export default class Checkout extends React.Component {
+export default class ByeNow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      cart: [],
       openLogin: false,
       coupon: "",
       currentUser: "",
@@ -31,15 +30,14 @@ export default class Checkout extends React.Component {
       points: "",
       userID: "",
       loading: true,
-      products: [],
+      product: "",
       selectedAddress: null,
-      addAddress: false
+      addAddress: false,
     };
   }
 
   componentDidMount() {
     firebase.auth().onAuthStateChanged((user) => {
-      console.log(user);
       if (user) {
         firebase
           .firestore()
@@ -56,7 +54,6 @@ export default class Checkout extends React.Component {
               }
               this.setState(
                 {
-                  cart: doc.data().cart,
                   currentUser: doc.data(),
                   email: doc.data().email,
                   addresses: doc.data().addresses,
@@ -65,94 +62,53 @@ export default class Checkout extends React.Component {
                   userID: doc.id,
                 },
                 () => {
-                  if (this.state.cart.length > 0) {
-                    this.state.cart.forEach((item) => {
-                      firebase
-                        .firestore()
-                        .collection("products")
-                        .doc(item.id)
-                        .get()
-                        .then((doc) => {
-                          var product = doc.data();
-                          product.id = doc.id;
-                          product.quantity = item.quantity;
-                          this.setState({
-                            products: [...this.state.products, product],
-                          });
-                        });
-                    });
-
-                    this.state.currentUser.name.includes(" ")
-                    ? this.setState({
-                        //first name
-                        firstName: this.state.currentUser.name.substr(
-                          0,
-                          this.state.currentUser.name.indexOf(" ")
-                        ),
-                        //last name
-                        lastName: this.state.currentUser.name.substr(
-                          this.state.currentUser.name.indexOf(" "),
-                          this.state.currentUser.name.length
-                        ),
-                        loading: false,
+                    firebase.firestore().collection("products").doc(this.props.match.params.item).onSnapshot(doc => {
+                      var product = doc.data();
+                      product.id = doc.id;
+                      product.quantity = this.props.match.params.quantity;
+                      console.log(product);
+                      this.setState({
+                        product: product
                       })
-                    : this.setState({
-                        firstName: this.state.currentUser.name,
-                        loading: false,
-                      });
-                  } else {
-                    window.location.href = "/";
-                  }
+                    })
+                    this.state.currentUser.name.includes(" ")
+                      ? this.setState({
+                          //first name
+                          firstName: this.state.currentUser.name.substr(
+                            0,
+                            this.state.currentUser.name.indexOf(" ")
+                          ),
+                          //last name
+                          lastName: this.state.currentUser.name.substr(
+                            this.state.currentUser.name.indexOf(" "),
+                            this.state.currentUser.name.length
+                          ),
+                          loading: false,
+                        })
+                      : this.setState({
+                          firstName: this.state.currentUser.name,
+                          loading: false,
+                        });
                 }
               );
             });
           });
       } else {
-        this.setState({
-          cart: JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [],
-          currentUser: "",
-          userID: "",
-          addAddress: true
-        },() => {
-          if(this.state.cart.length > 0){
-            this.state.cart.forEach((item) => {
-              firebase
-                .firestore()
-                .collection("products")
-                .doc(item.id)
-                .get()
-                .then((doc) => {
-                  var product = doc.data();
-                  product.id = doc.id;
-                  product.quantity = item.quantity;
-                  this.setState({
-                    products: [...this.state.products, product],
-                    loading: false,
-                  });
-                });
-            });
-          }else{
-            window.location.href = "/";
-          }
+        firebase.firestore().collection("products").doc(this.props.match.params.item).onSnapshot(doc => {
+          var product = doc.data();
+          product.id = doc.id;
+          product.quantity = this.props.match.params.quantity;
+          this.setState({
+            product: product,
+            points: 0,
+            userID: "",
+            loading: false,
+            addAddress: true
+          })
         })
-      }});
-    firebase
-      .firestore()
-      .collection("settings")
-      .get()
-      .then((snap) => {
-        snap.forEach((doc) => {
-          var coupons = doc.data().coupons;
-          coupons.forEach((coupon) => {
-            if (coupon.name === this.props.match.params.coupon) {
-              this.setState({
-                coupon: coupon,
-              });
-            }
-          });
-        });
-      });
-  }
+      };
+        })
+      }
 
   handlePay = (total, subtotal, shipping) => {
     if (
@@ -165,172 +121,174 @@ export default class Checkout extends React.Component {
       this.state.pincode.length > 0 &&
       this.state.firstName.length > 0
     ) {
-      var products = [];
-            this.state.products.forEach((product) => {
-              product.rate = false;
-              products.push(product);
-            });
+      var product = this.state.product;
+      product.rate = false;
+      console.log(this.state.points);
+      console.log(this.state.userID);
+      console.log(this.state.address);
+      console.log(this.state.apartment);
+      console.log(this.state.city);
+      console.log(this.state.country);
+      console.log(this.state.pincode);
+      console.log(this.state.phone);
+      console.log(this.state.state);
+      console.log(this.state.coupon);
+      firebase
+        .firestore()
+        .collection("orders")
+        .add({
+          products: [product],
+          date: new Date(),
+          points: this.state.points,
+          user: this.state.userID,
+          address: this.state.address,
+          appartment: this.state.apartment,
+          city: this.state.city,
+          country: this.state.country,
+          pincode: this.state.pincode,
+          phone: this.state.phone,
+          state: this.state.state,
+          coupon: this.state.coupon,
+          total: total,
+          shipping: shipping,
+          tag: "guest",
+          status: "Pending",
+        })
+        .then((res) => {
+          if (this.state.currentUser.length > 0) {
             firebase
               .firestore()
-              .collection("orders")
-              .add({
-                products: products,
-                date: new Date(),
-                points: this.state.points,
-                user: this.state.userID,
-                address: this.state.address,
-                appartment: this.state.appartment,
-                city: this.state.city,
-                country: this.state.country,
-                pincode: this.state.pincode,
-                phone: this.state.phone,
-                state: this.state.state,
-                coupon: this.state.coupon,
-                total: total,
-                shipping: shipping,
-                tag: "user",
-                status: "Pending",
-              })
-              .then((res) => {
-                if(this.state.currentUser.length > 0){
-                  firebase
+              .collection("users")
+              .doc(this.state.userID)
+              .get()
+              .then((doc) => {
+                var orders = doc.data().orders;
+                orders.push(res.id);
+                firebase
                   .firestore()
                   .collection("users")
                   .doc(this.state.userID)
-                  .get()
-                  .then((doc) => {
-                    var orders = doc.data().orders;
-                    orders.push(res.id);
-                    firebase
-                      .firestore()
-                      .collection("users")
-                      .doc(this.state.userID)
-                      .update({
-                        orders: orders,
-                        cart: [],
-                        points: 0,
-                      })
-                      .then(() => {
-                        window.location.href = "/Orders/" + res.id;
-                      });
+                  .update({
+                    orders: orders,
+                    points: 0,
+                  })
+                  .then(() => {
+                    window.location.href = "/Orders/" + res.id;
                   });
-                }else{
-                    firebase
-                      .firestore()
-                      .collection("users")
-                      .add({
-                        orders: [res.id],
-                        email: this.state.email,
-                        phone: this.state.phone,
-                        name: this.state.firstName + " " + this.state.lastName
-                      })
-                      .then(() => {
-                        // localStorage.removeItem("cart");
-                        window.location.href = "/Orders/" + res.id;
-                      });
-                }
               });
-    //   const options = {
-    //     key: "rzp_test_GLsJlJZsykHTEw",
-    //     name: "Marfit",
-    //     amount: total * 100,
-    //     handler: async (response) => {
-    //       try {
-    //         // firebase
-    //         //   .firestore()
-    //         //   .collection("payments")
-    //         //   .add({
-    //         //     name: this.state.name,
-    //         //     phone: this.state.phone,
-    //         //     email: this.state.email,
-    //         //     paymentId: response.razorpay_payment_id,
-    //         //     amount: this.state.amount,
-    //         //   })
-    //         // .then(() => {
-    //         var products = [];
-    //         this.state.products.forEach((product) => {
-    //           product.rate = false;
-    //           products.push(product);
-    //         });
-    //         firebase
-    //           .firestore()
-    //           .collection("orders")
-    //           .add({
-    //             products: products,
-    //             date: new Date(),
-    //             points: this.state.points,
-    //             user: this.state.userID,
-    //             address: this.state.address,
-    //             appartment: this.state.appartment,
-    //             city: this.state.city,
-    //             country: this.state.country,
-    //             pincode: this.state.pincode,
-    //             phone: this.state.phone,
-    //             state: this.state.state,
-    //             coupon: this.state.coupon,
-    //             total: total,
-    //             shipping: shipping,
-    //             tag: "user",
-    //             status: "Pending",
-    //           })
-    //           .then((res) => {
-    //             if (this.state.currentUser.length > 0) {
-    //               firebase
-    //                 .firestore()
-    //                 .collection("users")
-    //                 .doc(this.state.userID)
-    //                 .get()
-    //                 .then((doc) => {
-    //                   var orders = doc.data().orders;
-    //                   orders.push(res.id);
-    //                   firebase
-    //                     .firestore()
-    //                     .collection("users")
-    //                     .doc(this.state.userID)
-    //                     .update({
-    //                       orders: orders,
-    //                       cart: [],
-    //                       points: 0,
-    //                     })
-    //                     .then(() => {
-    //                       window.location.href = "/Orders/" + res.id;
-    //                     });
-    //                 });
-    //             } else {
-    //               firebase
-    //                 .firestore()
-    //                 .collection("users")
-    //                 .add({
-    //                   orders: [res.id],
-    //                   email: this.state.email,
-    //                   phone: this.state.phone,
-    //                   name: this.state.firstName + " " + this.state.lastName
-    //                 })
-    //                 .then(() => {
-    //                   // localStorage.removeItem("cart");
-    //                   window.location.href = "/Orders/" + res.id;
-    //                 });
-    //             }
-    //           });
-    //         // });
-    //       } catch (err) {
-    //         toaster.notify("Oops! Something went wrong");
-    //       }
-    //     },
-    //     prefill: {
-    //       name: this.state.firstName,
-    //       email: this.state.email,
-    //       contact: this.state.phone,
-    //     },
-    //     theme: {
-    //       color: "#2D499B",
-    //     },
-    //   };
-    //   const rzp1 = new window.Razorpay(options);
-    //   rzp1.open();
-    // }
-    
-  }else {
+          } else {
+            firebase
+              .firestore()
+              .collection("users")
+              .add({
+                orders: [res.id],
+                email: this.state.email,
+                phone: this.state.phone,
+                name: this.state.firstName + " " + this.state.lastName
+              })
+              .then((res2) => {
+                firebase.firestore().collection("orders").doc(res.id).update({
+                  user: res2.id
+                })
+                window.location.href = "/Orders/" + res.id;
+              });
+          }
+        });
+      //   const options = {
+      //     key: "rzp_test_GLsJlJZsykHTEw",
+      //     name: "Marfit",
+      //     amount: total * 100,
+      //     handler: async (response) => {
+      //       try {
+      //         // firebase
+      //         //   .firestore()
+      //         //   .collection("payments")
+      //         //   .add({
+      //         //     name: this.state.name,
+      //         //     phone: this.state.phone,
+      //         //     email: this.state.email,
+      //         //     paymentId: response.razorpay_payment_id,
+      //         //     amount: this.state.amount,
+      //         //   })
+      //         // .then(() => {
+      //         var product = this.state.product;
+      //         product.rate = false;
+      //         firebase
+      //           .firestore()
+      //           .collection("orders")
+      //           .add({
+      //             products: [product],
+      //             date: new Date(),
+      //             points: this.state.points,
+      //             user: this.state.userID,
+      //             address: this.state.address,
+      //             appartment: this.state.appartment,
+      //             city: this.state.city,
+      //             country: this.state.country,
+      //             pincode: this.state.pincode,
+      //             phone: this.state.phone,
+      //             state: this.state.state,
+      //             coupon: this.state.coupon,
+      //             total: total,
+      //             shipping: shipping,
+      //             tag: "user",
+      //             status: "Pending",
+      //           })
+      //           .then((res) => {
+      //             if(this.state.currentUser.length > 0){
+      //               firebase
+      //               .firestore()
+      //               .collection("users")
+      //               .doc(this.state.userID)
+      //               .get()
+      //               .then((doc) => {
+      //                 var orders = doc.data().orders;
+      //                 orders.push(res.id);
+      //                 firebase
+      //                   .firestore()
+      //                   .collection("users")
+      //                   .doc(this.state.userID)
+      //                   .update({
+      //                     orders: orders,
+      //                     points: 0,
+      //                   })
+      //                   .then(() => {
+      //                     window.location.href = "/Orders/" + res.id;
+      //                   });
+      //               });
+      //             }else{
+      //                 firebase
+      //                   .firestore()
+      //                   .collection("users")
+      //                   .add({
+      //                     orders: [res.id],
+      //                     email: this.state.email,
+      //                     phone: this.state.phone,
+      //                     name: this.state.firstName + " " + this.state.lastName
+      //                   })
+      //                   .then(() => {
+      //                     window.location.href = "/Orders/" + res.id;
+      //                   });
+      //             }
+      //           });
+      //         // });
+      //       } catch (err) {
+      //         toaster.notify("Oops! Something went wrong");
+      //       }
+      //     },
+      //     prefill: {
+      //       name: this.state.firstName,
+      //       email: this.state.email,
+      //       contact: this.state.phone,
+      //     },
+      //     theme: {
+      //       color: "#2D499B",
+      //     },
+      //   };
+      //   const rzp1 = new window.Razorpay(options);
+      //   rzp1.open();
+      // } 
+    } else {
       if(!this.state.addAddress){
         toaster.notify("Please select any address");
       }
@@ -365,37 +323,10 @@ export default class Checkout extends React.Component {
   }
 
   render() {
-    var subTotal = 0;
-    var shipping = 0;
-    var value = 0;
-    var total = 0;
-    for (var i = 0; i < this.state.products.length; i++) {
-      subTotal += this.state.products[i].sp * this.state.cart[i].quantity;
-      shipping +=
-        this.state.products[i].shippingCharge * this.state.cart[i].quantity;
-    }
-    total = shipping + subTotal - this.state.points;
-    var date = new Date();
-    if (this.state.coupon !== "") {
-      if (
-        this.state.coupon.start.toDate() < date &&
-        this.state.coupon.end.toDate() > date
-      ) {
-        if (this.state.coupon.type === "money") {
-          total -= this.state.coupon.value;
-          value = this.state.coupon.value;
-        } else {
-          value = total * (this.state.coupon.value / 100);
-          total -= value;
-        }
-      }
-    } else {
-      value = 0;
-    }
-
-    console.log(this.state.address);
-    console.log(this.state.addresses);
-
+    var subtotal = this.state.product.sp;
+    var shipping = this.state.product.shippingCharge * this.props.match.params.quantity;
+    var total = subtotal + shipping;
+    
     return (
       <div className="checkout">
         {this.state.loading ? (
@@ -507,7 +438,7 @@ export default class Checkout extends React.Component {
                   <input
                     type="text"
                     placeholder="Appartment, suite, etc. (optional)"
-                    name="appartment"
+                    name="apartment"
                     id="appartment"
                     value={this.state.apartment}
                     onChange={this.handleChange}
@@ -571,7 +502,7 @@ export default class Checkout extends React.Component {
                 <div
                   className="checkoutbtn"
                   onClick={() => {
-                    this.handlePay(total, subTotal, shipping);
+                    this.handlePay(total, subtotal, shipping);
                   }}
                 >
                   <a>Place an Order</a>
@@ -580,25 +511,23 @@ export default class Checkout extends React.Component {
             </div>
             <div className="right">
               <div className="items-container">
-                {this.state.cart.map((item, index) => (
-                  <CartCard item={item} show={false} quantity={item.quantity} />
-                ))}
+                  <CartCard item={{id : this.props.match.params.item}} show={false} quantity={this.props.match.params.quantity} />
               </div>
               <div className="order-details">
                 <div className="sub">
                   <p className="sub-title">Subtotal</p>
-                  <p>&#8377; {subTotal}</p>
+                  <p>&#8377; {subtotal}</p>
                 </div>
                 <div className="shipping-sub">
                   <p className="sub-title">Shipping</p>
                   <p>+ &#8377; {shipping}</p>
                 </div>
-                <div className="discount-sub">
+                {/* <div className="discount-sub">
                   <p className="sub-title">
                     Discount ({this.state.coupon.name})
                   </p>
                   <p>- &#8377; {value}</p>
-                </div>
+                </div> */}
                 <div className="points-sub">
                   <p className="sub-title">Points ({this.state.points})</p>
                   <p>- &#8377; {this.state.points}</p>

@@ -37,7 +37,7 @@ export default class OrderCard extends React.Component {
                 "/" +
                 this.props.item.subCategory +
                 "/" +
-                this.props.item.title
+                this.props.item.id
               }
             >
               <img src={this.props.item && this.props.item.images[0]} />

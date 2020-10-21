@@ -7,6 +7,7 @@ import empty from "./629-empty-box.json";
 import loading from "../../../../assets/loading.json";
 import Loader from "../../../Components/Loader/Loader";
 import toaster from "toasted-notes";
+import moment from "moment";
 import ReactImageMagnify from "react-image-magnify";
 import firebase from "firebase";
 
@@ -45,7 +46,9 @@ export default class ProductDesc extends React.Component {
       usersQuantity: 1,
       currentUser: "",
       loading: true,
-      colorSelected: "black"
+      colorSelected: "black",
+      ratings: [],
+      stars: 0,
     };
   }
 
@@ -70,10 +73,7 @@ export default class ProductDesc extends React.Component {
                 product.subCategory.toLowerCase() ===
                 this.props.match.params.id2.toLowerCase()
               ) {
-                if (
-                  product.id ===
-                  this.props.match.params.id3
-                ) {
+                if (product.id === this.props.match.params.id3) {
                   productShow = product;
                 } else {
                   var sim = product.id;
@@ -116,8 +116,8 @@ export default class ProductDesc extends React.Component {
                 cart: JSON.parse(localStorage.getItem("cart"))
                   ? JSON.parse(localStorage.getItem("cart"))
                   : [],
-                currentUser: "",
                 loading: false,
+                currentUser: "",
               });
             }
           });
@@ -316,6 +316,17 @@ export default class ProductDesc extends React.Component {
   };
 
   render() {
+    var stars = 0;
+    var review = 0;
+    if (this.state.product.title) {
+      this.state.product.ratings.map((rate) => {
+        stars += rate.stars
+        if (rate.review.length > 0) {
+          review += 1;
+        }
+      })
+      stars = Math.round(stars / this.state.product.ratings.length);
+    }
     return (
       <>
         {this.state.loading ? (
@@ -368,17 +379,21 @@ export default class ProductDesc extends React.Component {
                       "/" +
                       this.props.match.params.id2 +
                       "/" +
-                      this.state.product.id ? this.state.product.id : null
+                      this.state.product.id
+                        ? this.state.product.id
+                        : null
                     }
                     style={{ cursor: "pointer" }}
                   >
-                    {this.state.product.title ? this.state.product.title : "Not Found"}
+                    {this.state.product.title
+                      ? this.state.product.title
+                      : "Not Found"}
                   </a>
                 </div>
               </div>
             </div>
             <div className="product-container">
-              { this.state.product.title ? (
+              {this.state.product.title ? (
                 <div className="product-desc">
                   <div className="all-product-image">
                     <div className="carousal-section">
@@ -447,7 +462,16 @@ export default class ProductDesc extends React.Component {
                         <i className="fas fa-shopping-cart"></i>
                         <p>ADD TO CART</p>
                       </div>
-                      <div className="option">
+                      <div
+                        className="option"
+                        onClick={() =>
+                          (window.location.href =
+                            "/Checkout/" +
+                            this.state.product.id +
+                            "/" +
+                            this.state.usersQuantity)
+                        }
+                      >
                         <i className="fas fa-bolt"></i>
                         <p>BUY NOW</p>
                       </div>
@@ -587,9 +611,7 @@ export default class ProductDesc extends React.Component {
                           </p>
                           <p
                             className={
-                              this.state.colorSelected === "red"
-                                ? "red"
-                                : null
+                              this.state.colorSelected === "red" ? "red" : null
                             }
                             onClick={() => {
                               this.setState({ colorSelected: "red" });
@@ -630,75 +652,34 @@ export default class ProductDesc extends React.Component {
                     <div className="rating">
                       <div className="rating-header">
                         <h3>Ratings & Review</h3>
-                      <div className="rating-body">
-                        <div className="stars">
-                          <p>5</p>
-                          <i className="fas fa-star"></i>
-                      </div>
-                        <p className="rating-size">38 ratings & 9 reviews</p>
+                        <div className="rating-body">
+                          <div className="stars">
+                            <p>{stars}</p>
+                            <i className="fas fa-star"></i>
+                          </div>
+                            <p className="rating-size">{this.state.product.ratings.length} ratings {review > 0 ? "& " + review + " reviews" : null}</p>
                         </div>
                       </div>
                       <div className="review-list">
-                        <div className="reviews">
-                          <div className="upper">
-                            <div className="stars-mini">
-                              <p>3</p>
-                              <i className="fas fa-star"></i>
+                        {this.state.product.ratings.map((rating) => {
+                          return (
+                            <div className="reviews">
+                              <div className="upper">
+                                <div className="stars-mini">
+                                  <p>{rating.stars}</p>
+                                  <i className="fas fa-star"></i>
+                                </div>
+                                <p className="review-text">
+                                  {rating.review}
+                                </p>
+                              </div>
+                              <div className="lower">
+                                <p className="user-name">{rating.name}</p>
+                                <p className="date">{moment(rating.date.toDate(), "YYYYMMDD").fromNow()}</p>
+                              </div>
                             </div>
-                            <p className="review-text">
-                              This is an amazing and wonderful product.
-                            </p>
-                          </div>
-                          <div className="lower">
-                            <p className="user-name">Anas Alam</p>
-                            <p className="date">6 months ago</p>
-                          </div>
-                        </div>
-                        <div className="reviews">
-                          <div className="upper">
-                            <div className="stars-mini">
-                              <p>3</p>
-                              <i className="fas fa-star"></i>
-                            </div>
-                            <p className="review-text">
-                              This is an amazing and wonderful product.
-                            </p>
-                          </div>
-                          <div className="lower">
-                            <p className="user-name">Anas Alam</p>
-                            <p className="date">6 months ago</p>
-                          </div>
-                        </div>
-                        <div className="reviews">
-                          <div className="upper">
-                            <div className="stars-mini">
-                              <p>3</p>
-                              <i className="fas fa-star"></i>
-                            </div>
-                            <p className="review-text">
-                              This is an amazing and wonderful product.
-                            </p>
-                          </div>
-                          <div className="lower">
-                            <p className="user-name">Anas Alam</p>
-                            <p className="date">6 months ago</p>
-                          </div>
-                        </div>
-                        <div className="reviews">
-                          <div className="upper">
-                            <div className="stars-mini">
-                              <p>3</p>
-                              <i className="fas fa-star"></i>
-                            </div>
-                            <p className="review-text">
-                              This is an amazing and wonderful product.
-                            </p>
-                          </div>
-                          <div className="lower">
-                            <p className="user-name">Anas Alam</p>
-                            <p className="date">6 months ago</p>
-                          </div>
-                        </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </div>

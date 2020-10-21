@@ -6,6 +6,7 @@ import Couponbar from "./Layout/Components/Couponbar/Couponbar";
 import Navbar from "./Layout/Components/Navbar/Navbar";
 import MiniNav from "./Layout/Components/MiniNav/MiniNav";
 import Home from "./Layout/Pages/Home/Home";
+import ByeNow from "./Layout/Pages/BuyNow/ByeNow";
 import Footer from "./Layout/Components/Footer/Footer";
 import Dashboard from "./Layout/Pages/Dashboard/Dashboard";
 import CategoryList from "./Layout/Pages/Categories/CategoryList.page";
@@ -43,6 +44,11 @@ function App() {
             exact
             path="/Cart/Checkout/coupon::coupon"
             component={Checkout}
+          />
+          <Route
+            exact
+            path="/Checkout/:item/:quantity"
+            component={ByeNow}
           />
           <Route exact path="/Orders/:id" component={Order} />
           <Route exact path="/Products/:id" component={Viewall} />

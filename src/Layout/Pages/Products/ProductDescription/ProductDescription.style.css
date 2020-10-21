@@ -469,7 +469,7 @@
   align-items: center;
   justify-content: center;
   /* width: 45%; */
-  padding: 0.7rem;
+  padding: 0.25rem 0.6rem;
   border-radius: 50px;
   background-color: #26a541;
   color: #fff;
@@ -516,7 +516,8 @@
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  width: 7%;
+  /* width: 7%; */
+  padding: 0.2rem 0.4rem;
   border-radius: 50px;
   background-color: #26a541;
   color: #fff;
