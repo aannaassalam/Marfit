@@ -320,11 +320,11 @@ export default class ProductDesc extends React.Component {
     var review = 0;
     if (this.state.product.title) {
       this.state.product.ratings.map((rate) => {
-        stars += rate.stars
+        stars += rate.stars;
         if (rate.review.length > 0) {
           review += 1;
         }
-      })
+      });
       stars = Math.round(stars / this.state.product.ratings.length);
     }
     return (
@@ -407,14 +407,14 @@ export default class ProductDesc extends React.Component {
                                   key={index}
                                 >
                                   <img
-                                    src={this.state.product.images[index]}
+                                    src={this.state.product.images[index].uri}
                                     alt="slider Images"
                                   />
                                 </div>
                               ) : (
                                 <div className="preview-image" key={index}>
                                   <img
-                                    src={item}
+                                    src={item.uri}
                                     alt="slider Images"
                                     onClick={() => {
                                       this.setState({ activeImage: index });
@@ -437,16 +437,16 @@ export default class ProductDesc extends React.Component {
                                   "product-zoom-container",
                                 enlargedImageClassName: "product-zoom-image",
                                 smallImage: {
-                                  alt: "Wristwatch by Ted Baker London",
+                                  alt: "product image",
                                   isFluidWidth: true,
                                   src: this.state.product.images[
                                     this.state.activeImage
-                                  ],
+                                  ].uri,
                                 },
                                 largeImage: {
                                   src: this.state.product.images[
                                     this.state.activeImage
-                                  ],
+                                  ].uri,
                                   width: 1200,
                                   height: 1800,
                                 },
@@ -652,34 +652,49 @@ export default class ProductDesc extends React.Component {
                     <div className="rating">
                       <div className="rating-header">
                         <h3>Ratings & Review</h3>
-                        <div className="rating-body">
-                          <div className="stars">
-                            <p>{stars}</p>
-                            <i className="fas fa-star"></i>
+                        {this.state.product.ratings.length > 0 ? (
+                          <div className="rating-body">
+                            <div className="stars">
+                              <p>{stars}</p>
+                              <i className="fas fa-star"></i>
+                            </div>
+                            <p className="rating-size">
+                              {this.state.product.ratings.length} ratings{" "}
+                              {review > 0 ? "& " + review + " reviews" : null}
+                            </p>
                           </div>
-                            <p className="rating-size">{this.state.product.ratings.length} ratings {review > 0 ? "& " + review + " reviews" : null}</p>
-                        </div>
+                        ) : null}
                       </div>
                       <div className="review-list">
-                        {this.state.product.ratings.map((rating) => {
-                          return (
-                            <div className="reviews">
-                              <div className="upper">
-                                <div className="stars-mini">
-                                  <p>{rating.stars}</p>
-                                  <i className="fas fa-star"></i>
+                        {this.state.product.ratings.length > 0
+                          ? this.state.product.ratings.map((rating) => {
+                              return (
+                                <div className="reviews">
+                                  <div className="upper">
+                                    <div className="stars-mini">
+                                      <p>{rating.stars}</p>
+                                      <i className="fas fa-star"></i>
+                                    </div>
+                                    <p className="review-text">
+                                      {rating.review}
+                                    </p>
+                                  </div>
+                                  <div className="lower">
+                                    <p className="user-name">{rating.name}</p>
+                                    <p className="date">
+                                      {moment(
+                                        rating.date.toDate(),
+                                        "YYYYMMDD"
+                                      ).fromNow()}
+                                    </p>
+                                  </div>
                                 </div>
-                                <p className="review-text">
-                                  {rating.review}
-                                </p>
-                              </div>
-                              <div className="lower">
-                                <p className="user-name">{rating.name}</p>
-                                <p className="date">{moment(rating.date.toDate(), "YYYYMMDD").fromNow()}</p>
-                              </div>
+                              );
+                            })
+                            : <div className="noratings">
+                              <p>No ratings or reviews</p>
                             </div>
-                          );
-                        })}
+                          }
                       </div>
                     </div>
                   </div>

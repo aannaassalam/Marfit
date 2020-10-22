@@ -42,6 +42,7 @@ export default class Navbar extends React.Component {
         .where("email", "==", user.email)
         .onSnapshot((snap) => {
           snap.docs.forEach((doc) => {
+            console.log(doc.data())
             this.setState({
               currentUser: doc.data(),
               loginStatus: true,
@@ -54,6 +55,7 @@ export default class Navbar extends React.Component {
       } else {
         this.setState({
           loading: false,
+          cartSize: JSON.parse(localStorage.getItem("cart")).length
         });
       }
       

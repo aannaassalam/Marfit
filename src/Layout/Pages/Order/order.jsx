@@ -48,12 +48,10 @@ export default class Order extends React.Component {
       .get()
       .then((doc) => {
         console.log(doc.data())
-        firebase.firestore().collection("users").doc(doc.data().user).get().then(snap => {
           this.setState(
             {
               order: doc.data(),
               loading: false,
-              userName: snap.data().name
             },
             () => {
               var products = [];
@@ -76,7 +74,6 @@ export default class Order extends React.Component {
               );
             }
           );
-        })
       });
   }
 
@@ -103,9 +100,9 @@ export default class Order extends React.Component {
           var rate = {};
           rate.stars = this.state.starCount;
           rate.review = this.state.review;
-          rate.email = this.state.userEmail;
+          rate.email = this.state.order.email;
           rate.date = new Date();
-          rate.name = this.state.userName;
+          rate.name = this.state.order.name;
           ratings.push(rate);
           firebase
             .firestore()

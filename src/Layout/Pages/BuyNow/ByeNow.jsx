@@ -110,191 +110,178 @@ export default class ByeNow extends React.Component {
         })
       }
 
-  handlePay = (total, subtotal, shipping) => {
-    if (
-      this.state.email.length > 0 &&
-      this.state.country.length > 0 &&
-      this.state.state.length > 0 &&
-      this.state.phone.length > 0 &&
-      this.state.address.length > 0 &&
-      this.state.city.length > 0 &&
-      this.state.pincode.length > 0 &&
-      this.state.firstName.length > 0
-    ) {
-      var product = this.state.product;
-      product.rate = false;
-      console.log(this.state.points);
-      console.log(this.state.userID);
-      console.log(this.state.address);
-      console.log(this.state.apartment);
-      console.log(this.state.city);
-      console.log(this.state.country);
-      console.log(this.state.pincode);
-      console.log(this.state.phone);
-      console.log(this.state.state);
-      console.log(this.state.coupon);
-      firebase
-        .firestore()
-        .collection("orders")
-        .add({
-          products: [product],
-          date: new Date(),
-          points: this.state.points,
-          user: this.state.userID,
-          address: this.state.address,
-          appartment: this.state.apartment,
-          city: this.state.city,
-          country: this.state.country,
-          pincode: this.state.pincode,
-          phone: this.state.phone,
-          state: this.state.state,
-          coupon: this.state.coupon,
-          total: total,
-          shipping: shipping,
-          tag: "guest",
-          status: "Pending",
-        })
-        .then((res) => {
-          if (this.state.currentUser.length > 0) {
-            firebase
-              .firestore()
-              .collection("users")
-              .doc(this.state.userID)
-              .get()
-              .then((doc) => {
-                var orders = doc.data().orders;
-                orders.push(res.id);
-                firebase
-                  .firestore()
-                  .collection("users")
-                  .doc(this.state.userID)
-                  .update({
-                    orders: orders,
-                    points: 0,
-                  })
-                  .then(() => {
-                    window.location.href = "/Orders/" + res.id;
-                  });
-              });
-          } else {
-            firebase
-              .firestore()
-              .collection("users")
-              .add({
-                orders: [res.id],
-                email: this.state.email,
-                phone: this.state.phone,
-                name: this.state.firstName + " " + this.state.lastName
-              })
-              .then((res2) => {
-                firebase.firestore().collection("orders").doc(res.id).update({
-                  user: res2.id
-                })
-                window.location.href = "/Orders/" + res.id;
-              });
-          }
-        });
-      //   const options = {
-      //     key: "rzp_test_GLsJlJZsykHTEw",
-      //     name: "Marfit",
-      //     amount: total * 100,
-      //     handler: async (response) => {
-      //       try {
-      //         // firebase
-      //         //   .firestore()
-      //         //   .collection("payments")
-      //         //   .add({
-      //         //     name: this.state.name,
-      //         //     phone: this.state.phone,
-      //         //     email: this.state.email,
-      //         //     paymentId: response.razorpay_payment_id,
-      //         //     amount: this.state.amount,
-      //         //   })
-      //         // .then(() => {
-      //         var product = this.state.product;
-      //         product.rate = false;
-      //         firebase
-      //           .firestore()
-      //           .collection("orders")
-      //           .add({
-      //             products: [product],
-      //             date: new Date(),
-      //             points: this.state.points,
-      //             user: this.state.userID,
-      //             address: this.state.address,
-      //             appartment: this.state.appartment,
-      //             city: this.state.city,
-      //             country: this.state.country,
-      //             pincode: this.state.pincode,
-      //             phone: this.state.phone,
-      //             state: this.state.state,
-      //             coupon: this.state.coupon,
-      //             total: total,
-      //             shipping: shipping,
-      //             tag: "user",
-      //             status: "Pending",
-      //           })
-      //           .then((res) => {
-      //             if(this.state.currentUser.length > 0){
-      //               firebase
-      //               .firestore()
-      //               .collection("users")
-      //               .doc(this.state.userID)
-      //               .get()
-      //               .then((doc) => {
-      //                 var orders = doc.data().orders;
-      //                 orders.push(res.id);
-      //                 firebase
-      //                   .firestore()
-      //                   .collection("users")
-      //                   .doc(this.state.userID)
-      //                   .update({
-      //                     orders: orders,
-      //                     points: 0,
-      //                   })
-      //                   .then(() => {
-      //                     window.location.href = "/Orders/" + res.id;
-      //                   });
-      //               });
-      //             }else{
-      //                 firebase
-      //                   .firestore()
-      //                   .collection("users")
-      //                   .add({
-      //                     orders: [res.id],
-      //                     email: this.state.email,
-      //                     phone: this.state.phone,
-      //                     name: this.state.firstName + " " + this.state.lastName
-      //                   })
-      //                   .then(() => {
-      //                     window.location.href = "/Orders/" + res.id;
-      //                   });
-      //             }
-      //           });
-      //         // });
-      //       } catch (err) {
-      //         toaster.notify("Oops! Something went wrong");
-      //       }
-      //     },
-      //     prefill: {
-      //       name: this.state.firstName,
-      //       email: this.state.email,
-      //       contact: this.state.phone,
-      //     },
-      //     theme: {
-      //       color: "#2D499B",
-      //     },
-      //   };
-      //   const rzp1 = new window.Razorpay(options);
-      //   rzp1.open();
-      // } 
+  handlePay = async (total, subtotal, shipping) => {
+    var userExist = false;
+    if (this.state.currentUser.length === 0) {
+      await firebase.firestore().collection("users").where("email", "==", this.state.email).get().then(() => {
+        userExist = true;
+      })
+    }
+    if (!userExist) {
+      if (
+        this.state.email.length > 0 &&
+        this.state.country.length > 0 &&
+        this.state.state.length > 0 &&
+        this.state.phone.length > 0 &&
+        this.state.address.length > 0 &&
+        this.state.city.length > 0 &&
+        this.state.pincode.length > 0 &&
+        this.state.firstName.length > 0
+      ) {
+        var product = this.state.product;
+        product.rate = false;
+        firebase
+          .firestore()
+          .collection("orders")
+          .add({
+            products: [product],
+            date: new Date(),
+            email: this.state.email,
+            points: this.state.points,
+            address: this.state.address,
+            appartment: this.state.apartment,
+            city: this.state.city,
+            country: this.state.country,
+            pincode: this.state.pincode,
+            phone: this.state.phone,
+            state: this.state.state,
+            coupon: this.state.coupon,
+            name: this.state.firstName + " " + this.state.lastName,
+            total: total,
+            shipping: shipping,
+            tag: "guest",
+            status: "Pending",
+          })
+          .then((res) => {
+            if (this.state.currentUser.length > 0) {
+              firebase
+                .firestore()
+                .collection("users")
+                .doc(this.state.userID)
+                .get()
+                .then((doc) => {
+                  var orders = doc.data().orders;
+                  orders.push(res.id);
+                  firebase
+                    .firestore()
+                    .collection("users")
+                    .doc(this.state.userID)
+                    .update({
+                      orders: orders,
+                      points: 0,
+                    })
+                    .then(() => {
+                      window.location.href = "/Orders/" + res.id;
+                    });
+                });
+            } else {
+              window.location.href = "/Orders/" + res.id; 
+            }
+          });
+        //   const options = {
+        //     key: "rzp_test_GLsJlJZsykHTEw",
+        //     name: "Marfit",
+        //     amount: total * 100,
+        //     handler: async (response) => {
+        //       try {
+        //         // firebase
+        //         //   .firestore()
+        //         //   .collection("payments")
+        //         //   .add({
+        //         //     name: this.state.name,
+        //         //     phone: this.state.phone,
+        //         //     email: this.state.email,
+        //         //     paymentId: response.razorpay_payment_id,
+        //         //     amount: this.state.amount,
+        //         //   })
+        //         // .then(() => {
+        //         var product = this.state.product;
+        //         product.rate = false;
+        //         firebase
+        //           .firestore()
+        //           .collection("orders")
+        //           .add({
+        //             products: [product],
+        //             date: new Date(),
+        //             points: this.state.points,
+        //             user: this.state.userID,
+        //             address: this.state.address,
+        //             appartment: this.state.appartment,
+        //             city: this.state.city,
+        //             country: this.state.country,
+        //             pincode: this.state.pincode,
+        //             phone: this.state.phone,
+        //             state: this.state.state,
+        //             coupon: this.state.coupon,
+        //             total: total,
+        //             shipping: shipping,
+        //             tag: "user",
+        //             status: "Pending",
+        //           })
+        //           .then((res) => {
+        //             if(this.state.currentUser.length > 0){
+        //               firebase
+        //               .firestore()
+        //               .collection("users")
+        //               .doc(this.state.userID)
+        //               .get()
+        //               .then((doc) => {
+        //                 var orders = doc.data().orders;
+        //                 orders.push(res.id);
+        //                 firebase
+        //                   .firestore()
+        //                   .collection("users")
+        //                   .doc(this.state.userID)
+        //                   .update({
+        //                     orders: orders,
+        //                     points: 0,
+        //                   })
+        //                   .then(() => {
+        //                     window.location.href = "/Orders/" + res.id;
+        //                   });
+        //               });
+        //             }else{
+        //                 firebase
+        //                   .firestore()
+        //                   .collection("users")
+        //                   .add({
+        //                     orders: [res.id],
+        //                     email: this.state.email,
+        //                     phone: this.state.phone,
+        //                     name: this.state.firstName + " " + this.state.lastName
+        //                   })
+        //                   .then(() => {
+        //                     window.location.href = "/Orders/" + res.id;
+        //                   });
+        //             }
+        //           });
+        //         // });
+        //       } catch (err) {
+        //         toaster.notify("Oops! Something went wrong");
+        //       }
+        //     },
+        //     prefill: {
+        //       name: this.state.firstName,
+        //       email: this.state.email,
+        //       contact: this.state.phone,
+        //     },
+        //     theme: {
+        //       color: "#2D499B",
+        //     },
+        //   };
+        //   const rzp1 = new window.Razorpay(options);
+        //   rzp1.open();
+        // } 
+      } else {
+        if (!this.state.addAddress) {
+          toaster.notify("Please select any address");
+        }
+        else {
+          toaster.notify("Please Fill in all the fields");
+        }
+      }
     } else {
-      if(!this.state.addAddress){
-        toaster.notify("Please select any address");
-      }
-      else{
-        toaster.notify("Please Fill in all the fields");
-      }
+      toaster.notify("User already exist! please Log in");
     }
   };
 

@@ -18,9 +18,13 @@ export default class CartCard extends React.Component {
       .collection("products")
       .doc(this.props.item.id)
       .onSnapshot((doc) => {
-        this.setState({
-          product: doc.data(),
-        });
+        if (doc.data() !== undefined) {
+          var product = doc.data();
+          product.id = doc.id;
+          this.setState({
+            product: product,
+          });
+        }
       });
   }
 
@@ -37,10 +41,10 @@ export default class CartCard extends React.Component {
                 "/" +
                 this.state.product.subCategory +
                 "/" +
-                this.state.product.title
+                this.state.product.id
               }
             >
-              <img src={this.state.product && this.state.product.images[0]} />
+              <img src={this.state.product && this.state.product.images[0].uri} />
             </a>
             <div className="description">
               <p className="title">{this.state.product.title}</p>

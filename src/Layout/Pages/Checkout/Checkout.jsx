@@ -15,7 +15,7 @@ export default class Checkout extends React.Component {
       cart: [],
       openLogin: false,
       coupon: "",
-      currentUser: "",
+      currentUser: null,
       loginStatus: "",
       email: "",
       addresses: [],
@@ -33,7 +33,7 @@ export default class Checkout extends React.Component {
       loading: true,
       products: [],
       selectedAddress: null,
-      addAddress: false
+      addAddress: false,
     };
   }
 
@@ -48,11 +48,11 @@ export default class Checkout extends React.Component {
           .get()
           .then((snap) => {
             snap.forEach((doc) => {
-              console.log(doc.data())
-              if(doc.data().addresses.length === 0){
+              console.log(doc.data());
+              if (doc.data().addresses.length === 0) {
                 this.setState({
-                  addAddress: true
-                })
+                  addAddress: true,
+                });
               }
               this.setState(
                 {
@@ -83,23 +83,23 @@ export default class Checkout extends React.Component {
                     });
 
                     this.state.currentUser.name.includes(" ")
-                    ? this.setState({
-                        //first name
-                        firstName: this.state.currentUser.name.substr(
-                          0,
-                          this.state.currentUser.name.indexOf(" ")
-                        ),
-                        //last name
-                        lastName: this.state.currentUser.name.substr(
-                          this.state.currentUser.name.indexOf(" "),
-                          this.state.currentUser.name.length
-                        ),
-                        loading: false,
-                      })
-                    : this.setState({
-                        firstName: this.state.currentUser.name,
-                        loading: false,
-                      });
+                      ? this.setState({
+                          //first name
+                          firstName: this.state.currentUser.name.substr(
+                            0,
+                            this.state.currentUser.name.indexOf(" ")
+                          ),
+                          //last name
+                          lastName: this.state.currentUser.name.substr(
+                            this.state.currentUser.name.indexOf(" "),
+                            this.state.currentUser.name.length
+                          ),
+                          loading: false,
+                        })
+                      : this.setState({
+                          firstName: this.state.currentUser.name,
+                          loading: false,
+                        });
                   } else {
                     window.location.href = "/";
                   }
@@ -108,34 +108,40 @@ export default class Checkout extends React.Component {
             });
           });
       } else {
-        this.setState({
-          cart: JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [],
-          currentUser: "",
-          userID: "",
-          addAddress: true
-        },() => {
-          if(this.state.cart.length > 0){
-            this.state.cart.forEach((item) => {
-              firebase
-                .firestore()
-                .collection("products")
-                .doc(item.id)
-                .get()
-                .then((doc) => {
-                  var product = doc.data();
-                  product.id = doc.id;
-                  product.quantity = item.quantity;
-                  this.setState({
-                    products: [...this.state.products, product],
-                    loading: false,
+        this.setState(
+          {
+            cart: JSON.parse(localStorage.getItem("cart"))
+              ? JSON.parse(localStorage.getItem("cart"))
+              : [],
+            currentUser: "",
+            userID: "",
+            addAddress: true,
+          },
+          () => {
+            if (this.state.cart.length > 0) {
+              this.state.cart.forEach((item) => {
+                firebase
+                  .firestore()
+                  .collection("products")
+                  .doc(item.id)
+                  .get()
+                  .then((doc) => {
+                    var product = doc.data();
+                    product.id = doc.id;
+                    product.quantity = item.quantity;
+                    this.setState({
+                      products: [...this.state.products, product],
+                      loading: false,
+                    });
                   });
-                });
-            });
-          }else{
-            window.location.href = "/";
+              });
+            } else {
+              window.location.href = "/";
+            }
           }
-        })
-      }});
+        );
+      }
+    });
     firebase
       .firestore()
       .collection("settings")
@@ -154,189 +160,192 @@ export default class Checkout extends React.Component {
       });
   }
 
-  handlePay = (total, subtotal, shipping) => {
-    if (
-      this.state.email.length > 0 &&
-      this.state.country.length > 0 &&
-      this.state.state.length > 0 &&
-      this.state.phone.length > 0 &&
-      this.state.address.length > 0 &&
-      this.state.city.length > 0 &&
-      this.state.pincode.length > 0 &&
-      this.state.firstName.length > 0
-    ) {
-      var products = [];
-            this.state.products.forEach((product) => {
-              product.rate = false;
-              products.push(product);
-            });
-            firebase
-              .firestore()
-              .collection("orders")
-              .add({
-                products: products,
-                date: new Date(),
-                points: this.state.points,
-                user: this.state.userID,
-                address: this.state.address,
-                appartment: this.state.appartment,
-                city: this.state.city,
-                country: this.state.country,
-                pincode: this.state.pincode,
-                phone: this.state.phone,
-                state: this.state.state,
-                coupon: this.state.coupon,
-                total: total,
-                shipping: shipping,
-                tag: "user",
-                status: "Pending",
-              })
-              .then((res) => {
-                if(this.state.currentUser.length > 0){
+  handlePay = async (total, subtotal, shipping) => {
+    var userExist = false;
+    if (this.state.currentUser.email) {
+      await firebase
+        .firestore()
+        .collection("users")
+        .where("email", "==", this.state.email)
+        .get()
+        .then(() => {
+          userExist = true;
+        });
+    }
+    if (userExist) {
+      if (
+        this.state.email.length > 0 &&
+        this.state.country.length > 0 &&
+        this.state.state.length > 0 &&
+        this.state.phone.length > 0 &&
+        this.state.address.length > 0 &&
+        this.state.city.length > 0 &&
+        this.state.pincode.length > 0 &&
+        this.state.firstName.length > 0
+      ) {
+        var products = [];
+        this.state.products.forEach((product) => {
+          product.rate = false;
+          products.push(product);
+        });
+        firebase
+          .firestore()
+          .collection("orders")
+          .add({
+            products: products,
+            date: new Date(),
+            points: this.state.points,
+            email: this.state.email,
+            address: this.state.address,
+            appartment: this.state.apartment,
+            city: this.state.city,
+            country: this.state.country,
+            pincode: this.state.pincode,
+            phone: this.state.phone,
+            state: this.state.state,
+            coupon: this.state.coupon,
+            name: this.state.firstName + " " + this.state.lastName,
+            total: total,
+            shipping: shipping,
+            tag: "user",
+            status: "Pending",
+          })
+          .then((res) => {
+            if (this.state.currentUser.email) {
+              firebase
+                .firestore()
+                .collection("users")
+                .doc(this.state.userID)
+                .get()
+                .then((doc) => {
+                  var orders = doc.data().orders;
+                  orders.push(res.id);
                   firebase
-                  .firestore()
-                  .collection("users")
-                  .doc(this.state.userID)
-                  .get()
-                  .then((doc) => {
-                    var orders = doc.data().orders;
-                    orders.push(res.id);
-                    firebase
-                      .firestore()
-                      .collection("users")
-                      .doc(this.state.userID)
-                      .update({
-                        orders: orders,
-                        cart: [],
-                        points: 0,
-                      })
-                      .then(() => {
-                        window.location.href = "/Orders/" + res.id;
-                      });
-                  });
-                }else{
-                    firebase
-                      .firestore()
-                      .collection("users")
-                      .add({
-                        orders: [res.id],
-                        email: this.state.email,
-                        phone: this.state.phone,
-                        name: this.state.firstName + " " + this.state.lastName
-                      })
-                      .then(() => {
-                        // localStorage.removeItem("cart");
-                        window.location.href = "/Orders/" + res.id;
-                      });
-                }
-              });
-    //   const options = {
-    //     key: "rzp_test_GLsJlJZsykHTEw",
-    //     name: "Marfit",
-    //     amount: total * 100,
-    //     handler: async (response) => {
-    //       try {
-    //         // firebase
-    //         //   .firestore()
-    //         //   .collection("payments")
-    //         //   .add({
-    //         //     name: this.state.name,
-    //         //     phone: this.state.phone,
-    //         //     email: this.state.email,
-    //         //     paymentId: response.razorpay_payment_id,
-    //         //     amount: this.state.amount,
-    //         //   })
-    //         // .then(() => {
-    //         var products = [];
-    //         this.state.products.forEach((product) => {
-    //           product.rate = false;
-    //           products.push(product);
-    //         });
-    //         firebase
-    //           .firestore()
-    //           .collection("orders")
-    //           .add({
-    //             products: products,
-    //             date: new Date(),
-    //             points: this.state.points,
-    //             user: this.state.userID,
-    //             address: this.state.address,
-    //             appartment: this.state.appartment,
-    //             city: this.state.city,
-    //             country: this.state.country,
-    //             pincode: this.state.pincode,
-    //             phone: this.state.phone,
-    //             state: this.state.state,
-    //             coupon: this.state.coupon,
-    //             total: total,
-    //             shipping: shipping,
-    //             tag: "user",
-    //             status: "Pending",
-    //           })
-    //           .then((res) => {
-    //             if (this.state.currentUser.length > 0) {
-    //               firebase
-    //                 .firestore()
-    //                 .collection("users")
-    //                 .doc(this.state.userID)
-    //                 .get()
-    //                 .then((doc) => {
-    //                   var orders = doc.data().orders;
-    //                   orders.push(res.id);
-    //                   firebase
-    //                     .firestore()
-    //                     .collection("users")
-    //                     .doc(this.state.userID)
-    //                     .update({
-    //                       orders: orders,
-    //                       cart: [],
-    //                       points: 0,
-    //                     })
-    //                     .then(() => {
-    //                       window.location.href = "/Orders/" + res.id;
-    //                     });
-    //                 });
-    //             } else {
-    //               firebase
-    //                 .firestore()
-    //                 .collection("users")
-    //                 .add({
-    //                   orders: [res.id],
-    //                   email: this.state.email,
-    //                   phone: this.state.phone,
-    //                   name: this.state.firstName + " " + this.state.lastName
-    //                 })
-    //                 .then(() => {
-    //                   // localStorage.removeItem("cart");
-    //                   window.location.href = "/Orders/" + res.id;
-    //                 });
-    //             }
-    //           });
-    //         // });
-    //       } catch (err) {
-    //         toaster.notify("Oops! Something went wrong");
-    //       }
-    //     },
-    //     prefill: {
-    //       name: this.state.firstName,
-    //       email: this.state.email,
-    //       contact: this.state.phone,
-    //     },
-    //     theme: {
-    //       color: "#2D499B",
-    //     },
-    //   };
-    //   const rzp1 = new window.Razorpay(options);
-    //   rzp1.open();
-    // }
-    
-  }else {
-      if(!this.state.addAddress){
-        toaster.notify("Please select any address");
+                    .firestore()
+                    .collection("users")
+                    .doc(this.state.userID)
+                    .update({
+                      orders: orders,
+                      cart: [],
+                      points: 0,
+                    })
+                    .then(() => {
+                      window.location.href = "/Orders/" + res.id;
+                    });
+                });
+            } else {
+              localStorage.setItem("cart", JSON.stringify([]));
+              window.location.href = "/Orders/" + res.id;
+            }
+          });
+        //   const options = {
+        //     key: "rzp_test_GLsJlJZsykHTEw",
+        //     name: "Marfit",
+        //     amount: total * 100,
+        //     handler: async (response) => {
+        //       try {
+        //         // firebase
+        //         //   .firestore()
+        //         //   .collection("payments")
+        //         //   .add({
+        //         //     name: this.state.name,
+        //         //     phone: this.state.phone,
+        //         //     email: this.state.email,
+        //         //     paymentId: response.razorpay_payment_id,
+        //         //     amount: this.state.amount,
+        //         //   })
+        //         // .then(() => {
+        //         var products = [];
+        //         this.state.products.forEach((product) => {
+        //           product.rate = false;
+        //           products.push(product);
+        //         });
+        //         firebase
+        //           .firestore()
+        //           .collection("orders")
+        //           .add({
+        //             products: products,
+        //             date: new Date(),
+        //             points: this.state.points,
+        //             user: this.state.userID,
+        //             address: this.state.address,
+        //             appartment: this.state.appartment,
+        //             city: this.state.city,
+        //             country: this.state.country,
+        //             pincode: this.state.pincode,
+        //             phone: this.state.phone,
+        //             state: this.state.state,
+        //             coupon: this.state.coupon,
+        //             total: total,
+        //             shipping: shipping,
+        //             tag: "user",
+        //             status: "Pending",
+        //           })
+        //           .then((res) => {
+        //             if (this.state.currentUser.length > 0) {
+        //               firebase
+        //                 .firestore()
+        //                 .collection("users")
+        //                 .doc(this.state.userID)
+        //                 .get()
+        //                 .then((doc) => {
+        //                   var orders = doc.data().orders;
+        //                   orders.push(res.id);
+        //                   firebase
+        //                     .firestore()
+        //                     .collection("users")
+        //                     .doc(this.state.userID)
+        //                     .update({
+        //                       orders: orders,
+        //                       cart: [],
+        //                       points: 0,
+        //                     })
+        //                     .then(() => {
+        //                       window.location.href = "/Orders/" + res.id;
+        //                     });
+        //                 });
+        //             } else {
+        //               firebase
+        //                 .firestore()
+        //                 .collection("users")
+        //                 .add({
+        //                   orders: [res.id],
+        //                   email: this.state.email,
+        //                   phone: this.state.phone,
+        //                   name: this.state.firstName + " " + this.state.lastName
+        //                 })
+        //                 .then(() => {
+        //                   // localStorage.removeItem("cart");
+        //                   window.location.href = "/Orders/" + res.id;
+        //                 });
+        //             }
+        //           });
+        //         // });
+        //       } catch (err) {
+        //         toaster.notify("Oops! Something went wrong");
+        //       }
+        //     },
+        //     prefill: {
+        //       name: this.state.firstName,
+        //       email: this.state.email,
+        //       contact: this.state.phone,
+        //     },
+        //     theme: {
+        //       color: "#2D499B",
+        //     },
+        //   };
+        //   const rzp1 = new window.Razorpay(options);
+        //   rzp1.open();
+        // }
+      } else {
+        if (!this.state.addAddress) {
+          toaster.notify("Please select any address");
+        } else {
+          toaster.notify("Please Fill in all the fields");
+        }
       }
-      else{
-        toaster.notify("Please Fill in all the fields");
-      }
+    } else {
+      toaster.notify("User already exist! please Log in");
     }
   };
 
@@ -360,9 +369,9 @@ export default class Checkout extends React.Component {
       pincode: address.pincode,
       email: address.email,
       address: address.address,
-      selectedAddress: index
-    })
-  }
+      selectedAddress: index,
+    });
+  };
 
   render() {
     var subTotal = 0;
@@ -415,154 +424,164 @@ export default class Checkout extends React.Component {
               )}
 
               <main className="info">
-                {
-                  !this.state.addAddress ? 
-                    <div className="addressInput">
-                      {this.state.addresses.map((address, index) => {
-                              if(this.state.selectedAddress === index){
-                                return(
-                                <div className="address selected" key={index} onClick={() => this.handleAddress(index)}>
-                                  <div className="paras">
-                                    <p>Address {index + 1} :</p>
-                                    <p>
-                                      {address.firstName} {address.lastName}
-                                    </p>
-                                    <p>{address.address}</p>
-                                  </div>
-                                  <div className="circle">
-                                  </div>
-                                </div>
-                                )
-                              }else{
-                                return(
-                                  <div className="address" key={index} onClick={() => this.handleAddress(index)}>
-                                <div className="paras">
-                                  <p>Address {index + 1} :</p>
-                                  <p>
-                                    {address.firstName} {address.lastName}
-                                  </p>
-                                  <p>{address.address}</p>
-                                </div>
-                                <div className="circle">
-                                </div>
-                              </div>
-                                )
-                              }
-                            })}
-                            <div className="addAddress" onClick={() => this.setState({
-                              addAddress: true
-                            })}>
-                              <div className="plus">
-                                <i className="fas fa-plus"></i>
-                              </div>
-                              <p>Add New Address</p>
+                {!this.state.addAddress ? (
+                  <div className="addressInput">
+                    {this.state.addresses.map((address, index) => {
+                      if (this.state.selectedAddress === index) {
+                        return (
+                          <div
+                            className="address selected"
+                            key={index}
+                            onClick={() => this.handleAddress(index)}
+                          >
+                            <div className="paras">
+                              <p>Address {index + 1} :</p>
+                              <p>
+                                {address.firstName} {address.lastName}
+                              </p>
+                              <p>{address.address}</p>
                             </div>
+                            <div className="circle"></div>
+                          </div>
+                        );
+                      } else {
+                        return (
+                          <div
+                            className="address"
+                            key={index}
+                            onClick={() => this.handleAddress(index)}
+                          >
+                            <div className="paras">
+                              <p>Address {index + 1} :</p>
+                              <p>
+                                {address.firstName} {address.lastName}
+                              </p>
+                              <p>{address.address}</p>
+                            </div>
+                            <div className="circle"></div>
+                          </div>
+                        );
+                      }
+                    })}
+                    <div
+                      className="addAddress"
+                      onClick={() =>
+                        this.setState({
+                          addAddress: true,
+                        })
+                      }
+                    >
+                      <div className="plus">
+                        <i className="fas fa-plus"></i>
+                      </div>
+                      <p>Add New Address</p>
                     </div>
-                  :
+                  </div>
+                ) : (
                   <>
-                  <div className="contact">
-                  <div className="contact-label">
-                    <p className="heading">Contact information</p>
-                  </div>
-                  <input
-                    type="email"
-                    className="email-input"
-                    placeholder="Email"
-                    name="email"
-                    value={this.state.email}
-                    onChange={this.handleChange}
-                  />
-                </div>
-                <div className="shipping">
-                  <h2>Shipping address</h2>
-                  <div className="input-name">
-                    <input
-                      type="text"
-                      placeholder="First name"
-                      name="firstName"
-                      id="firstName"
-                      required
-                      value={this.state.firstName}
-                      onChange={this.handleChange}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Last name"
-                      name="lastName"
-                      id="lastName"
-                      required
-                      value={this.state.lastName}
-                      onChange={this.handleChange}
-                    />
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Address"
-                    name="address"
-                    id="address"
-                    required
-                    value={this.state.address}
-                    onChange={this.handleChange}
-                  />
-                  <input
-                    type="text"
-                    placeholder="Appartment, suite, etc. (optional)"
-                    name="appartment"
-                    id="appartment"
-                    value={this.state.apartment}
-                    onChange={this.handleChange}
-                  />
-                  <div className="region">
-                    <input
-                      type="text"
-                      placeholder="Country / Nation"
-                      name="country"
-                      required
-                      id="country"
-                      value={this.state.country}
-                      onChange={this.handleChange}
-                    />
-                    <input
-                      type="text"
-                      placeholder="State"
-                      name="state"
-                      required
-                      id="state"
-                      value={this.state.state}
-                      onChange={this.handleChange}
-                    />
-                  </div>
-                  <div className="region">
-                    <input
-                      type="text"
-                      placeholder="City"
-                      name="city"
-                      required
-                      id="city"
-                      value={this.state.city}
-                      onChange={this.handleChange}
-                    />
-                    <input
-                      type="text"
-                      placeholder="Pincode"
-                      name="pincode"
-                      required
-                      id="pincode"
-                      value={this.state.pincode}
-                      onChange={this.handleChange}
-                    />
-                  </div>
-                  <input
-                    type="text"
-                    name="phone"
-                    id="phone"
-                    placeholder="Phone"
-                    value={this.state.phone}
-                    onChange={this.handleChange}
-                  />
-                </div>
-                </>
-                }
+                    <div className="contact">
+                      <div className="contact-label">
+                        <p className="heading">Contact information</p>
+                      </div>
+                      <input
+                        type="email"
+                        className="email-input"
+                        placeholder="Email"
+                        name="email"
+                        value={this.state.email}
+                        onChange={this.handleChange}
+                      />
+                    </div>
+                    <div className="shipping">
+                      <h2>Shipping address</h2>
+                      <div className="input-name">
+                        <input
+                          type="text"
+                          placeholder="First name"
+                          name="firstName"
+                          id="firstName"
+                          required
+                          value={this.state.firstName}
+                          onChange={this.handleChange}
+                        />
+                        <input
+                          type="text"
+                          placeholder="Last name"
+                          name="lastName"
+                          id="lastName"
+                          required
+                          value={this.state.lastName}
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Address"
+                        name="address"
+                        id="address"
+                        required
+                        value={this.state.address}
+                        onChange={this.handleChange}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Appartment, suite, etc. (optional)"
+                        name="apartment"
+                        id="appartment"
+                        value={this.state.apartment}
+                        onChange={this.handleChange}
+                      />
+                      <div className="region">
+                        <input
+                          type="text"
+                          placeholder="Country / Nation"
+                          name="country"
+                          required
+                          id="country"
+                          value={this.state.country}
+                          onChange={this.handleChange}
+                        />
+                        <input
+                          type="text"
+                          placeholder="State"
+                          name="state"
+                          required
+                          id="state"
+                          value={this.state.state}
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                      <div className="region">
+                        <input
+                          type="text"
+                          placeholder="City"
+                          name="city"
+                          required
+                          id="city"
+                          value={this.state.city}
+                          onChange={this.handleChange}
+                        />
+                        <input
+                          type="text"
+                          placeholder="Pincode"
+                          name="pincode"
+                          required
+                          id="pincode"
+                          value={this.state.pincode}
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                      <input
+                        type="text"
+                        name="phone"
+                        id="phone"
+                        placeholder="Phone"
+                        value={this.state.phone}
+                        onChange={this.handleChange}
+                      />
+                    </div>
+                  </>
+                )}
               </main>
               <div className="placeOrder">
                 <a>

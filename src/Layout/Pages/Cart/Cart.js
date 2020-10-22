@@ -5,6 +5,7 @@ import discount from "../../../assets/download.png";
 import firebase from "firebase";
 import empty from "./629-empty-box.json";
 import Lottie from "lottie-react-web";
+import toaster from "toasted-notes";
 
 export default class Cart extends React.Component {
   constructor(props) {
@@ -34,13 +35,27 @@ export default class Cart extends React.Component {
               },() => {
                 console.log(this.state.cart)
                 this.state.cart.forEach(item => {
+                  console.log(item)
                   firebase.firestore().collection("products").doc(item.id).get().then(doc => {
-                    var product = doc.data();
+                    if (doc.data() === undefined) {
+                      toaster.notify("A product in your cart does not exist");
+                      var cart = []
+                      cart = this.state.cart.filter(item2 => item2.id !== item.id );
+                      this.setState({
+                        cart: cart
+                      })
+                      firebase.firestore().collection("users").doc(change.doc.id).update({
+                        cart: cart
+                      })
+                    } else {
+                      var product = doc.data();
+                    console.log(doc.data())
                     product.id = doc.id;
                     console.log(product);
                     this.setState({
                       products: [...this.state.products, product]
                     })
+                    }
                   })
                 })
               });
@@ -56,12 +71,22 @@ export default class Cart extends React.Component {
         }, () => {
           this.state.cart.forEach(item => {
             firebase.firestore().collection("products").doc(item.id).get().then(doc => {
-              var product = doc.data();
-              product.id = doc.id;
-              console.log(product);
-              this.setState({
-                products: [...this.state.products, product]
-              })
+              if (doc.data() === undefined) {
+                toaster.notify("A product in your cart does not exist");
+                var cart = [];
+                cart = this.state.cart.filter(item2 => item2.id !== item.id);
+                this.setState({
+                  cart: cart
+                })
+                localStorage.setItem("cart", JSON.stringify(cart));
+              } else {
+                var product = doc.data();
+                product.id = doc.id;
+                console.log(product);
+                this.setState({
+                  products: [...this.state.products, product]
+                })
+              }
             })
           })
         });
@@ -212,7 +237,7 @@ export default class Cart extends React.Component {
 
   render() {
     var total = 0;
-    if (this.state.products.length > 0) {
+    if (this.state.products.length > 0 && this.state.products.length === this.state.cart.length) {
         this.state.cart.forEach((data, index) => {
         if(data.id === this.state.products[index].id){
           total += this.state.products[index].sp * data.quantity

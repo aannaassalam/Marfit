@@ -491,6 +491,19 @@
   width: 100%;
 }
 
+.product-desc .description-section .rating .review-list .noratings{
+  height: 60px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.product-desc .description-section .rating .review-list .noratings p{
+  font-size: 17px;
+  font-weight: 500;
+}
+
 .product-desc .description-section .rating .review-list .reviews {
   width: 95%;
   border-bottom: 1px solid lightgray;

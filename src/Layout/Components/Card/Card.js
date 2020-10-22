@@ -221,7 +221,7 @@ export default class Card extends React.Component {
                   this.state.item.id
                 }
               >
-                <img src={this.state.item.images[0]} alt="Bag-Icon" />
+                <img src={this.state.item.images[0].uri} alt="Bag-Icon" />
               </a>
             </div>
             {this.state.currentUser &&
