@@ -57,18 +57,30 @@ class Dashboard extends React.Component {
       wishlist: [],
       copy: false,
       addTab: false,
+      editTab: false,
       points: "",
       orderedProduct: [],
+      editPhone: "",
       pincode: "",
+      editPincode: "",
       city: "",
+      editCity: "",
       country: "",
+      editCountry: "",
       state: "",
+      editState: "",
       firstName: "",
+      editFirstName: "",
       lastName: "",
+      editLastName: "",
       appartment: "",
+      editAppartment: "",
       address: "",
+      editAddress: "",
       email: "",
+      editEmail: "",
       redeem: "",
+      selectedTab : ""
     };
   }
 
@@ -305,6 +317,52 @@ class Dashboard extends React.Component {
         });
       });
   };
+
+  editTab = (index) => {
+    this.setState({
+      editAddress: this.state.addresses[index].address,
+      editPhone: this.state.addresses[index].phone,
+      editFirstName: this.state.addresses[index].firstName,
+      editLastName: this.state.addresses[index].lastName,
+      editPincode: this.state.addresses[index].pincode,
+      editState: this.state.addresses[index].state,
+      editCity: this.state.addresses[index].city,
+      editEmail: this.state.addresses[index].email,
+      editAppartment: this.state.addresses[index].appartment,
+      editCountry: this.state.addresses[index].country,
+      editTab: true,
+      selectedTab: index
+    })
+  }
+
+  handleEdit = () => {
+    var address = {};
+    address.address = this.state.editAddress;
+    address.phone = this.state.editPhone;
+    address.firstName = this.state.editFirstName;
+    address.lastName = this.state.editLastName;
+    address.pincode = this.state.editPincode;
+    address.state = this.state.editState;
+    address.city = this.state.editCity;
+    address.email = this.state.editEmail;
+    address.appartment = this.state.editAppartment;
+    address.country = this.state.editCountry;
+    var addresses = this.state.addresses;
+    addresses[this.state.selectedTab] = address;
+    firebase.firestore().collection("users").where("email", "==", this.state.currentUser.email).get().then(snap => {
+      snap.forEach(doc => {
+        console.log(this.state.addresses)
+        firebase.firestore().collection("users").doc(doc.id).update({
+          addresses: addresses
+        }).then(() => {
+          this.setState({
+            editTab: false
+          })
+          toaster.notify("Address updates successfully");
+        })
+      })
+    })
+  }
 
   render() {
     console.log(this.state.orders);
@@ -642,167 +700,297 @@ class Dashboard extends React.Component {
                     )}
                   </>
                 ) : null}
-                {this.state.tab === "Address" ? (
-                  <>
-                    <h1>Your Address List</h1>
-                    <div className="divider"></div>
-                    <div className="address-cont">
-                      {this.state.addTab ? (
-                        <>
-                          <i
-                            className="fas fa-arrow-left"
-                            onClick={() => {
-                              this.setState({ addTab: false });
-                            }}
-                          ></i>
-                          <div
-                            className={
-                              this.state.addTab ? "addtab active" : "addtab"
-                            }
-                          >
-                            <div className="inputs">
-                              <div className="region">
-                                <input
-                                  type="text"
-                                  placeholder="First name"
-                                  name="firstName"
-                                  id="firstName"
-                                  required
-                                  value={this.state.firstName}
-                                  onChange={this.handleChange}
-                                />
-                                <input
-                                  type="text"
-                                  placeholder="Last name"
-                                  name="lastName"
-                                  id="lastName"
-                                  required
-                                  value={this.state.lastName}
-                                  onChange={this.handleChange}
-                                />
-                              </div>
-                              <input
-                                type="text"
-                                placeholder="Email"
-                                name="email"
-                                id="email"
-                                required
-                                value={this.state.email}
-                                onChange={this.handleChange}
-                              />
-                              <input
-                                type="text"
-                                placeholder="Address"
-                                name="address"
-                                id="address"
-                                required
-                                value={this.state.address}
-                                onChange={this.handleChange}
-                              />
-                              <input
-                                type="text"
-                                placeholder="Appartment, suite, etc. (optional)"
-                                name="appartment"
-                                id="appartment"
-                                value={this.state.apartment}
-                                onChange={this.handleChange}
-                              />
-                              <div className="region">
-                                <input
-                                  type="text"
-                                  placeholder="Country / Nation"
-                                  name="country"
-                                  required
-                                  id="country"
-                                  value={this.state.country}
-                                  onChange={this.handleChange}
-                                />
-                                <input
-                                  type="text"
-                                  placeholder="State"
-                                  name="state"
-                                  required
-                                  id="state"
-                                  value={this.state.state}
-                                  onChange={this.handleChange}
-                                />
-                              </div>
-                              <div className="region">
-                                <input
-                                  type="text"
-                                  placeholder="City"
-                                  name="city"
-                                  required
-                                  id="city"
-                                  value={this.state.city}
-                                  onChange={this.handleChange}
-                                />
-                                <input
-                                  type="text"
-                                  placeholder="Pincode"
-                                  name="pincode"
-                                  required
-                                  id="pincode"
-                                  value={this.state.pincode}
-                                  onChange={this.handleChange}
-                                />
-                              </div>
-                              <input
-                                type="text"
-                                name="phone"
-                                id="phone"
-                                placeholder="Phone"
-                                value={this.state.phone}
-                                onChange={this.handleChange}
-                              />
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  this.handleAdd();
-                                }}
-                              >
-                                <p>Add</p>
-                              </button>
-                            </div>
-                          </div>
-                        </>
-                      ) : (
-                        <>
-                          {this.state.addresses &&
-                            this.state.addresses.map((address, index) => (
-                              <div className="address" key={index}>
-                                <div className="paras">
-                                  <p>Address {index + 1} :</p>
-                                  <p>
-                                    {address.firstName} {address.lastName}
-                                  </p>
-                                  <p>{address.address}</p>
+                  {this.state.tab === "Address" ? (
+                    <>
+                      <h1>Your Address List</h1>
+                      <div className="divider"></div>
+                      <div className="address-cont">
+                        {this.state.addTab ? (
+                          <>
+                            <i
+                              className="fas fa-arrow-left"
+                              onClick={() => {
+                                this.setState({ addTab: false });
+                              }}
+                            ></i>
+                            <div
+                              className={
+                                this.state.addTab ? "addtab active" : "addtab"
+                              }
+                            >
+                              <div className="inputs">
+                                <div className="region">
+                                  <input
+                                    type="text"
+                                    placeholder="First name"
+                                    name="firstName"
+                                    id="firstName"
+                                    required
+                                    value={this.state.firstName}
+                                    onChange={this.handleChange}
+                                  />
+                                  <input
+                                    type="text"
+                                    placeholder="Last name"
+                                    name="lastName"
+                                    id="lastName"
+                                    required
+                                    value={this.state.lastName}
+                                    onChange={this.handleChange}
+                                  />
                                 </div>
-                                <div
-                                  className="minus"
+                                <input
+                                  type="text"
+                                  placeholder="Email"
+                                  name="email"
+                                  id="email"
+                                  required
+                                  value={this.state.email}
+                                  onChange={this.handleChange}
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Address"
+                                  name="address"
+                                  id="address"
+                                  required
+                                  value={this.state.address}
+                                  onChange={this.handleChange}
+                                />
+                                <input
+                                  type="text"
+                                  placeholder="Appartment, suite, etc. (optional)"
+                                  name="appartment"
+                                  id="appartment"
+                                  value={this.state.apartment}
+                                  onChange={this.handleChange}
+                                />
+                                <div className="region">
+                                  <input
+                                    type="text"
+                                    placeholder="Country / Nation"
+                                    name="country"
+                                    required
+                                    id="country"
+                                    value={this.state.country}
+                                    onChange={this.handleChange}
+                                  />
+                                  <input
+                                    type="text"
+                                    placeholder="State"
+                                    name="state"
+                                    required
+                                    id="state"
+                                    value={this.state.state}
+                                    onChange={this.handleChange}
+                                  />
+                                </div>
+                                <div className="region">
+                                  <input
+                                    type="text"
+                                    placeholder="City"
+                                    name="city"
+                                    required
+                                    id="city"
+                                    value={this.state.city}
+                                    onChange={this.handleChange}
+                                  />
+                                  <input
+                                    type="text"
+                                    placeholder="Pincode"
+                                    name="pincode"
+                                    required
+                                    id="pincode"
+                                    value={this.state.pincode}
+                                    onChange={this.handleChange}
+                                  />
+                                </div>
+                                <input
+                                  type="text"
+                                  name="phone"
+                                  id="phone"
+                                  placeholder="Phone"
+                                  value={this.state.phone}
+                                  onChange={this.handleChange}
+                                />
+                                <button
+                                  type="button"
                                   onClick={() => {
-                                    this.handleDelete(index);
+                                    this.handleAdd();
                                   }}
                                 >
-                                  <i className="fas fa-minus-circle"></i>
-                                </div>
+                                  <p>Add</p>
+                                </button>
                               </div>
-                            ))}
+                            </div>
+                          </>
+                        ) : (
+                            this.state.editTab ?
+                              <>
+                                <i
+                                  className="fas fa-arrow-left"
+                                  onClick={() => {
+                                    this.setState({ editTab: false });
+                                  }}
+                                ></i>
+                                <div
+                                  className={
+                                    this.state.editTab ? "editTab active" : "editTab"
+                                  }
+                                >
+                                  <div className="inputs">
+                                    <div className="region">
+                                      <input
+                                        type="text"
+                                        placeholder="First name"
+                                        name="editFirstName"
+                                        id="editFirstName"
+                                        required
+                                        value={this.state.editFirstName}
+                                        onChange={this.handleChange}
+                                      />
+                                      <input
+                                        type="text"
+                                        placeholder="Last name"
+                                        name="editLastName"
+                                        id="editLastName"
+                                        required
+                                        value={this.state.editLastName}
+                                        onChange={this.handleChange}
+                                      />
+                                    </div>
+                                    <input
+                                      type="text"
+                                      placeholder="Email"
+                                      name="editEmail"
+                                      id="editEmail"
+                                      required
+                                      value={this.state.editEmail}
+                                      onChange={this.handleChange}
+                                    />
+                                    <input
+                                      type="text"
+                                      placeholder="Address"
+                                      name="editAddress"
+                                      id="editAddress"
+                                      required
+                                      value={this.state.editAddress}
+                                      onChange={this.handleChange}
+                                    />
+                                    <input
+                                      type="text"
+                                      placeholder="Appartment, suite, etc. (optional)"
+                                      name="editAppartment"
+                                      id="editAppartment"
+                                      value={this.state.editAppartment}
+                                      onChange={this.handleChange}
+                                    />
+                                    <div className="region">
+                                      <input
+                                        type="text"
+                                        placeholder="Country / Nation"
+                                        name="editCountry"
+                                        required
+                                        id="editCountry"
+                                        value={this.state.editCountry}
+                                        onChange={this.handleChange}
+                                      />
+                                      <input
+                                        type="text"
+                                        placeholder="State"
+                                        name="editState"
+                                        required
+                                        id="editState"
+                                        value={this.state.editState}
+                                        onChange={this.handleChange}
+                                      />
+                                    </div>
+                                    <div className="region">
+                                      <input
+                                        type="text"
+                                        placeholder="City"
+                                        name="editCity"
+                                        required
+                                        id="editCity"
+                                        value={this.state.editCity}
+                                        onChange={this.handleChange}
+                                      />
+                                      <input
+                                        type="text"
+                                        placeholder="Pincode"
+                                        name="editPincode"
+                                        required
+                                        id="editPincode"
+                                        value={this.state.editPincode}
+                                        onChange={this.handleChange}
+                                      />
+                                    </div>
+                                    <input
+                                      type="text"
+                                      name="editPhone"
+                                      id="editPhone"
+                                      placeholder="Phone"
+                                      value={this.state.editPhone}
+                                      onChange={this.handleChange}
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        this.handleEdit();
+                                      }}
+                                    >
+                                      <p>Save</p>
+                                    </button>
+                                  </div>
+                                </div>
+                              </>
+                              :
+                              <>
+                                {this.state.addresses &&
+                                  this.state.addresses.map((address, index) => (
+                                    <div className="address" key={index}>
+                                      <div className="paras">
+                                        <p>Address {index + 1} :</p>
+                                        <p>
+                                          {address.firstName} {address.lastName}
+                                        </p>
+                                        <p>{address.address}</p>
+                                      </div>
+                                      <div className="actions">
+                                      <div
+                                        className="edit"
+                                        onClick={() => {
+                                          this.editTab(index)
+                                        }}
+                                      >
+                                        <i className="fas fa-pen"></i>
+                                      </div>
+                                      <div
+                                        className="minus"
+                                        onClick={() => {
+                                          this.handleDelete(index);
+                                        }}
+                                      >
+                                        <i className="fas fa-minus-circle"></i>
+                                      </div>
+                                      </div>
+                                    </div>
+                                  ))}
 
-                          <div
-                            className="newAddress"
-                            onClick={() => {
-                              this.setState({ addTab: true });
-                            }}
-                          >
-                            <i className="fas fa-plus-circle"></i>
-                            <p>ADD NEW ADDRESS</p>
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </>
-                ) : null}
+                                <div
+                                  className="newAddress"
+                                  onClick={() => {
+                                    this.setState({ addTab: true });
+                                  }}
+                                >
+                                  <i className="fas fa-plus-circle"></i>
+                                  <p>ADD NEW ADDRESS</p>
+                                </div>
+                              </>
+                          )}
+                      </div>
+                    </>
+                  ): null}
                 {this.state.tab === "Refer" ? (
                   <>
                     <h1>Refer & Earn</h1>

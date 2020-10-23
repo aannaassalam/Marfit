@@ -178,7 +178,7 @@ export default class Cart extends React.Component {
             });
             firebase.firestore().collection("users").doc(doc.id).update({
               cart: cart,
-            });
+            })
           });
         });
     } else {
@@ -213,12 +213,12 @@ export default class Cart extends React.Component {
             cart.forEach((item) => {
               if (item.id === id) {
                 item.quantity += 1;
+                console.log(item.quantity);
               }
             });
-
             firebase.firestore().collection("users").doc(doc.id).update({
               cart: cart,
-            });
+            })
           });
         });
     } else {
@@ -237,10 +237,10 @@ export default class Cart extends React.Component {
 
   render() {
     var total = 0;
-    if (this.state.products.length > 0 && this.state.products.length === this.state.cart.length) {
+    if (this.state.products.length > 0) {
         this.state.cart.forEach((data, index) => {
         if(data.id === this.state.products[index].id){
-          total += this.state.products[index].sp * data.quantity
+          total += this.state.products[index].sp * data.quantity;
         }
       })
     }

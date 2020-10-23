@@ -305,15 +305,39 @@
   margin-left: 15px;
 }
 
-.dashboard-container .content .address-cont .address .minus {
-  width: 15px;
-  height: 15px;
+.dashboard-container .content .address-cont .address .actions{
+  width: 20%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: 6rem;
+}
+
+.dashboard-container .content .address-cont .address .actions .minus {
+  width: 20px;
+  height: 20px;
   cursor: pointer;
 }
 
-.dashboard-container .content .address-cont .address .minus i {
-  font-size: 16px;
+.dashboard-container .content .address-cont .address .actions .minus i {
+  font-size: 20px;
   color: red;
+}
+
+.dashboard-container .content .address-cont .address .actions .edit {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  background-color: green;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-container .content .address-cont .address .actions .edit i {
+  font-size: 12px;
+  color: white;
 }
 
 .dashboard-container .content .addtab.active{
@@ -389,6 +413,83 @@
 }
 
 .dashboard-container .content .addtab i {
+  cursor: pointer;
+  width: fit-content;
+}
+
+.dashboard-container .content .editTab.active{
+  transform: scale(1);
+  transition: transform .4s;
+}
+
+.dashboard-container .content .editTab {
+  height: 100%;
+  width: 99%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  transform: scale(0);
+  transform-origin: center;
+  transition: transform .4s;
+}
+
+.dashboard-container .content .editTab .inputs {
+  width: 80%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  /* justify-content: flex-start;
+  align-items: center; */
+}
+
+.dashboard-container .content .editTab .inputs .region{
+  width: 70%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-container .content .editTab .inputs .region input{
+  width: 48%;
+}
+
+.dashboard-container .content .editTab .inputs input {
+  width: 70%;
+  height: 45px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid grey;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 15px;
+}
+
+.dashboard-container .content .editTab .inputs input:focus {
+  border: 1px solid darkgrey;
+}
+
+.dashboard-container .content .editTab .inputs button {
+  cursor: pointer;
+  padding: .5rem 0;
+  width: 80px;
+  background-color: #fb641b;
+  color: #fff;
+  font-size: 18px;
+  font-weight: bold;
+  outline: none;
+  border: 1px solid #fb641b;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.dashboard-container .content .editTab .inputs button p{
+  width: fit-content;
+}
+
+.dashboard-container .content .editTab i {
   cursor: pointer;
   width: fit-content;
 }
