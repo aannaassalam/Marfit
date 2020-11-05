@@ -1,11 +1,11 @@
 import React from "react";
 import "./Cart.css";
 import CartCard from "../../Components/Cart-card/Cart-card";
-import discount from "../../../assets/download.png";
 import firebase from "firebase";
 import empty from "./629-empty-box.json";
 import Lottie from "lottie-react-web";
 import toaster from "toasted-notes";
+import discount from "../../../assets/discount.png";
 
 export default class Cart extends React.Component {
   constructor(props) {
@@ -16,82 +16,106 @@ export default class Cart extends React.Component {
       selectedCoupon: "",
       currentUser: "",
       products: [],
-      total: 0
+      total: 0,
     };
   }
 
   componentDidMount() {
-    firebase.auth().onAuthStateChanged(user => {
-      if(user){
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
         firebase
           .firestore()
           .collection("users")
           .where("email", "==", user.email)
           .onSnapshot((snap) => {
             snap.docChanges().forEach((change) => {
-              this.setState({
-                cart: change.doc.data().cart,
-                currentUser: change.doc.data()
-              },() => {
-                console.log(this.state.cart)
-                this.state.cart.forEach(item => {
-                  console.log(item)
-                  firebase.firestore().collection("products").doc(item.id).get().then(doc => {
-                    if (doc.data() === undefined) {
-                      toaster.notify("A product in your cart does not exist");
-                      var cart = []
-                      cart = this.state.cart.filter(item2 => item2.id !== item.id );
-                      this.setState({
-                        cart: cart
-                      })
-                      firebase.firestore().collection("users").doc(change.doc.id).update({
-                        cart: cart
-                      })
-                    } else {
-                      var product = doc.data();
-                    console.log(doc.data())
-                    product.id = doc.id;
-                    console.log(product);
-                    this.setState({
-                      products: [...this.state.products, product]
-                    })
-                    }
-                  })
-                })
-              });
+              this.setState(
+                {
+                  cart: change.doc.data().cart,
+                  currentUser: change.doc.data(),
+                },
+                () => {
+                  console.log(this.state.cart);
+                  this.state.cart.forEach((item) => {
+                    console.log(item);
+                    firebase
+                      .firestore()
+                      .collection("products")
+                      .doc(item.id)
+                      .get()
+                      .then((doc) => {
+                        if (doc.data() === undefined) {
+                          toaster.notify(
+                            "A product in your cart does not exist"
+                          );
+                          var cart = [];
+                          cart = this.state.cart.filter(
+                            (item2) => item2.id !== item.id
+                          );
+                          this.setState({
+                            cart: cart,
+                          });
+                          firebase
+                            .firestore()
+                            .collection("users")
+                            .doc(change.doc.id)
+                            .update({
+                              cart: cart,
+                            });
+                        } else {
+                          var product = doc.data();
+                          console.log(doc.data());
+                          product.id = doc.id;
+                          console.log(product);
+                          this.setState({
+                            products: [...this.state.products, product],
+                          });
+                        }
+                      });
+                  });
+                }
+              );
             });
           });
       } else {
-        setInterval(() => {
-          
-        }, 1000);
+        setInterval(() => {}, 1000);
         var cart = JSON.parse(localStorage.getItem("cart"));
-        this.setState({
-          cart: cart ? cart : [],
-        }, () => {
-          this.state.cart.forEach(item => {
-            firebase.firestore().collection("products").doc(item.id).get().then(doc => {
-              if (doc.data() === undefined) {
-                toaster.notify("A product in your cart does not exist");
-                var cart = [];
-                cart = this.state.cart.filter(item2 => item2.id !== item.id);
-                this.setState({
-                  cart: cart
-                })
-                localStorage.setItem("cart", JSON.stringify(cart));
-              } else {
-                var product = doc.data();
-                product.id = doc.id;
-                console.log(product);
-                this.setState({
-                  products: [...this.state.products, product]
-                })
-              }
-            })
-          })
-        });
-          
-      }}) 
+        this.setState(
+          {
+            cart: cart ? cart : [],
+          },
+          () => {
+            this.state.cart.forEach((item) => {
+              firebase
+                .firestore()
+                .collection("products")
+                .doc(item.id)
+                .get()
+                .then((doc) => {
+                  if (doc.data() === undefined) {
+                    toaster.notify("A product in your cart does not exist");
+                    var cart = [];
+                    cart = this.state.cart.filter(
+                      (item2) => item2.id !== item.id
+                    );
+                    this.setState({
+                      cart: cart,
+                    });
+                    localStorage.setItem("cart", JSON.stringify(cart));
+                  } else {
+                    var product = doc.data();
+                    product.id = doc.id;
+                    console.log(product);
+                    this.setState({
+                      products: [...this.state.products, product],
+                    });
+                  }
+                });
+            });
+          }
+        );
+      }
+    });
     firebase
       .firestore()
       .collection("settings")
@@ -178,7 +202,7 @@ export default class Cart extends React.Component {
             });
             firebase.firestore().collection("users").doc(doc.id).update({
               cart: cart,
-            })
+            });
           });
         });
     } else {
@@ -218,7 +242,7 @@ export default class Cart extends React.Component {
             });
             firebase.firestore().collection("users").doc(doc.id).update({
               cart: cart,
-            })
+            });
           });
         });
     } else {
@@ -238,11 +262,11 @@ export default class Cart extends React.Component {
   render() {
     var total = 0;
     if (this.state.products.length > 0) {
-        this.state.cart.forEach((data, index) => {
-        if(data.id === this.state.products[index].id){
+      this.state.cart.forEach((data, index) => {
+        if (data.id === this.state.products[index].id) {
           total += this.state.products[index].sp * data.quantity;
         }
-      })
+      });
     }
     if (this.state.selectedCoupon !== "") {
       if (this.state.selectedCoupon.type === "money") {
@@ -320,12 +344,11 @@ export default class Cart extends React.Component {
               <div className="avail-coupon">
                 <p>Available Coupons</p>
                 {this.state.coupons.map((item, index) => {
-                  var date = new Date();
-                  if (item.start.toDate() < date && item.end.toDate() > date) {
+                  if (item.active === "Active") {
                     return (
                       <div className="coupon-selector" key={index}>
                         <div className="coupon-title">
-                          <img src={item.image} alt="discount image" />
+                          <img src={discount} alt="" />
                           <div className="paragraphs">
                             <p className="coupon-name">{item.name}</p>
                             <p className="coupon-details">

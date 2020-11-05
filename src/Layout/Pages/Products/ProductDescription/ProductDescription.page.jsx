@@ -88,9 +88,9 @@ export default class ProductDesc extends React.Component {
                 .firestore()
                 .collection("users")
                 .where("email", "==", user.email)
-                .onSnapshot((snap) => {
-                  snap.docChanges().forEach((change) => {
-                    var wishlist = change.doc.data().wishlist;
+                .get().then((snap) => {
+                  snap.forEach((doc) => {
+                    var wishlist = doc.data().wishlist;
                     // productShow["isWished"] = false;
                     wishlist.forEach((item) => {
                       if (item === this.state.product.id) {
@@ -103,7 +103,7 @@ export default class ProductDesc extends React.Component {
                       product: productShow,
                       simProducts: simProducts,
                       loading: false,
-                      cart: change.doc.data().cart,
+                      cart: doc.data().cart,
                       currentUser: user.email,
                     });
                   });
@@ -197,6 +197,7 @@ export default class ProductDesc extends React.Component {
                 var localCart = JSON.stringify(this.state.cart);
                 localStorage.setItem("cart", localCart);
                 toaster.notify("Added to cart");
+                window.location.reload();
               }
             );
           } else {
@@ -220,6 +221,7 @@ export default class ProductDesc extends React.Component {
             var localCart = JSON.stringify(this.state.cart);
             localStorage.setItem("cart", localCart);
             toaster.notify("Added to cart");
+            window.location.reload();
           }
         );
       }
@@ -407,14 +409,14 @@ export default class ProductDesc extends React.Component {
                                   key={index}
                                 >
                                   <img
-                                    src={this.state.product.images[index].uri}
+                                    src={this.state.product.images[index]}
                                     alt="slider Images"
                                   />
                                 </div>
                               ) : (
                                 <div className="preview-image" key={index}>
                                   <img
-                                    src={item.uri}
+                                    src={item}
                                     alt="slider Images"
                                     onClick={() => {
                                       this.setState({ activeImage: index });
@@ -428,6 +430,7 @@ export default class ProductDesc extends React.Component {
 
                       <div className="product-image">
                         {this.state.product.images ? (
+                          <>
                           <div className="product-image-container">
                             <ReactImageMagnify
                               {...{
@@ -441,19 +444,23 @@ export default class ProductDesc extends React.Component {
                                   isFluidWidth: true,
                                   src: this.state.product.images[
                                     this.state.activeImage
-                                  ].uri,
+                                  ],
                                 },
                                 largeImage: {
                                   src: this.state.product.images[
                                     this.state.activeImage
-                                  ].uri,
+                                  ],
                                   width: 1200,
                                   height: 1800,
                                 },
                                 lensStyle: { backgroundColor: "transparent" },
                               }}
                             />
-                          </div>
+                            </div>
+                            <div className="product-image-container2">
+                              <img src={this.state.product.images[this.state.activeImage]} alt=""/>
+                            </div>
+                            </>
                         ) : null}
                       </div>
                     </div>

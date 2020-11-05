@@ -44,7 +44,7 @@ export default class CartCard extends React.Component {
                 this.state.product.id
               }
             >
-              <img src={this.state.product && this.state.product.images[0].uri} />
+              <img src={this.state.product && this.state.product.images[0]} />
             </a>
             <div className="description">
               <p className="title">{this.state.product.title}</p>

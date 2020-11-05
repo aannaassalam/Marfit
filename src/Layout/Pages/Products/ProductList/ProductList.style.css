@@ -197,10 +197,20 @@
 }
 
 @media(max-width: 680px){
+  .productlist-container
+  .categorylist-breadcrumb
+  .breadcrumb-menu
+  .bd-menu-stats{
+    display: none;
+  }
   .productlist-container .catalogue{
     display: flex;
     justify-content: center;
     flex-direction: column;
+  }
+  .filter-header .left {
+    width: 100%;
+    margin-bottom: 20px;
   }
   .filter-header .left .filter {
     display: none;
@@ -219,12 +229,6 @@
     display: flex;
     width: 100%;
     height: 50%;
-  }
-}
-
-@media(max-width: 540px){
-  .filter-header .left {
-    width: 100%;
   }
 }
 

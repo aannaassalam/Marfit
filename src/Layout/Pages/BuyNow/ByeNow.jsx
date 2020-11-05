@@ -24,7 +24,7 @@ export default class ByeNow extends React.Component {
       country: "",
       firstName: "",
       lastName: "",
-      apartment: "",
+      appartment: "",
       city: "",
       pincode: "",
       points: "",
@@ -139,7 +139,7 @@ export default class ByeNow extends React.Component {
             email: this.state.email,
             points: this.state.points,
             address: this.state.address,
-            appartment: this.state.apartment,
+            appartment: this.state.appartment,
             city: this.state.city,
             country: this.state.country,
             pincode: this.state.pincode,
@@ -153,13 +153,30 @@ export default class ByeNow extends React.Component {
             status: "Pending",
           })
           .then((res) => {
-            if (this.state.currentUser.length > 0) {
+            if (this.state.currentUser.email) {
               firebase
                 .firestore()
                 .collection("users")
                 .doc(this.state.userID)
                 .get()
                 .then((doc) => {
+                  var addresses = doc.data().addresses;
+                  if (this.state.addAddress) {
+                    var address = {
+                      address: this.state.address,
+                      email: this.state.email,
+                      phone: this.state.phone,
+                      state: this.state.state,
+                      country: this.state.country,
+                      firstName: this.state.firstName,
+                      lastName: this.state.lastName,
+                      appartment: this.state.appartment,
+                      city: this.state.city,
+                      pincode: this.state.pincode,
+                    };
+                    console.log(address)
+                    addresses.push(address);
+                  }
                   var orders = doc.data().orders;
                   orders.push(res.id);
                   firebase
@@ -168,6 +185,7 @@ export default class ByeNow extends React.Component {
                     .doc(this.state.userID)
                     .update({
                       orders: orders,
+                      addresses: addresses,
                       points: 0,
                     })
                     .then(() => {
@@ -300,7 +318,7 @@ export default class ByeNow extends React.Component {
       country: address.country,
       firstName: address.firstName,
       lastName: address.lastName,
-      apartment: address.appartment,
+      appartment: address.appartment,
       city: address.city,
       pincode: address.pincode,
       email: address.email,
@@ -425,9 +443,9 @@ export default class ByeNow extends React.Component {
                   <input
                     type="text"
                     placeholder="Appartment, suite, etc. (optional)"
-                    name="apartment"
+                    name="appartment"
                     id="appartment"
-                    value={this.state.apartment}
+                    value={this.state.appartment}
                     onChange={this.handleChange}
                   />
                   <div className="region">

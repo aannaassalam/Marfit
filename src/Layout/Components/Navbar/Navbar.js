@@ -55,7 +55,7 @@ export default class Navbar extends React.Component {
       } else {
         this.setState({
           loading: false,
-          cartSize: JSON.parse(localStorage.getItem("cart")).length
+          cartSize: JSON.parse(localStorage.getItem("cart"))? JSON.parse(localStorage.getItem("cart")).length : 0
         });
       }
       
@@ -129,7 +129,7 @@ export default class Navbar extends React.Component {
   };
 
   render() {
-    console.log(this.state.currentUser)
+    console.log(this.state.loading)
     return (
       <nav className="navbar">
         <div className="nav-container">
@@ -271,6 +271,7 @@ export default class Navbar extends React.Component {
                     onClick={() => {
                       this.setState({ login: true });
                     }}
+                    id="userLogin"
                   >
                     <i className="fas fa-user"></i>
                     <p>LOGIN/SIGN UP</p>
@@ -284,7 +285,7 @@ export default class Navbar extends React.Component {
                 >
                   <i className="fas fa-shopping-cart"></i>
                   <p>CART</p>
-                  <p>{this.state.cartSize}</p>
+                    {this.state.cartSize > 0 ? <p className="cartSize">{this.state.cartSize}</p> : null}
                 </a>
               </>
             )}

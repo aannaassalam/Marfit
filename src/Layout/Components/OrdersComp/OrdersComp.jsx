@@ -26,7 +26,7 @@ class OrdersComp extends Component {
       .doc(this.props.item)
       .onSnapshot((order) => {
             this.setState({
-              orderimg: order.data().products[0].images[0].uri,
+              orderimg: order.data().products[0].images[0],
               ordertitle: order.data().products[0].title,
               orderdate: order.data().date,
               ordertotal: order.data().total,

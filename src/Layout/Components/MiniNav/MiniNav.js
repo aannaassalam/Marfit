@@ -30,7 +30,6 @@ export default class MiniNav extends React.Component {
   render() {
     return (
       <div className="mini-container">
-        <div className="tray">
           {this.state.loading ? (
             <Loader />
           ) : (
@@ -58,7 +57,6 @@ export default class MiniNav extends React.Component {
               <a href="/Sale" className="sale">Sale</a>
             </>
           )}
-        </div>
       </div>
     );
   }

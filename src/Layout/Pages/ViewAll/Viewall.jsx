@@ -30,6 +30,7 @@ export default class Viewall extends Component {
                 loading: false,
                 once: true,
               });
+              console.log("hh");
             }
           });
         });
@@ -68,7 +69,7 @@ export default class Viewall extends Component {
         {this.state.loading ? (
           <Loader />
         ) : (
-          <Loader>
+          <>
             <p>{this.state.data.title}</p>
             <div className="lines">
               <div className="horizontal"></div>
@@ -83,7 +84,7 @@ export default class Viewall extends Component {
                 return <Card item={item} />;
               })}
             </div>
-          </Loader>
+          </>
         )}
       </div>
     );

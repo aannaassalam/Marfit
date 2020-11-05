@@ -86,6 +86,7 @@
 .card .slider .swiper-container .swiper-wrapper .swiper-slide {
   height: 280px;
   width: 240px;
+  margin-right: 1rem;
 }
 
 .swiper-button-next {

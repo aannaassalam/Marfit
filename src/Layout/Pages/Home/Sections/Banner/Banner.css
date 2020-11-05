@@ -27,7 +27,7 @@
 
 .panel .cont img {
   width: 100%;
-  object-fit: cover;
+  object-fit: fill;
 }
 
 .swiper-pagination-bullet-active {
@@ -40,9 +40,9 @@
   }
 }
 
-@media (max-width: 468px) {
+@media (max-width: 680px) {
   .panel-container {
-    height: 30vh;
+    height: 200px;
     width: 100%;
     margin-top: 5px;
   }

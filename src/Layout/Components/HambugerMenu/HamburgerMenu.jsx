@@ -2,11 +2,35 @@ import React from "react";
 import { Link } from "react-router-dom";
 import logo from "../../../assets/image_1.png";
 import "./HamburgerMenu.css";
+import firebase from 'firebase';
 
 export default class HamburgerMenu extends React.Component {
+
+  constructor(props){
+    super(props);
+    this.state = {
+      categories: [],
+      open: null
+    }
+  }
+
+  componentDidMount() {
+    firebase
+      .firestore()
+      .collection("settings")
+      .onSnapshot((snap) => {
+        snap.docChanges().forEach((change) => {
+          this.setState({
+            categories: change.doc.data().categories,
+            loading: false,
+          });
+        });
+      });
+  }
+
   render() {
     return (
-      <div className={this.props.active ? "menu active" : "menu"}>
+      <div className={this.props.active ? "menu-ham active" : "menu-ham"}>
         <div
           className={
             this.props.active ? "hamburger-menu active" : "hamburger-menu"
@@ -25,6 +49,33 @@ export default class HamburgerMenu extends React.Component {
             <Link to="/" className="box" onClick={() => this.props.close()}>
               <p>Home</p>
             </Link>
+            <Link to="/NewArrivals" className="box" onClick={() => this.props.close()}>
+              <p style={{color: "#fb641b"}}>New Arrivals</p>
+            </Link>
+            <Link to="/Sale" className="box" onClick={() => this.props.close()}>
+              <p style={{color: "#fb641b"}}>Sale</p>
+            </Link>
+            <div className="MiniNav">
+            {this.state.categories.map((cat, index) => {
+                return (
+                  <div className={this.state.open === index ? "MiniNav-category opened box" : "MiniNav-category box"} key={index} onClick={() => this.state.open === index ? this.setState({open: null}) : this.setState({open: index})}>
+                    <p>{cat.name} <i className={this.state.open === index ? "fa fa-chevron-down fa-1x open" : "fa fa-chevron-down fa-1x"}></i></p>
+                    <div className="subcategory-options">
+                      {cat.subcategories.map((sub, index) => {
+                        return (
+                          <a
+                            href={"/Category/" + cat.name + "/" + sub.name}
+                            key={index}
+                          >
+                            {sub.name}
+                          </a>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+            })}
+              </div>
             {this.props.login ? (
               <>
               <Link to="/Dashboard/Orders" className="box disappear" onClick={() => this.props.close()}>

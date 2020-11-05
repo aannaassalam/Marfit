@@ -46,7 +46,7 @@
 @media (max-width: 680px){
     .about{
         flex-direction: column;
-        height: 800px;
+        height: auto;
     }
     
     .about img{
@@ -56,10 +56,11 @@
 
     .about .white-container{
         width: 100%;
+        padding: 20px 0;
     }
 
     .about .white-container p{
-        font-size: 1.5rem;
+        font-size: 1.2rem;
     }
 }
 

@@ -21,107 +21,114 @@ export default class Card extends React.Component {
   }
 
   componentDidMount() {
-    if(typeof(this.props.item) === "object"){
+    if (typeof this.props.item === "object") {
       firebase
-      .firestore()
-      .collection("products")
-      .doc(this.props.item.id)
-      .onSnapshot((product) => {
-        if (product.exists) {
-          var p = product.data();
-          p.id = product.id;
-          this.setState(
-            {
-              item: p,
+        .firestore()
+        .collection("products")
+        .doc(this.props.item.id)
+        .onSnapshot((product) => {
+          if (product.exists) {
+            var p = product.data();
+            p.id = product.id;
+            this.setState(
+              {
+                item: p,
+                loading: false,
+              },
+              () => {
+                firebase.auth().onAuthStateChanged((user) => {
+                  if (user) {
+                    firebase
+                      .firestore()
+                      .collection("users")
+                      .where("email", "==", user.email)
+                      .get()
+                      .then((snap) =>
+                        snap.forEach((doc) => {
+                          var wishlist = doc.data().wishlist;
+                          var currentUser = {};
+                          currentUser.email = user.email;
+                          currentUser.id = doc.id;
+                          this.setState({
+                            currentUser: currentUser,
+                          });
+                          wishlist.forEach((item) => {
+                            console.log(item);
+                            console.log(this.state.item.id);
+                            if (item === this.state.item.id) {
+                              console.log("here");
+                              this.setState({
+                                isWished: true,
+                              });
+                            }
+                          });
+                        })
+                      );
+                  } else {
+                    this.setState({ currentUser: "" });
+                  }
+                });
+              }
+            );
+          } else {
+            this.setState({
               loading: false,
-            },
-            () => {
-              firebase.auth().onAuthStateChanged((user) => {
-                if (user) {
-                  firebase
-                    .firestore()
-                    .collection("users")
-                    .where("email", "==", user.email)
-                    .get()
-                    .then((snap) =>
-                      snap.forEach((doc) => {
-                        var wishlist = doc.data().wishlist;
-                        var currentUser = {};
-                        currentUser.email = user.email;
-                        currentUser.id = doc.id;
-                        this.setState({
-                          currentUser: currentUser,
-                        });
-                        wishlist.forEach((item) => {
-                          console.log(item);
-                          console.log(this.state.item.id);
-                          if (item === this.state.item.id) {
-                            console.log("here");
-                            this.setState({
-                              isWished: true,
-                            });
-                          }
-                        });
-                      })
-                    );
-                } else {
-                  this.setState({ currentUser: "" });
-                }
-              });
-            }
-          );
-        }
-      });
-    }else{
+            });
+          }
+        });
+    } else {
       firebase
-      .firestore()
-      .collection("products")
-      .doc(this.props.item)
-      .onSnapshot((product) => {
-        if (product.exists) {
-          var p = product.data();
-          p.id = product.id;
-          this.setState(
-            {
-              item: p,
+        .firestore()
+        .collection("products")
+        .doc(this.props.item)
+        .onSnapshot((product) => {
+          if (product.exists) {
+            var p = product.data();
+            p.id = product.id;
+            this.setState(
+              {
+                item: p,
+                loading: false,
+              },
+              () => {
+                firebase.auth().onAuthStateChanged((user) => {
+                  if (user) {
+                    firebase
+                      .firestore()
+                      .collection("users")
+                      .where("email", "==", user.email)
+                      .get()
+                      .then((snap) =>
+                        snap.forEach((doc) => {
+                          var wishlist = doc.data().wishlist;
+                          var currentUser = {};
+                          currentUser.email = user.email;
+                          currentUser.id = doc.id;
+                          this.setState({
+                            currentUser: currentUser,
+                          });
+                          wishlist.forEach((item) => {
+                            if (item === this.state.item.id) {
+                              this.setState({
+                                isWished: true,
+                              });
+                            }
+                          });
+                        })
+                      );
+                  } else {
+                    this.setState({ currentUser: "" });
+                  }
+                });
+              }
+            );
+          } else {
+            this.setState({
               loading: false,
-            },
-            () => {
-              firebase.auth().onAuthStateChanged((user) => {
-                if (user) {
-                  firebase
-                    .firestore()
-                    .collection("users")
-                    .where("email", "==", user.email)
-                    .get()
-                    .then((snap) =>
-                      snap.forEach((doc) => {
-                        var wishlist = doc.data().wishlist;
-                        var currentUser = {};
-                        currentUser.email = user.email;
-                        currentUser.id = doc.id;
-                        this.setState({
-                          currentUser: currentUser,
-                        });
-                        wishlist.forEach((item) => {
-                          if (item === this.state.item.id) {
-                            this.setState({
-                              isWished: true,
-                            });
-                          }
-                        });
-                      })
-                    );
-                } else {
-                  this.setState({ currentUser: "" });
-                }
-              });
-            }
-          );
-        }
-      });
+            });
+          }
+        });
     }
-    
   }
 
   addToWishlist = () => {
@@ -198,76 +205,82 @@ export default class Card extends React.Component {
   render() {
     var percent = Math.round((this.state.item.sp / this.state.item.cp) * 100);
     return (
-      <div className="card-cont">
-        {this.state.loading ? (
-          <Lottie
-            options={{ animationData: Loading }}
-            width={100}
-            height={100}
-            position={"absolute"}
-            top= {0}
-          />
-        ) : (
-          <>
-            <div className="img-container">
-              <a
-                style={{ width: "100%", height: "100%" }}
-                href={
-                  "/Category/" +
-                  this.state.item.category +
-                  "/" +
-                  this.state.item.subCategory +
-                  "/" +
-                  this.state.item.id
-                }
-              >
-                <img src={this.state.item.images[0].uri} alt="Bag-Icon" />
-              </a>
-            </div>
-            {this.state.currentUser &&
-            this.state.currentUser.email.length > 0 ? (
+      <>
+        {this.state.item.title ? (
+          <div className="card-cont">
+            {this.state.loading ? (
+              <Lottie
+                options={{ animationData: Loading }}
+                width={100}
+                height={100}
+                position={"absolute"}
+                top={0}
+              />
+            ) : (
               <>
-                {this.state.isWished ? (
-                  <div
-                    className="circle"
-                    onClick={() => this.removeFromWishlist(this.state.item.id)}
+                <div className="img-container">
+                  <a
+                    style={{ width: "100%", height: "100%" }}
+                    href={
+                      "/Category/" +
+                      this.state.item.category +
+                      "/" +
+                      this.state.item.subCategory +
+                      "/" +
+                      this.state.item.id
+                    }
                   >
-                    <i className="red fa fa-heart"></i>
-                  </div>
-                ) : (
-                  <div
-                    className="circle"
-                    onClick={() => this.addToWishlist(this.state.item.id)}
-                  >
-                    <i className="fa fa-heart"></i>
-                  </div>
-                )}
-              </>
-            ) : null}
+                    <img src={this.state.item.images[0]} alt="Bag-Icon" />
+                  </a>
+                </div>
+                {this.state.currentUser &&
+                this.state.currentUser.email.length > 0 ? (
+                  <>
+                    {this.state.isWished ? (
+                      <div
+                        className="circle"
+                        onClick={() =>
+                          this.removeFromWishlist(this.state.item.id)
+                        }
+                      >
+                        <i className="red fa fa-heart"></i>
+                      </div>
+                    ) : (
+                      <div
+                        className="circle"
+                        onClick={() => this.addToWishlist(this.state.item.id)}
+                      >
+                        <i className="fa fa-heart"></i>
+                      </div>
+                    )}
+                  </>
+                ) : null}
 
-            <a
-              href={
-                "/Category/" +
-                this.state.item.category +
-                "/" +
-                this.state.item.subCategory +
-                "/" +
-                this.state.item.id
-              }
-              className="short-description"
-            >
-              <p className="item-title">{this.state.item.title}</p>
-              <p className="item-price">&#8377;{this.state.item.sp}</p>
-              <div className="price-flex">
-                <p className="price-line-through">
-                  &#8377;{this.state.item.cp}
-                </p>
-                <p className="discount">{100 - percent}% off</p>
-              </div>
-            </a>
-          </>
-        )}
-      </div>
+                <a
+                  href={
+                    "/Category/" +
+                    this.state.item.category +
+                    "/" +
+                    this.state.item.subCategory +
+                    "/" +
+                    this.state.item.id
+                  }
+                  className="short-description"
+                >
+                  <p className="item-title">{this.state.item.title}</p>
+                  <p className="item-price">&#8377;{this.state.item.sp}</p>
+                  <div className="price-flex">
+                    <p className="price-line-through">
+                      &#8377;{this.state.item.cp}
+                    </p>
+                    <p className="discount">{100 - percent}% off</p>
+                  </div>
+                </a>
+              </>
+            )}
+          </div>
+        ) : null}
+      </>
     );
   }
 }
