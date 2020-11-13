@@ -607,6 +607,55 @@
   margin-right: 10px;
 }
 
+.buying-options-sticky {
+  width: 100%;
+  display: none;
+  flex-direction: row;
+  align-items: center;
+  position: sticky;
+  bottom: 0px;
+  background-color: #fff;
+}
+
+.buying-options-sticky .option {
+  width: 180px;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  margin: 0 0.5rem;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.buying-options-sticky .option:hover {
+  transform: translateY(-5px);
+}
+
+.buying-options-sticky .option:nth-child(1) {
+  background-color: #fff;
+  border: 2px solid #fb6b25;
+  color: #000;
+  transition: background-color .1s, color .1s;
+}
+
+.buying-options-sticky .option:nth-child(1):active {
+  background-color: orangered;
+  border-color: orangered;
+  color: white;
+}
+
+.buying-options-sticky .option:nth-child(2) {
+  background-color: orangered;
+  border: 2px solid orangered;
+  color: #fff;
+}
+
+.buying-options-sticky .option i {
+  margin-right: 0.25rem;
+}
+
 @media(max-width: 768px){
   .product-container{
     height: auto;
@@ -624,19 +673,8 @@
   .product-desc .description-section {
     overflow-y: visible;
   }
-  .product-desc .all-product-image .buying-options {
-    position: fixed;
-    /* position: sticky;*/
-    bottom: 0px;
-    /* background: #fff; */
-    padding-bottom: 20px;
-    padding-top: 20px;
-    justify-content: center;
-    z-index: 99;
-  }
-  .product-desc .all-product-image .buying-options .option{
-    width: 40%;
-    height: 52px;
+  .product-desc .all-product-image .buying-options{
+    display: none;
   }
   .product-desc .all-product-image .carousal-section {
     flex-direction: column-reverse;
@@ -644,7 +682,7 @@
   .product-desc .all-product-image .carousal-section .product-images {
     width: 100%;
     display: flex;
-    padding-top: 3rem;
+    padding-top: 3.5rem;
   }
   .product-desc .all-product-image .carousal-section .product-image {
     width: 100%;
@@ -655,6 +693,21 @@
   }
   .product-desc .all-product-image .carousal-section .product-image .product-image-container2{
     display: flex;
+  }
+  .buying-options-sticky{
+    display: flex;
+    padding-bottom: 20px;
+    padding-top: 20px;
+    justify-content: center;
+    z-index: 99;
+    margin-top: 10px;
+  }
+  .buying-options-sticky .option{
+    width: 40i%;
+    height: 52px;
+  }
+  .buying-options-sticky .option i{
+    margin-right: .5rem;
   }
 }
 
@@ -709,5 +762,9 @@
   }
   .categorylist-breadcrumb{
     display: none;
+  }
+  .buying-options-sticky .option{
+    width: 45%;
+    height: 40px;
   }
 }

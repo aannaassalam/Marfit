@@ -6,7 +6,6 @@
   justify-content: center;
   box-shadow: 0 3px 6px 0 #dee0e2;
   background-color: #fff;
-  overflow-y: scroll;
   padding: 0 2rem;
   align-items: center;
 }
@@ -39,6 +38,7 @@
   cursor: pointer;
   margin: 0 20px;
   white-space: nowrap;
+  position: relative;
 }
 /* 
 .mini-container .tray a{
@@ -69,7 +69,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  top: 140px;
+  top: 40px;
   padding: 0.2rem 0;
   border: 1px solid lightgray;
   width: 150px;

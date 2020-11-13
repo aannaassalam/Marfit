@@ -735,13 +735,34 @@ export default class ProductDesc extends React.Component {
               )}
             </div>
             {this.state.simProducts.length > 0 ? (
+                <>
               <div className="product-like">
                 <Slider
                   data={this.state.simProducts}
                   title={this.state.sliderTitle}
                   view={false}
-                />
+                  />
+                </div>
+                <div className="buying-options-sticky">
+                <div className="option" onClick={this.AddToCart}>
+                  <i className="fas fa-shopping-cart"></i>
+                  <p>ADD TO CART</p>
+                </div>
+                <div
+                  className="option"
+                  onClick={() =>
+                    (window.location.href =
+                      "/Checkout/" +
+                      this.state.product.id +
+                      "/" +
+                      this.state.usersQuantity)
+                  }
+                >
+                  <i className="fas fa-bolt"></i>
+                  <p>BUY NOW</p>
+                </div>
               </div>
+                </>
             ) : null}
           </motion.div>
         )}

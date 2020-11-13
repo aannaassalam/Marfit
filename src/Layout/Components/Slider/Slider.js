@@ -12,7 +12,7 @@ export default class Slider extends React.Component {
     super(props);
     this.state = {
       products: [],
-      loading: true,
+      // loading: true,
     };
   }
 
@@ -34,6 +34,7 @@ export default class Slider extends React.Component {
       //     prevEl: ".swiper-button-prev",
       //   },
     });
+    // console.log(this.props.data);
 
     // this.props.data.forEach(item => {
     //   firebase.firestore().collection('products').doc(item).get().then(snap => {
@@ -45,6 +46,25 @@ export default class Slider extends React.Component {
     //   })
     // })
   }
+
+  handleValid = (data) => {
+    data.map((item, index) => {
+      firebase
+        .firestore()
+        .collection("products")
+        .doc(item)
+        .get()
+        .then((snap) => {
+          return snap ? (
+            <div className="swiper-slide" key={index}>
+              <Card item={item} />
+            </div>
+          ) : (
+            <div>HIII</div>
+          );
+        });
+    });
+  };
 
   render() {
     return (
@@ -68,13 +88,13 @@ export default class Slider extends React.Component {
           ) : null}
         </div>
         <div className="slider">
-          {!this.state.products.length > 0 ? (
+          {this.props.data.length > 0 ? (
             <div className="swiper-container">
               <div className="swiper-wrapper">
-                {this.state.products.map((item, index) => (
+                {this.props.data.map((item,index) => (
                   <div className="swiper-slide" key={index}>
-                    <Card item={item} />
-                  </div>
+                  <Card item={item} />
+                </div>
                 ))}
               </div>
               {/* <div className="swiper-button-prev"></div>
@@ -88,6 +108,7 @@ export default class Slider extends React.Component {
             />
           )}
         </div>
+        
       </div>
     );
   }

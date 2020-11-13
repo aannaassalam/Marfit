@@ -19,6 +19,10 @@
     width: 100%;
     height: 100%;
   }
+
+  .hide{
+    display: none !important;
+  }
   
   .menu-ham .hamburger-menu {
     width: 300px;
@@ -202,6 +206,11 @@
     .menu-ham .hamburger-menu{
         width: 600px;
     }
+
+    .hide{
+      display: flex !important;
+    }
+
     .menu-ham .hamburger-menu .ham-list .MiniNav{
       display: flex;
       flex-direction: column;

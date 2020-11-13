@@ -49,10 +49,10 @@ export default class HamburgerMenu extends React.Component {
             <Link to="/" className="box" onClick={() => this.props.close()}>
               <p>Home</p>
             </Link>
-            <Link to="/NewArrivals" className="box" onClick={() => this.props.close()}>
+            <Link to="/NewArrivals" className="box hide" onClick={() => this.props.close()}>
               <p style={{color: "#fb641b"}}>New Arrivals</p>
             </Link>
-            <Link to="/Sale" className="box" onClick={() => this.props.close()}>
+            <Link to="/Sale" className="box hide" onClick={() => this.props.close()}>
               <p style={{color: "#fb641b"}}>Sale</p>
             </Link>
             <div className="MiniNav">

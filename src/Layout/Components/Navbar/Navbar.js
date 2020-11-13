@@ -30,7 +30,7 @@ export default class Navbar extends React.Component {
       products: [],
       searchedItems: [],
       search: "",
-      cartSize:0
+      cartSize: 0,
     };
   }
 
@@ -38,37 +38,41 @@ export default class Navbar extends React.Component {
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         firestore()
-        .collection("users")
-        .where("email", "==", user.email)
-        .onSnapshot((snap) => {
-          snap.docs.forEach((doc) => {
-            console.log(doc.data())
-            this.setState({
-              currentUser: doc.data(),
-              loginStatus: true,
-              isAnonymous: user.isAnonymous,
-              loading: false,
-              cartSize:doc.data().cart.length
+          .collection("users")
+          .where("email", "==", user.email)
+          .onSnapshot((snap) => {
+            snap.docs.forEach((doc) => {
+              console.log(doc.data());
+              this.setState({
+                currentUser: doc.data(),
+                loginStatus: true,
+                isAnonymous: user.isAnonymous,
+                loading: false,
+                cartSize: doc.data().cart.length,
+              });
             });
           });
-        });
       } else {
         this.setState({
           loading: false,
-          cartSize: JSON.parse(localStorage.getItem("cart"))? JSON.parse(localStorage.getItem("cart")).length : 0
+          cartSize: JSON.parse(localStorage.getItem("cart"))
+            ? JSON.parse(localStorage.getItem("cart")).length
+            : 0,
         });
       }
-      
     });
-    firebase.firestore().collection("products").onSnapshot(snap => {
-      snap.docChanges().forEach(changes => {
-        var product = changes.doc.data();
-        product.id = changes.doc.id;
-        this.setState({
-          products: [...this.state.products, product]
-        })
-      })
-    })
+    firebase
+      .firestore()
+      .collection("products")
+      .onSnapshot((snap) => {
+        snap.docChanges().forEach((changes) => {
+          var product = changes.doc.data();
+          product.id = changes.doc.id;
+          this.setState({
+            products: [...this.state.products, product],
+          });
+        });
+      });
   }
 
   handleCart = () => {
@@ -79,31 +83,43 @@ export default class Navbar extends React.Component {
 
   handleSearch = (e) => {
     console.log(e.target.value);
-    this.setState({
-      [e.target.name] : e.target.value,
-      searchedItems: []
-    },() => {
-      var search = [];
-      firebase.firestore().collection("products").onSnapshot(snap => {
-        snap.docChanges().forEach(changes => {
-          var found = false;
-          this.state.searchedItems.forEach(item => {
-            if(item.id === changes.doc.id){
-              found = true;
-            }
-          })
-          if(changes.doc.data().title.toLowerCase().includes(this.state.search.toLowerCase()) && !found){
-            var product = changes.doc.data();
-            product.id = changes.doc.id;
-            search.push(product);
-          }
-        })
-        this.setState({
-          searchedItems: search
-        })
-      })
-    })
-  }
+    this.setState(
+      {
+        [e.target.name]: e.target.value,
+        searchedItems: [],
+      },
+      () => {
+        var search = [];
+        firebase
+          .firestore()
+          .collection("products")
+          .onSnapshot((snap) => {
+            snap.docChanges().forEach((changes) => {
+              var found = false;
+              this.state.searchedItems.forEach((item) => {
+                if (item.id === changes.doc.id) {
+                  found = true;
+                }
+              });
+              if (
+                changes.doc
+                  .data()
+                  .title.toLowerCase()
+                  .includes(this.state.search.toLowerCase()) &&
+                !found
+              ) {
+                var product = changes.doc.data();
+                product.id = changes.doc.id;
+                search.push(product);
+              }
+            });
+            this.setState({
+              searchedItems: search,
+            });
+          });
+      }
+    );
+  };
 
   handleCartClose = () => {
     this.setState({
@@ -129,7 +145,7 @@ export default class Navbar extends React.Component {
   };
 
   render() {
-    console.log(this.state.loading)
+    console.log(this.state.loading);
     return (
       <nav className="navbar">
         <div className="nav-container">
@@ -167,31 +183,37 @@ export default class Navbar extends React.Component {
             <button>
               <i className="fa fa-search"></i>
             </button>
-            <div className={this.state.search.length > 0 ? "searchResult": null}>
-              { 
-                this.state.searchedItems.length > 0 && this.state.search.length > 0
-                ?
-                this.state.searchedItems.map(item => {
-                  console.log(item)
-                  return(
-                  <a href={"/Category/" + item.category + "/" + item.subCategory + "/" + item.id} className="result">
-                    <img src={item.images[0]} alt="item image"/>
+            <div className={this.state.search.length > 0 ? "searchResult" : null}>
+            {this.state.searchedItems.length > 0 &&
+            this.state.search.length > 0 ? (
+              this.state.searchedItems.map((item) => {
+                console.log(item);
+                return (
+                  <a
+                    href={
+                      "/Category/" +
+                      item.category +
+                      "/" +
+                      item.subCategory +
+                      "/" +
+                      item.id
+                    }
+                    className="result"
+                  >
+                    <img src={item.images[0]} alt="item image" />
                     <div className="resultTitle">
                       <p>{item.title}</p>
                       <p>in {item.category}</p>
                     </div>
                   </a>
-                  )
-                })
-                :
-                this.state.search.length > 0
-                ?
-                <div className="errorMsg">
-                  <p>No item matched with your search</p>
-                </div>
-                :null
-              }
-            </div>
+                );
+              })
+            ) : this.state.search.length > 0 ? (
+              <div className="errorMsg">
+                <p>No item matched with your search</p>
+              </div>
+            ) : null}
+          </div>
           </div>
           <div
             className={
@@ -285,15 +307,14 @@ export default class Navbar extends React.Component {
                 >
                   <i className="fas fa-shopping-cart"></i>
                   <p>CART</p>
-                    {this.state.cartSize > 0 ? <p className="cartSize">{this.state.cartSize}</p> : null}
+                  {this.state.cartSize > 0 ? (
+                    <p className="cartSize">{this.state.cartSize}</p>
+                  ) : null}
                 </a>
               </>
             )}
           </div>
-            <Cart
-              active={this.state.showCart}
-              close={this.handleCartClose}
-            />
+          <Cart active={this.state.showCart} close={this.handleCartClose} />
           {this.state.login ? (
             <Login
               close={(toggle) => this.setState({ login: toggle })}
@@ -311,6 +332,40 @@ export default class Navbar extends React.Component {
           close={() => this.setState({ showMenu: false })}
           handleLogin={() => this.setState({ login: true })}
         />
+
+        {this.state.searchbtn ? (
+          <div className={this.state.search.length > 0 ? "searchResult" : null}>
+            {this.state.searchedItems.length > 0 &&
+            this.state.search.length > 0 ? (
+              this.state.searchedItems.map((item) => {
+                console.log(item);
+                return (
+                  <a
+                    href={
+                      "/Category/" +
+                      item.category +
+                      "/" +
+                      item.subCategory +
+                      "/" +
+                      item.id
+                    }
+                    className="result"
+                  >
+                    <img src={item.images[0]} alt="item image" />
+                    <div className="resultTitle">
+                      <p>{item.title}</p>
+                      <p>in {item.category}</p>
+                    </div>
+                  </a>
+                );
+              })
+            ) : this.state.search.length > 0 ? (
+              <div className="errorMsg">
+                <p>No item matched with your search</p>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
       </nav>
     );
   }

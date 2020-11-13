@@ -77,31 +77,35 @@ export default class Home extends React.Component {
             <Banner />
             <FeatureItems />
             <Slider
-              data={this.state.data1.products}
-              title={this.state.data1.title}
+              data={this.state.sliders[0].products}
+              title={this.state.sliders[0].title}
               view={this.state.viewAll}
             />
             <Add />
             <Slider
-              data={this.state.data2.products}
-              title={this.state.data2.title}
+              data={this.state.sliders[1].products}
+              title={this.state.sliders[1].title}
               view={this.state.viewAll}
             />
             <About />
             <Slider
-              data={this.state.data1.products}
-              title={this.state.data1.title}
+              data={this.state.sliders[2].products}
+              title={this.state.sliders[2].title}
               view={this.state.viewAll}
             />
             <Add />
-            {this.state.sliders &&
-              this.state.sliders.map((slider) => (
-                <Slider
-                  data={slider.products}
-                  title={slider.title}
-                  view={this.state.viewAll}
-                />
-              ))}
+              {this.state.sliders &&
+                this.state.sliders.map((slider, index) => {
+                  if (index > 2) {
+                    return (
+                      <Slider
+                      data={slider.products}
+                      title={slider.title}
+                      view={this.state.viewAll}
+                    />
+                  )
+                  }
+            })}
             </motion.div>
         )}
 

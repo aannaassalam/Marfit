@@ -7,10 +7,11 @@ import Filter from "../../../Components/Filter/Filter.component";
 import Card from "../../../Components/Card/Card";
 import firebase from "firebase";
 import Lottie from "lottie-react-web";
+import empty from "../629-empty-box.json";
+import circular from "../../../../assets/circular loading.json";
 import Loader from "../../../Components/Loader/Loader";
 import loading from "../../../../assets/loading.json";
 import toaster from "toasted-notes";
-import empty from "../629-empty-box.json";
 
 const pageVariants = {
   initial: {
@@ -44,18 +45,21 @@ class ProductList extends React.Component {
       outStock: false,
       loading: true,
       month: 3,
-      min: 100,
-      max: 5000,
-      filter: false
+      min: 0,
+      max: 0,
+      filter: false,
+      productLoading: false
     };
   }
-  
+
   componentDidMount() {
     firebase
       .firestore()
       .collection("products")
       .onSnapshot((snap) => {
         var productList = [];
+        var min = 100;
+        var max = 0;
         snap.docChanges().forEach((change) => {
           if (
             this.props.match.params.id1 === change.doc.data().category &&
@@ -66,62 +70,29 @@ class ProductList extends React.Component {
             productList.push(product);
           }
         });
-        if (firebase.auth().currentUser) {
-          firebase
-            .firestore()
-            .collection("users")
-            .where("email", "==", firebase.auth().currentUser.email)
-            .onSnapshot((snap) => {
-              snap.docChanges().forEach((change) => {
-                var wishlist = [];
-                var filterProductList = [];
-                wishlist = change.doc.data().wishlist;
-                productList.map((product) => {
-                  if (
-                    product.category.toLowerCase() ===
-                      this.props.match.params.id1.toLowerCase() &&
-                    product.subCategory.toLowerCase() ===
-                      this.props.match.params.id2.toLowerCase()
-                  ) {
-                    filterProductList.push(product);
-                  }
-                });
-                filterProductList.map((item) => {
-                  var found = false;
-                  wishlist.map((i) => {
-                    if (item.email === i.email && item.id === i.id) {
-                      item["isWished"] = true;
-                      found = true;
-                    }
-                  });
-                  if (found === false) {
-                    item["isWished"] = false;
-                  }
-                });
-                this.setState(
-                  {
-                    productList: filterProductList,
-                    filterProductList: filterProductList,
-                    loading: false,
-                  },
-                  () => {
-                    this.handleProductInStock();
-                  }
-                );
-              });
-            });
-        } else {
-          this.setState(
-            {
-              productList: productList,
-              loading: false,
-            },
-            () => {
-              this.handleProductInStock();
-            }
-          );
-        }
+        productList.map(product => {
+          if (min > product.sp) {
+            min = product.sp
+          }
+          if (max < product.sp) {
+            max = product.sp
+          }
+        })
+        this.setState(
+          {
+            productList: productList,
+            filterProductList: productList,
+            min: min,
+            max: max,
+            loading: false
+          },
+          () => {
+            this.handleProductInStock();
+          }
+        );
+
       });
+
     firebase
       .firestore()
       .collection("settings")
@@ -137,7 +108,7 @@ class ProductList extends React.Component {
                 {
                   category: cat,
                 },
-                () => {}
+                () => { }
               );
             }
           });
@@ -214,9 +185,9 @@ class ProductList extends React.Component {
     );
   };
 
-  handleShowFilter=() =>{
+  handleShowFilter = () => {
     this.setState({
-      filter:!this.state.filter
+      filter: !this.state.filter
     })
   }
 
@@ -229,10 +200,19 @@ class ProductList extends React.Component {
       }
     });
     this.setState({
-      filterProductList: newproducts,
+      productLoading: true,
+      filterProductList: [],
       min: min,
       max: max,
-    });
+    },
+      () => {
+        setTimeout(() => {
+          this.setState({
+            filterProductList: newproducts,
+            productLoading: false,
+          });
+        },500)
+      })
   };
 
   handleProductOutStock = () => {
@@ -395,11 +375,11 @@ class ProductList extends React.Component {
                         under <b>{this.props.match.params.id2}</b> category
                       </p>
                     ) : (
-                      <p>
-                        We have total {this.state.productList.length} products
+                        <p>
+                          We have total {this.state.productList.length} products
                         under <b>{this.props.match.params.id1}</b> category
-                      </p>
-                    )}
+                        </p>
+                      )}
                   </div>
                 </div>
               </div>
@@ -431,124 +411,141 @@ class ProductList extends React.Component {
                   </p>
                 </div>
               ) : (
-                <>
-                  <div className="filter-header">
-                    <div className="left">
+                  <>
+                    <div className="filter-header">
+                      <div className="left">
+                        <div className="filter">
+                          <img src={filter} alt="filter-logo" />
+                          <p>Filters</p>
+                        </div>
+                        <div className="filter-inPhone" onClick={this.handleShowFilter}>
+                          <img src={filter} alt="filter-logo" />
+                          <p>Filter</p>
+                        </div>
+                        <div className="reset">
+                          <button onClick={this.handleReset}>Reset</button>
+                        </div>
+                      </div>
+
+                      {/* Tags */}
+                      <div className="right"></div>
+                    </div>
+
+                    {/* Product List catalogue */}
+                    <div className="catalogue">
                       <div className="filter">
-                        <img src={filter} alt="filter-logo" />
-                        <p>Filters</p>
+                        <Filter
+                          handleMonths={(e) => this.handleMonths(e)}
+                          category={this.state.category}
+                          subCat={this.props.match.params.id2}
+                          type={this.state.type}
+                          handleProductAddType={(e) => this.handleProductAddType(e)}
+                          handleProductRemoveType={(e) =>
+                            this.handleProductRemoveType(e)
+                          }
+                          handleRentRange={(min, max) =>
+                            this.handleRentRange(min, max)
+                          }
+                          handleProductInStock={this.handleProductInStock}
+                          handleProductOutStock={this.handleProductOutStock}
+                          outStock={this.state.outStock}
+                          min={this.state.min}
+                          max={this.state.max}
+                          month={this.state.month}
+                        />
                       </div>
-                      <div className="filter-inPhone" onClick={this.handleShowFilter}>
-                        <img src={filter} alt="filter-logo" />
-                        <p>Filter</p>
+                      <div className={this.state.filter ? "mobile-filter-active" : "mobile-filter"}>
+                        <Filter
+                          handleMonths={(e) => this.handleMonths(e)}
+                          category={this.state.category}
+                          subCat={this.props.match.params.id2}
+                          type={this.state.type}
+                          handleProductAddType={(e) => this.handleProductAddType(e)}
+                          handleProductRemoveType={(e) =>
+                            this.handleProductRemoveType(e)
+                          }
+                          handleRentRange={(min, max) =>
+                            this.handleRentRange(min, max)
+                          }
+                          handleProductInStock={this.handleProductInStock}
+                          handleProductOutStock={this.handleProductOutStock}
+                          outStock={this.state.outStock}
+                          min={this.state.min}
+                          max={this.state.max}
+                          month={this.state.month}
+                        />
                       </div>
-                      <div className="reset">
-                        <button onClick={this.handleReset}>Reset</button>
-                      </div>
-                    </div>
 
-                    {/* Tags */}
-                    <div className="right"></div>
-                  </div>
-
-                  {/* Product List catalogue */}
-                  <div className="catalogue">
-                    <div className="filter">
-                    <Filter
-                      handleMonths={(e) => this.handleMonths(e)}
-                      category={this.state.category}
-                      subCat={this.props.match.params.id2}
-                      type={this.state.type}
-                      handleProductAddType={(e) => this.handleProductAddType(e)}
-                      handleProductRemoveType={(e) =>
-                        this.handleProductRemoveType(e)
-                      }
-                      handleRentRange={(min, max) =>
-                        this.handleRentRange(min, max)
-                      }
-                      handleProductInStock={this.handleProductInStock}
-                      handleProductOutStock={this.handleProductOutStock}
-                      outStock={this.state.outStock}
-                      min={this.state.min}
-                      max={this.state.max}
-                      month={this.state.month}
-                    />
-                    </div>
-                    <div className={this.state.filter?"mobile-filter-active":"mobile-filter"}>
-                    <Filter
-                      handleMonths={(e) => this.handleMonths(e)}
-                      category={this.state.category}
-                      subCat={this.props.match.params.id2}
-                      type={this.state.type}
-                      handleProductAddType={(e) => this.handleProductAddType(e)}
-                      handleProductRemoveType={(e) =>
-                        this.handleProductRemoveType(e)
-                      }
-                      handleRentRange={(min, max) =>
-                        this.handleRentRange(min, max)
-                      }
-                      handleProductInStock={this.handleProductInStock}
-                      handleProductOutStock={this.handleProductOutStock}
-                      outStock={this.state.outStock}
-                      min={this.state.min}
-                      max={this.state.max}
-                      month={this.state.month}
-                    />
-                    </div>
-
-                    <div className="card-list-container">
-                      <div className="card-list">
-                        {this.state.filterProductList.length > 0 ? (
-                          <>
-                            {this.state.filterProductList.map((item, index) => {
-                              return (
-                                <Card
-                                  id1={this.props.match.params.id1}
-                                  id2={this.props.match.params.id2}
-                                  item={item}
-                                  addToWishlist={(e) => this.addToWishlist(e)}
-                                  removeFromWishlist={(e) =>
-                                    this.removeFromWishlist(e)
-                                  }
-                                  key={index}
-                                />
-                              );
-                            })}
-                          </>
-                        ) : (
-                          <div
-                            style={{
-                              width: "100%",
-                              height: "85vh",
+                      <div className="card-list-container">
+                        {
+                          this.state.productLoading ?
+                            <div style={{
                               display: "flex",
                               alignItems: "center",
                               justifyContent: "center",
-                              flexDirection: "column",
-                            }}
-                          >
-                            <Lottie
-                              options={{ animationData: empty }}
-                              width={200}
-                              height={200}
-                            />
-                            <p
-                              style={{
-                                fontSize: "16px",
-                                fontWeight: "bold",
-                                color: "#313131",
-                              }}
-                            >
-                              Sorry! we could not find any items
+                              width: "100%",
+                              height: "100%"
+                            }}>
+                              <Lottie
+                                options={{ animationData: circular }}
+                                width={100}
+                                height={100}
+                              />
+                            </div>
+                            :
+                            <div className="card-list">
+                              {this.state.filterProductList.length > 0 ? (
+                                <>
+                                  {this.state.filterProductList.map((item, index) => {
+                                    return (
+                                      <Card
+                                        id1={this.props.match.params.id1}
+                                        id2={this.props.match.params.id2}
+                                        item={item}
+                                        addToWishlist={(e) => this.addToWishlist(e)}
+                                        removeFromWishlist={(e) =>
+                                          this.removeFromWishlist(e)
+                                        }
+                                        key={index}
+                                      />
+                                    );
+                                  })}
+                                </>
+                              ) : (
+                                  <div
+                                    style={{
+                                      width: "100%",
+                                      height: "85vh",
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      flexDirection: "column",
+                                    }}
+                                  >
+                                    <Lottie
+                                      options={{ animationData: empty }}
+                                      width={200}
+                                      height={200}
+                                    />
+                                    <p
+                                      style={{
+                                        fontSize: "16px",
+                                        fontWeight: "bold",
+                                        color: "#313131",
+                                      }}
+                                    >
+                                      Sorry! we could not find any items
                             </p>
-                          </div>
-                        )}
+                                  </div>
+                                )}
+                            </div>
+                        }
                       </div>
                     </div>
-                  </div>
-                </>
-              )}
+                  </>
+                )}
             </motion.div>
-        )}
+          )}
       </>
     );
   }

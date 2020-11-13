@@ -19,6 +19,7 @@ import Order from "./Layout/Pages/Order/order";
 import Viewall from "./Layout/Pages/ViewAll/Viewall";
 import NewArrival from "./Layout/Pages/NewArrival/NewArrival";
 import Loader from "./Layout/Components/Loader/Loader";
+import Sale from "./Layout/Pages/Sale/Sale";
 
 function App() {
   const location = useLocation();
@@ -51,6 +52,7 @@ function App() {
             component={ByeNow}
           />
           <Route exact path="/Orders/:id" component={Order} />
+          <Route exact path="/Sale" component={Sale} />
           <Route exact path="/Products/:id" component={Viewall} />
           <Route exact path="*" component={NotFound} />
         </Switch>

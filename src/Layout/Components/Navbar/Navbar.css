@@ -5,7 +5,8 @@
   /* border-bottom: 1px solid darkgray; */
   padding: 0 2rem;
   background-color: #fff;
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 999;
   box-shadow: 0 1px 3px 0 #dee0e2;
 }
@@ -124,10 +125,9 @@
   transition: width 0.5s;
   outline: none;
 }
-
-.navbar .nav-container .second-container .searchResult{
+.navbar .second-container .searchResult{
   max-height: 400px;
-  width: 100%;
+  width: 400px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -135,7 +135,9 @@
   padding: 1rem;
   padding-bottom: 0;
   position: absolute;
-  top: 45px;
+  top: 55px;
+  right: 50%;
+  transform: translateX(50%);
   overflow-x: scroll;
   border-radius: 7px !important;
   scrollbar-width: thin;
@@ -143,11 +145,11 @@
               -2px 0px 4px #999;
 }
 
-.navbar .nav-container .second-container .searchResult::-webkit-scrollbar{
+.navbar .second-container .searchResult::-webkit-scrollbar{
   width: 5px;
 }
 
-.navbar .nav-container .second-container .searchResult .result{
+.navbar .second-container .searchResult .result{
   height: 80px;
   width: 100%;
   display: flex;
@@ -158,25 +160,25 @@
   color: #000;
 }
 
-.navbar .nav-container .second-container .searchResult .result img{
+.navbar .second-container .searchResult .result img{
   height: 50px;
   width: 50px;
   object-fit: contain;
 }
 
-.navbar .nav-container .second-container .searchResult .result .resultTitle{
+.navbar .second-container .searchResult .result .resultTitle{
   padding: .5rem;
   display: flex;
   flex-direction: column;
   justify-content: space-around;
 }
 
-.navbar .nav-container .second-container .searchResult .result .resultTitle p:first-child{
+.navbar .second-container .searchResult .result .resultTitle p:first-child{
   margin-bottom: 7px;
   font-weight: 700;
 }
 
-.navbar .nav-container .second-container .searchResult .result .resultTitle p:last-child{
+.navbar .second-container .searchResult .result .resultTitle p:last-child{
   color: #a5a5a5;
   font-size: 14px;
   padding-left: 0.5rem;
@@ -374,11 +376,66 @@
   font-size: 15px;
 }
 
+.navbar .searchResult{
+  max-height: 400px;
+  width: 33%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f7f7f7;
+  padding: 1rem;
+  padding-bottom: 0;
+  position: absolute;
+  top: 60px;
+  right: 50%;
+  transform: translateX(50%);
+  overflow-x: scroll;
+  border-radius: 7px !important;
+  scrollbar-width: thin;
+  box-shadow: 2px 3px 4px #999,
+              -2px 0px 4px #999;
+}
+
+.navbar .searchResult::-webkit-scrollbar{
+  width: 5px;
+}
+
+.navbar .searchResult .result{
+  height: 80px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+  text-decoration: none;
+  color: #000;
+}
+
+.navbar .searchResult .result img{
+  height: 50px;
+  width: 50px;
+  object-fit: contain;
+}
+
+.navbar .searchResult .result .resultTitle{
+  padding: .5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.navbar .searchResult .result .resultTitle p:first-child{
+  margin-bottom: 7px;
+  font-weight: 700;
+}
+
+.navbar .searchResult .result .resultTitle p:last-child{
+  color: #a5a5a5;
+  font-size: 14px;
+  padding-left: 0.5rem;
+}
+
 @media (max-width: 1024px) {
-  .navbar {
-    position: sticky;
-    top: 0;
-  }
 
   .navbar .nav-container .first-container {
     width: 20%;
@@ -398,9 +455,12 @@
     display: none;
   }
 
-  .navbar .nav-container .second-container {
+  /* .navbar .nav-container .second-container {
     width: 0;
     transition: width 0.5s;
+  } */
+  .navbar .nav-container .second-container{
+    display: none;
   }
 
   .navbar .nav-container .second-container-active {
@@ -491,7 +551,8 @@
 
   .navbar .nav-container .third-container-none .fa-times {
     font-size: 17px;
-    margin: 10px;
+    margin-left: 5px;
+    justify-content: center;
     cursor: pointer;
   }
 
@@ -507,7 +568,9 @@
     padding: 0 10px;
     height: 50px;
   }
-
+  .navbar .nav-container .second-container-active{
+    width: 81%;
+  }
   .navbar .nav-container .third-container {
     width: fit-content;
   }
@@ -527,6 +590,10 @@
   .navbar .nav-container .third-container .profile {
     display: none;
   }
+  .navbar .searchResult{
+    top: 50px;
+    width: 95%;
+  }
   #cartId p:first-child{
     display: none;
   }
@@ -537,5 +604,12 @@
   }
   #userLogin{
     display: none;
+  }
+}
+
+@media(max-width: 360px){
+  .navbar .nav-container .second-container-active .input-container{
+    font-size: 15px;
+    padding-left: 10px;
   }
 }

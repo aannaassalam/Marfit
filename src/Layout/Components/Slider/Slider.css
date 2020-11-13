@@ -70,6 +70,16 @@
   justify-content: center;
 }
 
+.swipe {
+  overflow: hidden;
+  visibility: hidden;
+  position: relative;
+}
+.swipe-wrap {
+  overflow: hidden;
+  position: relative;
+}
+
 .card .slider {
   /* height: 80%; */
 }
