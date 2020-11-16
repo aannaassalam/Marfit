@@ -16,6 +16,7 @@ export default class Order extends React.Component {
       order: "",
       loading: true,
       status: ["ordered", "packed", "out", "delivered"],
+      replacement: false,
       starCount: 0,
       review: "",
       reviewProductCount: 0,
@@ -23,7 +24,7 @@ export default class Order extends React.Component {
       modal: true,
       btnLoading: false,
       rateProducts: [],
-      userName: ""
+      userName: "",
     };
   }
 
@@ -47,33 +48,33 @@ export default class Order extends React.Component {
       .doc(this.props.match.params.id)
       .get()
       .then((doc) => {
-        console.log(doc.data())
-          this.setState(
-            {
-              order: doc.data(),
-              loading: false,
-            },
-            () => {
-              var products = [];
-              this.state.order.products.map((product) => {
-                if (product.rate === false) {
-                  products.push(product);
+        console.log(doc.data());
+        this.setState(
+          {
+            order: doc.data(),
+            loading: false,
+          },
+          () => {
+            var products = [];
+            this.state.order.products.map((product) => {
+              if (product.rate === false) {
+                products.push(product);
+              }
+            });
+            this.setState(
+              {
+                rateProducts: products,
+              },
+              () => {
+                if (this.state.rateProducts.length < 1) {
+                  this.setState({
+                    modal: false,
+                  });
                 }
-              });
-              this.setState(
-                {
-                  rateProducts: products,
-                },
-                () => {
-                  if (this.state.rateProducts.length < 1) {
-                    this.setState({
-                      modal: false,
-                    });
-                  }
-                }
-              );
-            }
-          );
+              }
+            );
+          }
+        );
       });
   }
 
@@ -119,18 +120,22 @@ export default class Order extends React.Component {
                 .get()
                 .then((doc) => {
                   var products = doc.data().products;
-                  products.forEach(product => {
-                    if(product.id === this.state.rateProducts[this.state.reviewProductCount].id){
+                  products.forEach((product) => {
+                    if (
+                      product.id ===
+                      this.state.rateProducts[this.state.reviewProductCount].id
+                    ) {
                       product.rate = true;
                     }
-                  })
+                  });
                   firebase
                     .firestore()
                     .collection("orders")
                     .doc(this.props.match.params.id)
                     .update({
                       products: products,
-                    }).then(() => {
+                    })
+                    .then(() => {
                       if (
                         this.state.reviewProductCount <
                         this.state.rateProducts.length - 1
@@ -284,10 +289,20 @@ export default class Order extends React.Component {
                       </div>
                     </div>
                     <div className="step_footer">
-                      <p className="need">
-                        Need help? <span>Contact us</span>
-                      </p>
-                      <button type="button" className="continue" onClick={() => window.location.href = "/"}>Continue shopping</button>
+                      <div className="replacement">
+                        <div className="need">
+                          <p>
+                            Need help? <span>Contact us</span>
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        className="continue"
+                        onClick={() => this.setState({ replacement: true })}
+                      >
+                        Replacement
+                      </button>
                     </div>
                   </main>
                 </div>
@@ -298,10 +313,7 @@ export default class Order extends React.Component {
               <div className="items-container">
                 {this.state.order &&
                   this.state.order.products.map((item, index) => (
-                    <OrderCard
-                      item={item}
-                      key={index}
-                    />
+                    <OrderCard item={item} key={index} />
                   ))}
               </div>
               <div className="order-details">
@@ -309,16 +321,14 @@ export default class Order extends React.Component {
                   <p className="sub-title">Shipping</p>
                   <p>+ &#8377; {this.state.order.shipping}</p>
                 </div>
-                {
-                  this.state.order.points ? 
+                {this.state.order.points ? (
                   <div className="points-sub">
                     <p className="sub-title">
                       Points ({this.state.order.points})
                     </p>
                     <p>- &#8377; {this.state.order.points}</p>
                   </div>
-                : null
-                }
+                ) : null}
               </div>
               <div className="total">
                 <p>TOTAL</p>
@@ -442,6 +452,45 @@ export default class Order extends React.Component {
                   </div>
                 </div>
               ) : null
+            ) : null}
+
+            {this.state.replacement ? (
+              <div className="rating-cont">
+                <div className="rating-modal">
+                  <div className="modal-head">
+                    <p>Why are you returning this : </p>
+
+                    <i
+                      className="fas fa-times"
+                      onClick={() => this.setState({ replacement: false })}
+                    ></i>
+                  </div>
+                  <div className="modal-body">
+                    <div className="dropdown">
+                      <button>Bought by mistake</button>
+                      <div class="dropdown-content">
+                        <a href="#">Bought by mistake</a>
+                        <a href="#">Better price available</a>
+                        <a href="#">Performance or quality not adequate</a>
+                        <a href="#">Incompatible or not useful</a>
+                        <a href="#">Product damaged, but shipping box OK</a>
+                        <a href="#">Item arrived too late</a>
+                        <a href="#">Missing parts or accessories</a>
+                        <a href="#">Both product and shipping box damaged</a>
+                        <a href="#">Wrong items was sent</a>
+                        <a href="#">Item defective or dosen't work</a>
+                        <a href="#">
+                          Received extra item i didn't buy (no refund neended)
+                        </a>
+                        <a href="#">No longer neended</a>
+                        <a href="#">Did not approve purchase</a>
+                        <a href="#">Inaccurate website description</a>
+                      </div>
+                    </div>
+                    <button className="replace">Replace</button>
+                  </div>
+                </div>
+              </div>
             ) : null}
           </div>
         )}
