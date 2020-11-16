@@ -1,0 +1,26 @@
+.mobile-mini-container {
+	width: 100%;
+	overflow-x: scroll;
+	box-shadow: 0 3px 6px 0 #dee0e2;
+	background-color: #fff;
+	display: flex;
+	padding-left: 0.8rem;
+}
+
+.mobile-mini-container::-webkit-scrollbar {
+	width: 0;
+	height: 0;
+}
+
+.mobile-mini-container .item img {
+	width: 55px;
+	height: 55px;
+	object-fit: cover;
+	margin: 0.25rem 0.5rem 0 0.5rem;
+}
+
+@media only screen and (min-width: 469px) {
+	.mobile-mini-container {
+		display: none;
+	}
+}
