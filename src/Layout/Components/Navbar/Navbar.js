@@ -17,7 +17,7 @@ import { Thumbs } from "swiper";
 export default class Navbar extends React.Component {
 	constructor(props) {
 		super(props);
-
+		this.child = React.createRef();
 		this.state = {
 			showCart: false,
 			login: false,
@@ -38,6 +38,22 @@ export default class Navbar extends React.Component {
 
 	componentDidMount() {
 		window.addEventListener("scroll", this.handleScroll);
+		this.handleInit();
+		firebase
+			.firestore()
+			.collection("products")
+			.onSnapshot((snap) => {
+				snap.docChanges().forEach((changes) => {
+					var product = changes.doc.data();
+					product.id = changes.doc.id;
+					this.setState({
+						products: [...this.state.products, product],
+					});
+				});
+			});
+	}
+
+	handleInit = () => {
 		firebase.auth().onAuthStateChanged((user) => {
 			if (user) {
 				firebase
@@ -63,19 +79,8 @@ export default class Navbar extends React.Component {
 				});
 			}
 		});
-		firebase
-			.firestore()
-			.collection("products")
-			.onSnapshot((snap) => {
-				snap.docChanges().forEach((changes) => {
-					var product = changes.doc.data();
-					product.id = changes.doc.id;
-					this.setState({
-						products: [...this.state.products, product],
-					});
-				});
-			});
-	}
+		this.child.current.handleInit();
+	};
 
 	handleScroll = () => {
 		const currentScroll = window.pageYOffset;
@@ -434,7 +439,7 @@ export default class Navbar extends React.Component {
 								</>
 							)}
 						</div>
-						<Cart active={this.state.showCart} close={this.handleCartClose} />
+						<Cart active={this.state.showCart} close={this.handleCartClose} ref={this.child} handleInit={this.handleInit} />
 						{this.state.login ? (
 							<Login
 								close={(toggle) => this.setState({ login: toggle })}

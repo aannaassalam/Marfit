@@ -197,7 +197,7 @@ export default class ProductDesc extends React.Component {
                 var localCart = JSON.stringify(this.state.cart);
                 localStorage.setItem("cart", localCart);
                 toaster.notify("Added to cart");
-                window.location.reload();
+                this.props.handleParent();
               }
             );
           } else {
@@ -221,7 +221,7 @@ export default class ProductDesc extends React.Component {
             var localCart = JSON.stringify(this.state.cart);
             localStorage.setItem("cart", localCart);
             toaster.notify("Added to cart");
-            window.location.reload();
+            this.props.handleParent();
           }
         );
       }

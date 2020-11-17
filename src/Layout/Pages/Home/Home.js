@@ -61,7 +61,6 @@ export default class Home extends React.Component {
 	}
 
 	render() {
-		console.log(this.state.loading);
 		return (
 			<div className='main'>
 				{this.state.loading ? (
