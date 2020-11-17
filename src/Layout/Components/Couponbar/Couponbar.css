@@ -7,11 +7,19 @@
   font-size: 14px;
   color: #fff;
   font-weight: 500;
+  user-select: none;
 }
 
 @media (max-width: 1024px) {
   .mini-nav {
     height: 35px;
     font-size: 18px;
+  }
+}
+
+@media (max-width: 680px) {
+  .mini-nav {
+    height: 35px;
+    font-size: 16px;
   }
 }

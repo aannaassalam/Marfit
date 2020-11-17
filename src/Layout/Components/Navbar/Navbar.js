@@ -178,37 +178,6 @@ export default class Navbar extends React.Component {
 								<button>
 									<i className='fa fa-search'></i>
 								</button>
-								{/* <div className={this.state.search.length > 0 ? "searchResult" : null}>
-                  {this.state.searchedItems.length > 0 &&
-                    this.state.search.length > 0 ? (
-                      this.state.searchedItems.map((item) => {
-                        console.log(item);
-                        return (
-                          <a
-                            href={
-                              "/Category/" +
-                              item.category +
-                              "/" +
-                              item.subCategory +
-                              "/" +
-                              item.id
-                            }
-                            className="result"
-                          >
-                            <img src={item.images[0]} alt="item image" />
-                            <div className="resultTitle">
-                              <p>{item.title}</p>
-                              <p>in {item.category}</p>
-                            </div>
-                          </a>
-                        );
-                      })
-                    ) : this.state.search.length > 0 ? (
-                      <div className="errorMsg">
-                        <p>No item matched with your search</p>
-                      </div>
-                    ) : null}
-                </div> */}
 							</div>
 						</div>
 						<div className='nav-container hide'>
