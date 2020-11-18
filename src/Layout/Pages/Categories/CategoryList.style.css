@@ -77,3 +77,12 @@
   font-size: 14px;
   color: #414141;
 }
+
+@media (max-width: 680px){
+  .categorylist-container
+  .categorylist-breadcrumb
+  .breadcrumb-menu
+  .bd-menu-stats{
+    display: none;
+  }
+}

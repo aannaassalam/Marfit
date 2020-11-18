@@ -95,58 +95,10 @@ export default class Filter extends React.Component {
           this.state.loading ?
             null :
             <div className="filter-container">
-              {/* <div className="top">
-              <h1>TENURE MONTHS</h1>
-              {this.props.month < 12 ? (
-                <p>{this.props.month} months</p>
-              ) : (
-                <p>1 year</p>
-              )}
-              <div className="slider">
-                <Slider
-                  marks={marks}
-                  value={this.props.month}
-                  step={1}
-                  min={3}
-                  max={12}
-                  onChange={(e) => this.handleSlider(e)}
-                />
-              </div>
-            </div> */}
-              {/* {this.props.category.subcategories.tags ? (
-              <div className="type">
-                <h1>TYPE</h1>
-                {this.props.category.subcategories.map((sub) => {
-                  if (sub.name.toLowerCase() === this.props.subCat.toLowerCase()) {
-                    return sub.tags.map((tag) => {
-                      return (
-                        <div className="category">
-                          {this.props.type.includes(tag) ? (
-                            <i
-                              class="fas fa-check-square"
-                              onClick={() =>
-                                this.props.handleProductRemoveType(tag)
-                              }
-                            ></i>
-                          ) : (
-                            <div
-                              className="uncheck"
-                              onClick={() => this.props.handleProductAddType(tag)}
-                            ></div>
-                          )}
-                          <p>{tag.tag}</p>
-                        </div>
-                      );
-                    });
-                  }
-                })}
-              </div>
-            ) : null} */}
-
               <div className="price">
                 <h1>PRICE RANGE</h1>
                 <p>
-                &#8377;{this.state.minPrice} - &#8377;{this.state.maxPrice}
+                  &#8377;{this.state.minPrice} - &#8377;{this.state.maxPrice}
                 </p>
                 <div className="slider">
                   <Range
@@ -178,6 +130,32 @@ export default class Filter extends React.Component {
                   <p>Out of Stock</p>
                 </div>
               </div>
+
+              {this.props.colors.length > 0 ? (
+                <div className="colors">
+                  <h1>Colors</h1>
+                  {this.props.colors.map((color, index) => {
+                    console.log(this.props.presentColor)
+                    return (
+                      <div
+                        key={index}
+                        onClick={() => this.props.handleColorFilter(color)}
+                      >
+                        <div className="colorCheck">
+                          {color.toLowerCase() ===
+                            this.props.presentColor.toLowerCase() ? (
+                              <i className="fas fa-check-square"></i>
+                            ) : (
+                              <div className="uncheck"></div>
+                            )}
+                          <p>{color}</p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : null}
+
               {this.props.category.subcategories ? (
                 <div className="cat">
                   <h1>SUB-CATEGORIES</h1>

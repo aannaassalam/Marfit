@@ -84,22 +84,22 @@ export default class Checkout extends React.Component {
 
                     this.state.currentUser.name.includes(" ")
                       ? this.setState({
-                          //first name
-                          firstName: this.state.currentUser.name.substr(
-                            0,
-                            this.state.currentUser.name.indexOf(" ")
-                          ),
-                          //last name
-                          lastName: this.state.currentUser.name.substr(
-                            this.state.currentUser.name.indexOf(" "),
-                            this.state.currentUser.name.length
-                          ),
-                          loading: false,
-                        })
+                        //first name
+                        firstName: this.state.currentUser.name.substr(
+                          0,
+                          this.state.currentUser.name.indexOf(" ")
+                        ),
+                        //last name
+                        lastName: this.state.currentUser.name.substr(
+                          this.state.currentUser.name.indexOf(" "),
+                          this.state.currentUser.name.length
+                        ),
+                        loading: false,
+                      })
                       : this.setState({
-                          firstName: this.state.currentUser.name,
-                          loading: false,
-                        });
+                        firstName: this.state.currentUser.name,
+                        loading: false,
+                      });
                   } else {
                     window.location.href = "/";
                   }
@@ -211,6 +211,13 @@ export default class Checkout extends React.Component {
             status: "Pending",
           })
           .then((res) => {
+            products.forEach(product => {
+              if (product.quantity > 0) {
+                firebase.firestore().collection('products').doc(product.id).update({
+                  quantity: product.quantity - 1
+                })
+              }
+            })
             if (this.state.currentUser.email) {
               firebase
                 .firestore()
@@ -422,234 +429,234 @@ export default class Checkout extends React.Component {
         {this.state.loading ? (
           <Loader />
         ) : (
-          <>
-            <div className="left">
-              {this.state.currentUser !== "" ? null : (
-                <div className="already">
-                  <p>
-                    Already have an account?{" "}
-                    <span onClick={() => this.setState({ openLogin: true })}>
-                      Log in
+            <>
+              <div className="left">
+                {this.state.currentUser !== "" ? null : (
+                  <div className="already">
+                    <p>
+                      Already have an account?{" "}
+                      <span onClick={() => this.setState({ openLogin: true })}>
+                        Log in
                     </span>
-                  </p>
-                </div>
-              )}
-
-              <main className="info">
-                {!this.state.addAddress ? (
-                  <div className="addressInput">
-                    {this.state.addresses.map((address, index) => {
-                      if (this.state.selectedAddress === index) {
-                        return (
-                          <div
-                            className="address selected"
-                            key={index}
-                            onClick={() => this.handleAddress(index)}
-                          >
-                            <div className="paras">
-                              <p>Address {index + 1} :</p>
-                              <p>
-                                {address.firstName} {address.lastName}
-                              </p>
-                              <p>{address.address}</p>
-                            </div>
-                            <div className="circle"></div>
-                          </div>
-                        );
-                      } else {
-                        return (
-                          <div
-                            className="address"
-                            key={index}
-                            onClick={() => this.handleAddress(index)}
-                          >
-                            <div className="paras">
-                              <p>Address {index + 1} :</p>
-                              <p>
-                                {address.firstName} {address.lastName}
-                              </p>
-                              <p>{address.address}</p>
-                            </div>
-                            <div className="circle"></div>
-                          </div>
-                        );
-                      }
-                    })}
-                    <div
-                      className="addAddress"
-                      onClick={() =>
-                        this.setState({
-                          addAddress: true,
-                        })
-                      }
-                    >
-                      <div className="plus">
-                        <i className="fas fa-plus"></i>
-                      </div>
-                      <p>Add New Address</p>
-                    </div>
+                    </p>
                   </div>
-                ) : (
-                  <>
-                    <div className="contact">
-                      <div className="contact-label">
-                        <p className="heading">Contact information</p>
-                      </div>
-                      <input
-                        type="email"
-                        className="email-input"
-                        placeholder="Email"
-                        name="email"
-                        value={this.state.email}
-                        onChange={this.handleChange}
-                      />
-                    </div>
-                    <div className="shipping">
-                      <h2>Shipping address</h2>
-                      <div className="input-name">
-                        <input
-                          type="text"
-                          placeholder="First name"
-                          name="firstName"
-                          id="firstName"
-                          required
-                          value={this.state.firstName}
-                          onChange={this.handleChange}
-                        />
-                        <input
-                          type="text"
-                          placeholder="Last name"
-                          name="lastName"
-                          id="lastName"
-                          required
-                          value={this.state.lastName}
-                          onChange={this.handleChange}
-                        />
-                      </div>
-                      <input
-                        type="text"
-                        placeholder="Address"
-                        name="address"
-                        id="address"
-                        required
-                        value={this.state.address}
-                        onChange={this.handleChange}
-                      />
-                      <input
-                        type="text"
-                        placeholder="Appartment, suite, etc. (optional)"
-                        name="appartment"
-                        id="appartment"
-                        value={this.state.appartment}
-                        onChange={this.handleChange}
-                      />
-                      <div className="region">
-                        <input
-                          type="text"
-                          placeholder="Country / Nation"
-                          name="country"
-                          required
-                          id="country"
-                          value={this.state.country}
-                          onChange={this.handleChange}
-                        />
-                        <input
-                          type="text"
-                          placeholder="State"
-                          name="state"
-                          required
-                          id="state"
-                          value={this.state.state}
-                          onChange={this.handleChange}
-                        />
-                      </div>
-                      <div className="region">
-                        <input
-                          type="text"
-                          placeholder="City"
-                          name="city"
-                          required
-                          id="city"
-                          value={this.state.city}
-                          onChange={this.handleChange}
-                        />
-                        <input
-                          type="text"
-                          placeholder="Pincode"
-                          name="pincode"
-                          required
-                          id="pincode"
-                          value={this.state.pincode}
-                          onChange={this.handleChange}
-                        />
-                      </div>
-                      <input
-                        type="text"
-                        name="phone"
-                        id="phone"
-                        placeholder="Phone"
-                        value={this.state.phone}
-                        onChange={this.handleChange}
-                      />
-                    </div>
-                  </>
                 )}
-              </main>
-              <div className="placeOrder">
-                <a>
-                  <i className="fas fa-chevron-left"></i>Return to cart
+
+                <main className="info">
+                  {!this.state.addAddress ? (
+                    <div className="addressInput">
+                      {this.state.addresses.map((address, index) => {
+                        if (this.state.selectedAddress === index) {
+                          return (
+                            <div
+                              className="address selected"
+                              key={index}
+                              onClick={() => this.handleAddress(index)}
+                            >
+                              <div className="paras">
+                                <p>Address {index + 1} :</p>
+                                <p>
+                                  {address.firstName} {address.lastName}
+                                </p>
+                                <p>{address.address}</p>
+                              </div>
+                              <div className="circle"></div>
+                            </div>
+                          );
+                        } else {
+                          return (
+                            <div
+                              className="address"
+                              key={index}
+                              onClick={() => this.handleAddress(index)}
+                            >
+                              <div className="paras">
+                                <p>Address {index + 1} :</p>
+                                <p>
+                                  {address.firstName} {address.lastName}
+                                </p>
+                                <p>{address.address}</p>
+                              </div>
+                              <div className="circle"></div>
+                            </div>
+                          );
+                        }
+                      })}
+                      <div
+                        className="addAddress"
+                        onClick={() =>
+                          this.setState({
+                            addAddress: true,
+                          })
+                        }
+                      >
+                        <div className="plus">
+                          <i className="fas fa-plus"></i>
+                        </div>
+                        <p>Add New Address</p>
+                      </div>
+                    </div>
+                  ) : (
+                      <>
+                        <div className="contact">
+                          <div className="contact-label">
+                            <p className="heading">Contact information</p>
+                          </div>
+                          <input
+                            type="email"
+                            className="email-input"
+                            placeholder="Email"
+                            name="email"
+                            value={this.state.email}
+                            onChange={this.handleChange}
+                          />
+                        </div>
+                        <div className="shipping">
+                          <h2>Shipping address</h2>
+                          <div className="input-name">
+                            <input
+                              type="text"
+                              placeholder="First name"
+                              name="firstName"
+                              id="firstName"
+                              required
+                              value={this.state.firstName}
+                              onChange={this.handleChange}
+                            />
+                            <input
+                              type="text"
+                              placeholder="Last name"
+                              name="lastName"
+                              id="lastName"
+                              required
+                              value={this.state.lastName}
+                              onChange={this.handleChange}
+                            />
+                          </div>
+                          <input
+                            type="text"
+                            placeholder="Address"
+                            name="address"
+                            id="address"
+                            required
+                            value={this.state.address}
+                            onChange={this.handleChange}
+                          />
+                          <input
+                            type="text"
+                            placeholder="Appartment, suite, etc. (optional)"
+                            name="appartment"
+                            id="appartment"
+                            value={this.state.appartment}
+                            onChange={this.handleChange}
+                          />
+                          <div className="region">
+                            <input
+                              type="text"
+                              placeholder="Country / Nation"
+                              name="country"
+                              required
+                              id="country"
+                              value={this.state.country}
+                              onChange={this.handleChange}
+                            />
+                            <input
+                              type="text"
+                              placeholder="State"
+                              name="state"
+                              required
+                              id="state"
+                              value={this.state.state}
+                              onChange={this.handleChange}
+                            />
+                          </div>
+                          <div className="region">
+                            <input
+                              type="text"
+                              placeholder="City"
+                              name="city"
+                              required
+                              id="city"
+                              value={this.state.city}
+                              onChange={this.handleChange}
+                            />
+                            <input
+                              type="text"
+                              placeholder="Pincode"
+                              name="pincode"
+                              required
+                              id="pincode"
+                              value={this.state.pincode}
+                              onChange={this.handleChange}
+                            />
+                          </div>
+                          <input
+                            type="text"
+                            name="phone"
+                            id="phone"
+                            placeholder="Phone"
+                            value={this.state.phone}
+                            onChange={this.handleChange}
+                          />
+                        </div>
+                      </>
+                    )}
+                </main>
+                <div className="placeOrder">
+                  <a>
+                    <i className="fas fa-chevron-left"></i>Return to cart
                 </a>
-                <div
-                  className="checkoutbtn"
-                  onClick={() => {
-                    this.handlePay(total, subTotal, shipping);
-                  }}
-                >
-                  <a>Place an Order</a>
+                  <div
+                    className="checkoutbtn"
+                    onClick={() => {
+                      this.handlePay(total, subTotal, shipping);
+                    }}
+                  >
+                    <a>Place an Order</a>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="right">
-              <div className="items-container">
-                {this.state.cart.map((item, index) => (
-                  <CartCard item={item} show={false} quantity={item.quantity} />
-                ))}
-              </div>
-              <div className="order-details">
-                <div className="sub">
-                  <p className="sub-title">Subtotal</p>
-                  <p>&#8377; {subTotal}</p>
+              <div className="right">
+                <div className="items-container">
+                  {this.state.cart.map((item, index) => (
+                    <CartCard item={item} show={false} quantity={item.quantity} />
+                  ))}
                 </div>
-                <div className="shipping-sub">
-                  <p className="sub-title">Shipping</p>
-                  <p>+ &#8377; {shipping}</p>
-                </div>
-                <div className="discount-sub">
-                  <p className="sub-title">
-                    Discount ({this.state.coupon.name})
+                <div className="order-details">
+                  <div className="sub">
+                    <p className="sub-title">Subtotal</p>
+                    <p>&#8377; {subTotal}</p>
+                  </div>
+                  <div className="shipping-sub">
+                    <p className="sub-title">Shipping</p>
+                    <p>+ &#8377; {shipping}</p>
+                  </div>
+                  <div className="discount-sub">
+                    <p className="sub-title">
+                      Discount ({this.state.coupon.name})
                   </p>
-                  <p>- &#8377; {value}</p>
+                    <p>- &#8377; {value}</p>
+                  </div>
+                  <div className="points-sub">
+                    <p className="sub-title">Points ({this.state.points})</p>
+                    <p>- &#8377; {this.state.points}</p>
+                  </div>
                 </div>
-                <div className="points-sub">
-                  <p className="sub-title">Points ({this.state.points})</p>
-                  <p>- &#8377; {this.state.points}</p>
+                <div className="total">
+                  <p>TOTAL</p>
+                  <p>&#8377; {total}</p>
                 </div>
               </div>
-              <div className="total">
-                <p>TOTAL</p>
-                <p>&#8377; {total}</p>
-              </div>
-            </div>
-            {this.state.openLogin ? (
-              <Login
-                close={(toggle) => this.setState({ openLogin: toggle })}
-                login={(toggle) => {
-                  this.setState({ loginStatus: toggle });
-                }}
-              />
-            ) : null}
-          </>
-        )}
+              {this.state.openLogin ? (
+                <Login
+                  close={(toggle) => this.setState({ openLogin: toggle })}
+                  login={(toggle) => {
+                    this.setState({ loginStatus: toggle });
+                  }}
+                />
+              ) : null}
+            </>
+          )}
       </div>
     );
   }

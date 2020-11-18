@@ -329,7 +329,6 @@
   height: 50px;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   align-items: center;
   margin-top: 20px;
 }
@@ -340,6 +339,12 @@
   font-weight: 600;
   margin-left: 7px;
   margin-bottom: 7px;
+}
+
+.product-desc .description-section .other-details .quantity-cont,
+.product-desc .description-section .other-details .size-cont,
+.product-desc .description-section .other-details .color-cont{
+  margin-right: 60px;
 }
 
 .product-desc .description-section .other-details .quantity-cont .quantity{
@@ -399,7 +404,7 @@
 }
 
 .product-desc .description-section .other-details .color-cont .colors{
-  width: 180px;
+  /* width: 180px; */
   height: 30px;
   border: 1px solid grey;
   border-radius: 5px;
@@ -418,21 +423,9 @@
   font-weight: bold;
 }
 
-.product-desc .description-section .other-details .color-cont .colors .black{
-  background-color: #333;
-  color: white;
-  font-size: 15px;
-}
-
-.product-desc .description-section .other-details .color-cont .colors .red{
-  background-color: #ff1313;
-  color: white !important;
-  font-size: 15px;
-}
-
-.product-desc .description-section .other-details .color-cont .colors .brown{
-  background-color: rgb(112, 48, 48);
-  color: white;
+.product-desc .description-section .other-details .color-cont .colors .colorSelected{
+  background-color: orangered;
+  color: #ffffff;
   font-size: 15px;
 }
 
@@ -740,6 +733,7 @@
     height: 200px;
     flex-direction: column;
     align-items: flex-start;
+    justify-content: space-between;
   }
   .product-desc .description-section .rating .rating-header {
     flex-direction: column;

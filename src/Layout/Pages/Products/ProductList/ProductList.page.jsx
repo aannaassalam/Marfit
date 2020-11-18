@@ -48,50 +48,15 @@ class ProductList extends React.Component {
       min: 0,
       max: 0,
       filter: false,
-      productLoading: false
+      productLoading: false,
+      colors: [],
+      presentColor: ""
     };
   }
 
   componentDidMount() {
-    firebase
-      .firestore()
-      .collection("products")
-      .onSnapshot((snap) => {
-        var productList = [];
-        var min = 100;
-        var max = 0;
-        snap.docChanges().forEach((change) => {
-          if (
-            this.props.match.params.id1 === change.doc.data().category &&
-            this.props.match.params.id2 === change.doc.data().subCategory
-          ) {
-            var product = change.doc.data();
-            product.id = change.doc.id;
-            productList.push(product);
-          }
-        });
-        productList.map(product => {
-          if (min > product.sp) {
-            min = product.sp
-          }
-          if (max < product.sp) {
-            max = product.sp
-          }
-        })
-        this.setState(
-          {
-            productList: productList,
-            filterProductList: productList,
-            min: min,
-            max: max,
-            loading: false
-          },
-          () => {
-            this.handleProductInStock();
-          }
-        );
 
-      });
+    this.handleInit();
 
     firebase
       .firestore()
@@ -113,6 +78,53 @@ class ProductList extends React.Component {
             }
           });
         });
+      });
+  }
+
+  handleInit = () => {
+    firebase
+      .firestore()
+      .collection("products")
+      .get().then((snap) => {
+        var productList = [];
+        var min = 100;
+        var max = 0;
+        var colors = [];
+        snap.forEach((doc) => {
+          if (
+            this.props.match.params.id1 === doc.data().category &&
+            this.props.match.params.id2 === doc.data().subCategory
+          ) {
+            var product = doc.data();
+            product.id = doc.id;
+            productList.push(product);
+            if (!colors.includes(doc.data().color)) {
+              colors.push(doc.data().color);
+            }
+          }
+        });
+        productList.map(product => {
+          if (min > product.sp) {
+            min = product.sp
+          }
+          if (max < product.sp) {
+            max = product.sp
+          }
+        })
+        this.setState(
+          {
+            productList: productList,
+            filterProductList: productList,
+            colors: colors,
+            min: min,
+            max: max,
+            loading: false
+          },
+          () => {
+            this.handleProductInStock();
+          }
+        );
+
       });
   }
 
@@ -211,7 +223,7 @@ class ProductList extends React.Component {
             filterProductList: newproducts,
             productLoading: false,
           });
-        },500)
+        }, 500)
       })
   };
 
@@ -219,7 +231,7 @@ class ProductList extends React.Component {
     var products = this.state.productList;
     var newproducts = [];
     products.map((product) => {
-      if (product.quantity >= 0) {
+      if (product.quantity === 0) {
         newproducts.push(product);
       }
     });
@@ -251,8 +263,26 @@ class ProductList extends React.Component {
       month: 3,
       min: 100,
       max: 5000,
+      presentColor: ""
     });
   };
+
+  handleColorFilter = (color) => {
+    this.setState({
+      filterProductList: []
+    }, () => {
+      var products = [];
+      this.state.productList.forEach(product => {
+        if (product.color === color) {
+          products.push(product);
+        }
+      })
+      this.setState({
+        filterProductList: products,
+        presentColor: color
+      })
+    })
+  }
 
   addToWishlist = (e) => {
     if (firebase.auth().currentUser) {
@@ -452,6 +482,9 @@ class ProductList extends React.Component {
                           min={this.state.min}
                           max={this.state.max}
                           month={this.state.month}
+                          colors={this.state.colors}
+                          presentColor={this.state.presentColor}
+                          handleColorFilter={(color) => this.handleColorFilter(color)}
                         />
                       </div>
                       <div className={this.state.filter ? "mobile-filter-active" : "mobile-filter"}>
@@ -473,6 +506,8 @@ class ProductList extends React.Component {
                           min={this.state.min}
                           max={this.state.max}
                           month={this.state.month}
+                          colors={this.state.colors}
+                          presentColor={this.state.presentColor}
                         />
                       </div>
 
