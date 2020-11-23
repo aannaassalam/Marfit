@@ -11,6 +11,7 @@ import Loader from "../../Components/Loader/Loader";
 import "./Home.css";
 import firebase from "firebase";
 import MobileMiniNav from "../../Components/MobileMiniNav/MobileMiniNav";
+import axios from "axios";
 
 const pageVariants = {
 	initial: {
@@ -44,7 +45,12 @@ export default class Home extends React.Component {
 		};
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
+		var data = {
+			something: "something brew",
+		};
+		var res = await axios.post("http://localhost:5000/some", data);
+		alert(res.data);
 		firebase
 			.firestore()
 			.collection("settings")
