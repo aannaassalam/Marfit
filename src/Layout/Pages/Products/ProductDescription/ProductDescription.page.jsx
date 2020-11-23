@@ -78,7 +78,10 @@ export default class ProductDesc extends React.Component {
                   productShow = product;
                   firebase.firestore().collection('products').where('batch', '==', productShow.batch).onSnapshot(snap => {
                     snap.docChanges().forEach(changes => {
-                      colors.push(changes.doc.data().color)
+                      var data = {};
+                      data.color = changes.doc.data().color
+                      data.id = changes.doc.id
+                      colors.push(data)
                     })
                   })
                 } else {
@@ -160,6 +163,7 @@ export default class ProductDesc extends React.Component {
               tempCart.id = this.state.product.id;
               tempCart.quantity = this.state.usersQuantity;
               tempCart.size = this.state.sizeSelected;
+              tempCart.max = this.state.product.max;
               cart.push(tempCart);
               console.log(cart);
               firebase
@@ -196,6 +200,7 @@ export default class ProductDesc extends React.Component {
             tempCart.id = this.state.product.id;
             tempCart.quantity = this.state.usersQuantity;
             tempCart.size = this.state.sizeSelected;
+            tempCart.max = this.state.product.max;
             cart.push(tempCart);
             this.setState(
               {
@@ -220,6 +225,8 @@ export default class ProductDesc extends React.Component {
         var tempCart = {};
         tempCart.id = this.state.product.id;
         tempCart.quantity = this.state.usersQuantity;
+        tempCart.size = this.state.sizeSelected;
+        tempCart.max = this.state.product.max;
         cart.push(tempCart);
         this.setState(
           {
@@ -476,23 +483,31 @@ export default class ProductDesc extends React.Component {
                         </div>
                       </div>
                       <div className="buying-options">
-                        <div className="option" onClick={this.AddToCart}>
-                          <i className="fas fa-shopping-cart"></i>
-                          <p>ADD TO CART</p>
-                        </div>
-                        <div
-                          className="option"
-                          onClick={() =>
-                            (window.location.href =
-                              "/Checkout/" +
-                              this.state.product.id +
-                              "/" +
-                              this.state.usersQuantity)
-                          }
-                        >
-                          <i className="fas fa-bolt"></i>
-                          <p>BUY NOW</p>
-                        </div>
+                        {
+                          this.state.product.quantity > 0
+                            ?
+                            <>
+                              <div className="option" onClick={this.AddToCart}>
+                                <i className="fas fa-shopping-cart"></i>
+                                <p>ADD TO CART</p>
+                              </div>
+                              <div
+                                className="option"
+                                onClick={() =>
+                                  (window.location.href =
+                                    "/Checkout/" +
+                                    this.state.product.id +
+                                    "/" +
+                                    this.state.usersQuantity)
+                                }
+                              >
+                                <i className="fas fa-bolt"></i>
+                                <p>BUY NOW</p>
+                              </div>
+                            </>
+                            :
+                            <p className="outstock">OUT OF STOCK</p>
+                        }
                       </div>
                     </div>
                     <div className="description-section">
@@ -622,15 +637,22 @@ export default class ProductDesc extends React.Component {
                                     return (
                                       <p
                                         className={
-                                          color === this.state.product.color
+                                          color.color === this.state.product.color
                                             ? "colorSelected"
                                             : null
                                         }
                                         onClick={() => {
-                                          this.setState({ colorSelected: "black" });
+                                          window.location.href = "/Category/" +
+                                            this.props.match.params.id1 +
+                                            "/" +
+                                            this.props.match.params.id2 +
+                                            "/" +
+                                            color.id
+                                            ? color.id
+                                            : null
                                         }}
                                       >
-                                        {color}
+                                        {color.color}
                                       </p>
                                     )
                                   })
@@ -647,6 +669,18 @@ export default class ProductDesc extends React.Component {
                           {this.state.product.description}
                         </p>
                         <ul>
+                          <li>
+                            <p className="darkgrey">Height</p>
+                            <p className="text">{this.state.product.height}</p>
+                          </li>
+                          <li>
+                            <p className="darkgrey">Width</p>
+                            <p className="text">{this.state.product.width}</p>
+                          </li>
+                          <li>
+                            <p className="darkgrey">Thickness</p>
+                            <p className="text">{this.state.product.thick}</p>
+                          </li>
                           {this.state.product.specifications &&
                             this.state.product.specifications.map((spec) => (
                               <li>
@@ -744,23 +778,31 @@ export default class ProductDesc extends React.Component {
                     />
                   </div>
                   <div className="buying-options-sticky">
-                    <div className="option" onClick={this.AddToCart}>
-                      <i className="fas fa-shopping-cart"></i>
-                      <p>ADD TO CART</p>
-                    </div>
-                    <div
-                      className="option"
-                      onClick={() =>
-                        (window.location.href =
-                          "/Checkout/" +
-                          this.state.product.id +
-                          "/" +
-                          this.state.usersQuantity)
-                      }
-                    >
-                      <i className="fas fa-bolt"></i>
-                      <p>BUY NOW</p>
-                    </div>
+                    {
+                      this.state.product.quantity > 0
+                        ?
+                        <>
+                          <div className="option" onClick={this.AddToCart}>
+                            <i className="fas fa-shopping-cart"></i>
+                            <p>ADD TO CART</p>
+                          </div>
+                          <div
+                            className="option"
+                            onClick={() =>
+                              (window.location.href =
+                                "/Checkout/" +
+                                this.state.product.id +
+                                "/" +
+                                this.state.usersQuantity)
+                            }
+                          >
+                            <i className="fas fa-bolt"></i>
+                            <p>BUY NOW</p>
+                          </div>
+                        </>
+                        :
+                        <p className="outstock">OUT OF STOCK</p>
+                    }
                   </div>
                 </>
               ) : null}

@@ -222,6 +222,12 @@ class ProductList extends React.Component {
           this.setState({
             filterProductList: newproducts,
             productLoading: false,
+          }, () => {
+            // if (this.state.outStock) {
+            //   this.handleProductOutStock();
+            // } else {
+            //   this.handleProductInStock();
+            // }
           });
         }, 500)
       })
@@ -230,29 +236,45 @@ class ProductList extends React.Component {
   handleProductOutStock = () => {
     var products = this.state.productList;
     var newproducts = [];
-    products.map((product) => {
+    products.forEach((product) => {
       if (product.quantity === 0) {
         newproducts.push(product);
       }
     });
     this.setState({
-      filterProductList: newproducts,
-      outStock: true,
-    });
+      filterProductList: [],
+      productLoading: true,
+    }, () => {
+      setTimeout(() => {
+        this.setState({
+          filterProductList: newproducts,
+          outStock: true,
+          productLoading: false
+        });
+      }, 500)
+    })
   };
 
   handleProductInStock = () => {
     var products = this.state.productList;
     var newproducts = [];
-    products.map((product) => {
+    products.forEach((product) => {
       if (product.quantity > 0) {
         newproducts.push(product);
       }
     });
     this.setState({
-      filterProductList: newproducts,
-      outStock: false,
-    });
+      filterProductList: [],
+      productLoading: true
+    }, () => {
+      setTimeout(() => {
+        this.setState({
+          filterProductList: newproducts,
+          outStock: false,
+          productLoading: false
+        });
+      }, 500)
+    })
   };
 
   handleReset = () => {

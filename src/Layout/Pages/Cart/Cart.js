@@ -17,6 +17,9 @@ export default class Cart extends React.Component {
 			currentUser: "",
 			products: [],
 			total: 0,
+			outStockList: [],
+			outStock: false,
+			acTotal: 0
 		};
 	}
 
@@ -33,48 +36,61 @@ export default class Cart extends React.Component {
 					.where("email", "==", user.email)
 					.onSnapshot((snap) => {
 						snap.docChanges().forEach((change) => {
-							this.setState(
-								{
-									cart: change.doc.data().cart,
-									currentUser: change.doc.data(),
-								},
-								() => {
-									console.log(this.state.cart);
-									this.state.cart.forEach((item) => {
-										console.log(item);
-										firebase
-											.firestore()
-											.collection("products")
-											.doc(item.id)
-											.get()
-											.then((doc) => {
-												if (doc.data() === undefined) {
-													toaster.notify("A product in your cart does not exist");
-													var cart = [];
-													cart = this.state.cart.filter((item2) => item2.id !== item.id);
-													this.setState({
-														cart: cart,
-													});
-													firebase.firestore().collection("users").doc(change.doc.id).update({
-														cart: cart,
-													});
-												} else {
-													var product = doc.data();
-													console.log(doc.data());
-													product.id = doc.id;
-													console.log(product);
-													this.setState({
-														products: [...this.state.products, product],
-													});
-												}
+							var products = [];
+							change.doc.data().cart.forEach(async (item) => {
+								console.log(item);
+								await firebase
+									.firestore()
+									.collection("products")
+									.doc(item.id)
+									.get()
+									.then((doc) => {
+										if (doc.exists) {
+											console.log('53 Doc Exist:', doc.id)
+											var product = doc.data();
+											product.id = doc.id;
+											products.push(product);
+											if (doc.data().quantity === 0 && !this.state.outStockList.includes(item.id)) {
+												this.setState({
+													outStockList: [...this.state.outStockList, item.id],
+													outStock: true
+												})
+											}
+											if (products.length === change.doc.data().cart.length) {
+												var total = 0;
+												change.doc.data().cart.reverse().map((data, index) => {
+													// alert(products[index].id + change.doc.data().cart[index].id + item.id)
+													if (data.id === products[index].id) {
+														total += products[index].sp * data.quantity;
+														console.log(total);
+													}
+												});
+												this.setState({
+													cart: change.doc.data().cart,
+													products: products,
+													currentUser: change.doc.data(),
+													total: total,
+													acTotal: total,
+												})
+											}
+										}
+										else {
+											console.log('67 Doc does not Exist:', doc.id)
+											toaster.notify("A product in your cart does not exist");
+											var cart = [];
+											cart = change.doc.data().cart.filter((item2) => item2.id !== item.id);
+											this.setState({
+												cart: cart,
 											});
+											firebase.firestore().collection("users").doc(change.doc.id).update({
+												cart: cart,
+											});
+										}
 									});
-								}
-							);
+							});
 						});
 					});
 			} else {
-				setInterval(() => {}, 1000);
 				var cart = JSON.parse(localStorage.getItem("cart"));
 				this.setState(
 					{
@@ -103,6 +119,12 @@ export default class Cart extends React.Component {
 										this.setState({
 											products: [...this.state.products, product],
 										});
+										if (doc.data().quantity === 0 && !this.state.outStockList.includes(item.id)) {
+											this.setState({
+												outStockList: [...this.state.outStockList, item.id],
+												outStock: true
+											})
+										}
 									}
 								});
 						});
@@ -126,6 +148,16 @@ export default class Cart extends React.Component {
 	handleChange(e) {
 		this.setState({
 			selectedCoupon: this.state.coupons[e.target.value],
+		}, () => {
+			var total = this.state.acTotal;
+				if (this.state.selectedCoupon.type === "money") {
+					total -= this.state.selectedCoupon.value;
+				} else {
+					total -= total * (this.state.selectedCoupon.value / 100);
+				}
+				this.setState({
+					total: Math.round(total)
+				})
 		});
 	}
 
@@ -145,6 +177,12 @@ export default class Cart extends React.Component {
 						var newCart = cart.filter((item) => {
 							return item.id !== id;
 						});
+						var outOfStock = this.state.outStockList.filter(item => item !== id);
+						if (outOfStock.length === 0) {
+							this.setState({
+								outStock: false
+							})
+						}
 						firebase
 							.firestore()
 							.collection("users")
@@ -155,6 +193,7 @@ export default class Cart extends React.Component {
 							.then(() => {
 								this.setState({
 									cart: newCart,
+									outStockList: outOfStock
 								});
 							});
 					});
@@ -167,8 +206,15 @@ export default class Cart extends React.Component {
 					newCart.push(car);
 				}
 			});
+			var outOfStock = this.state.outStockList.filter(item => item !== id);
+			if (outOfStock.length === 0) {
+				this.setState({
+					outStock: false
+				})
+			}
 			this.setState({
 				cart: newCart,
+				outStockList: outOfStock
 			});
 			localStorage.setItem("cart", JSON.stringify(newCart));
 			this.props.handleInit();
@@ -230,9 +276,8 @@ export default class Cart extends React.Component {
 					snap.forEach((doc) => {
 						var cart = doc.data().cart;
 						cart.forEach((item) => {
-							if (item.id === id) {
+							if (item.id === id && item.quantity < item.max) {
 								item.quantity += 1;
-								console.log(item.quantity);
 							}
 						});
 						firebase.firestore().collection("users").doc(doc.id).update({
@@ -255,21 +300,18 @@ export default class Cart extends React.Component {
 	};
 
 	render() {
-		var total = 0;
-		if (this.state.products.length > 0) {
-			this.state.cart.forEach((data, index) => {
-				if (data.id === this.state.products[index].id) {
-					total += this.state.products[index].sp * data.quantity;
-				}
-			});
-		}
-		if (this.state.selectedCoupon !== "") {
-			if (this.state.selectedCoupon.type === "money") {
-				total -= this.state.selectedCoupon.value;
-			} else {
-				total -= total * (this.state.selectedCoupon.value / 100);
-			}
-		}
+		var total = this.state.total;
+		// if (this.state.products.length > 0) {
+		// 	this.state.cart.forEach((data, index) => {
+		// 		console.log('292', data, index);
+		// 		console.log(this.state.products[1].id);
+		// 		if (data.id === this.state.products[index].id) {
+		// 			total += this.state.products[index].sp * data.quantity;
+		// 			console.log(total);
+		// 		}
+		// 	});
+		// }
+
 
 		return (
 			<div className={this.props.active ? "cart-cont active" : "cart-cont"}>
@@ -283,43 +325,63 @@ export default class Cart extends React.Component {
 						{this.state.cart.length > 0 ? (
 							this.state.cart.map((item, index) => (
 								<div className='list' key={index}>
-									<CartCard
-										item={item}
-										removeFromCart={(e) => {
-											this.removeFromCart(e);
-										}}
-										handleplus={() => {
-											this.handleplus(item.id);
-										}}
-										handleminus={() => {
-											this.handleminus(item.id);
-										}}
-										id={index}
-										show={true}
-									/>
+									{
+										this.state.outStockList.includes(item.id)
+											?
+											<CartCard
+												item={item}
+												removeFromCart={(e) => {
+													this.removeFromCart(e);
+												}}
+												handleplus={() => {
+													this.handleplus(item.id);
+												}}
+												handleminus={() => {
+													this.handleminus(item.id);
+												}}
+												id={index}
+												show={true}
+												grey={true}
+											/> :
+											<CartCard
+												item={item}
+												removeFromCart={(e) => {
+													this.removeFromCart(e);
+												}}
+												handleplus={() => {
+													this.handleplus(item.id);
+												}}
+												handleminus={() => {
+													this.handleminus(item.id);
+												}}
+												id={index}
+												show={true}
+												grey={false}
+											/>
+									}
 								</div>
 							))
 						) : (
-							<div
-								style={{
-									width: "100%",
-									height: "40vh",
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
-									flexDirection: "column",
-								}}>
-								<Lottie options={{ animationData: empty }} width={150} height={150} />
-								<p
+								<div
 									style={{
-										fontSize: "14px",
-										fontWeight: "bold",
-										color: "#313131",
+										width: "100%",
+										height: "40vh",
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+										flexDirection: "column",
 									}}>
-									No items in cart
+									<Lottie options={{ animationData: empty }} width={150} height={150} />
+									<p
+										style={{
+											fontSize: "14px",
+											fontWeight: "bold",
+											color: "#313131",
+										}}>
+										No items in cart
 								</p>
-							</div>
-						)}
+								</div>
+							)}
 					</div>
 					<div className='cart-checkout'>
 						<div className='apply-coupon'>
@@ -352,21 +414,23 @@ export default class Cart extends React.Component {
 							</div>
 						</div>
 						{this.state.cart.length > 0 ? (
-							<button className='checkout-btn'>
-								<a
-									href={
-										this.state.selectedCoupon !== ""
-											? "/Cart/Checkout/coupon:" + this.state.selectedCoupon.name
-											: "/Cart/Checkout/coupon:" + " ?"
-									}>
-									CHECKOUT . &#8377;{total}
-								</a>
+							<button className='checkout-btn' onClick={() => (
+								this.state.outStock ?
+									toaster.notify('Your cart contains an out of stock product, please remove it')
+									:
+									window.location.href = this.state.selectedCoupon !== ""
+										? "/Cart/Checkout/coupon:" + this.state.selectedCoupon.name
+										: "/Cart/Checkout/coupon:" + " ?"
+							)}>
+								<p>
+									CHECKOUT  &#8377;{total}
+								</p>
 							</button>
 						) : (
-							<button className='checkout-btn-disabled'>
-								<p>CHECKOUT</p>
-							</button>
-						)}
+								<button className='checkout-btn-disabled'>
+									<p>CHECKOUT</p>
+								</button>
+							)}
 					</div>
 				</div>
 			</div>

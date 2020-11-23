@@ -59,6 +59,7 @@ class CategoryList extends React.Component {
               var productList = [];
               snap.docChanges().forEach((change2) => {
                 var product = change2.doc.data();
+                product.id = change2.doc.id;
                 if (
                   product.category.toLowerCase() ===
                   this.props.match.params.id.toLowerCase()
@@ -112,88 +113,88 @@ class CategoryList extends React.Component {
         {this.state.loading ? (
           <Loader />
         ) : (
-          <motion.div
-            initial="initial"
-            animate="in"
-            exit="out"
-            variants={pageVariants}
-            transition={pageTransition}
-            className="categorylist-container"
-          >
-            {/* Breadcrumb menu */}
+            <motion.div
+              initial="initial"
+              animate="in"
+              exit="out"
+              variants={pageVariants}
+              transition={pageTransition}
+              className="categorylist-container"
+            >
+              {/* Breadcrumb menu */}
 
-            <div className="categorylist-breadcrumb">
-              <div className="breadcrumb-menu">
-                <div className="bd-menu-list">
-                  <a href="/" style={{ cursor: "pointer" }}>
-                    Home
+              <div className="categorylist-breadcrumb">
+                <div className="breadcrumb-menu">
+                  <div className="bd-menu-list">
+                    <a href="/" style={{ cursor: "pointer" }}>
+                      Home
                   </a>
-                  <a>
-                    <i class="fas fa-chevron-right"></i>
-                  </a>
-                  <a
-                    href={"/Category/" + this.props.match.params.id}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {this.props.match.params.id}
-                  </a>
-                </div>
+                    <a>
+                      <i class="fas fa-chevron-right"></i>
+                    </a>
+                    <a
+                      href={"/Category/" + this.props.match.params.id}
+                      style={{ cursor: "pointer" }}
+                    >
+                      {this.props.match.params.id}
+                    </a>
+                  </div>
 
-                <div className="bd-menu-stats">
-                  <p>
-                    We have total {this.state.productList.length} products under{" "}
-                    <b>{this.props.match.params.id}</b> category
+                  <div className="bd-menu-stats">
+                    <p>
+                      We have total {this.state.productList.length} products under{" "}
+                      <b>{this.props.match.params.id}</b> category
                   </p>
+                  </div>
                 </div>
               </div>
-            </div>
-            {this.state.productList.length > 0 ? (
-              <>
-                {/* Sub category sections */}
-                <div style={{ width: "85%", maxWidth: "1500px" }}>
-                  <SubCategoryList
+              {this.state.productList.length > 0 ? (
+                <>
+                  {/* Sub category sections */}
+                  <div style={{ width: "85%", maxWidth: "1500px" }}>
+                    <SubCategoryList
+                      parentCategory={this.props.match.params.id}
+                      categories={this.state.categories}
+                      handleViewList={(e) => this.handleViewList(e)}
+                    />
+                  </div>
+
+                  {/* Most rated products for that category */}
+
+                  <MostRated
                     parentCategory={this.props.match.params.id}
-                    categories={this.state.categories}
-                    handleViewList={(e) => this.handleViewList(e)}
+                    productList={this.state.productList}
                   />
-                </div>
-
-                {/* Most rated products for that category */}
-
-                <MostRated
-                  parentCategory={this.props.match.params.id}
-                  productList={this.state.productList}
-                />
-              </>
-            ) : (
-              <div
-                style={{
-                  width: "100%",
-                  height: "75vh",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                }}
-              >
-                <Lottie
-                  options={{ animationData: empty }}
-                  width={200}
-                  height={200}
-                />
-                <p
-                  style={{
-                    fontSize: "16px",
-                    fontWeight: "bold",
-                    color: "#313131",
-                  }}
-                >
-                  Sorry! we could not find any items
+                </>
+              ) : (
+                  <div
+                    style={{
+                      width: "100%",
+                      height: "75vh",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      flexDirection: "column",
+                    }}
+                  >
+                    <Lottie
+                      options={{ animationData: empty }}
+                      width={200}
+                      height={200}
+                    />
+                    <p
+                      style={{
+                        fontSize: "16px",
+                        fontWeight: "bold",
+                        color: "#313131",
+                      }}
+                    >
+                      Sorry! we could not find any items
                 </p>
-              </div>
-            )}
-          </motion.div>
-        )}
+                  </div>
+                )}
+            </motion.div>
+          )}
       </>
     );
   }

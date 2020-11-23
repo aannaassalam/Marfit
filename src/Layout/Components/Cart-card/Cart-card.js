@@ -32,7 +32,7 @@ export default class CartCard extends React.Component {
     return (
       <>
         {this.state.product ? (
-          <div className="items">
+          <div className={this.props.grey ? "items grey" : "items"}>
             <a
               style={{ textDecoration: "none", color: "black" }}
               href={

@@ -29,22 +29,11 @@ export default class Slider extends React.Component {
           spaceBetween: 20,
         },
       },
-      //   navigation: {
-      //     nextEl: ".swiper-button-next",
-      //     prevEl: ".swiper-button-prev",
-      //   },
+        navigation: {
+          nextEl: ".swiper-button-next",
+          prevEl: ".swiper-button-prev",
+        },
     });
-    // console.log(this.props.data);
-
-    // this.props.data.forEach(item => {
-    //   firebase.firestore().collection('products').doc(item).get().then(snap => {
-    //     if (snap) {
-    //       this.setState({
-    //         products: [...this.state.products, item]
-    //       })
-    //     }
-    //   })
-    // })
   }
 
   handleValid = (data) => {
@@ -97,8 +86,8 @@ export default class Slider extends React.Component {
                 </div>
                 ))}
               </div>
-              {/* <div className="swiper-button-prev"></div>
-            <div className="swiper-button-next"></div> */}
+              <div className="swiper-button-prev"></div>
+            <div className="swiper-button-next"></div>
             </div>
           ) : (
             <Lottie

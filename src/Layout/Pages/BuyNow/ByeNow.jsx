@@ -64,7 +64,7 @@ export default class ByeNow extends React.Component {
                   firebase.firestore().collection("products").doc(this.props.match.params.item).onSnapshot(doc => {
                     var product = doc.data();
                     product.id = doc.id;
-                    product.quantity = this.props.match.params.quantity;
+                    product.userquantity = this.props.match.params.quantity;
                     console.log(product);
                     this.setState({
                       product: product
@@ -96,7 +96,7 @@ export default class ByeNow extends React.Component {
         firebase.firestore().collection("products").doc(this.props.match.params.item).onSnapshot(doc => {
           var product = doc.data();
           product.id = doc.id;
-          product.quantity = this.props.match.params.quantity;
+          product.userquantity = this.props.match.params.quantity;
           this.setState({
             product: product,
             points: 0,
@@ -154,7 +154,7 @@ export default class ByeNow extends React.Component {
           .then((res) => {
             if (product.quantity > 0) {
               firebase.firestore().collection('products').doc(product.id).update({
-                quantity: product.quantity - 1
+                quantity: product.quantity - product.userquantity
               })
             }
             if (this.state.currentUser.email) {

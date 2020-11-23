@@ -101,10 +101,30 @@
 
 .swiper-button-next {
   color: black !important;
+  height: 40px !important;
+  width: 40px !important;
+  border-radius: 50%;
+  background-color: #f6f6f6;
+  box-shadow: 0 0 10px 0 gray;
+}
+
+.swiper-button-next::after{
+  font-size: 24px !important;
+  transform: translate(25%, 0);
 }
 
 .swiper-button-prev {
   color: black !important;
+  height: 40px !important;
+  width: 40px !important;
+  border-radius: 50%;
+  background-color: #f6f6f6;
+  box-shadow: 0 0 10px 0 gray;
+}
+
+.swiper-button-prev::after{
+  font-size: 24px !important;
+  transform: translate(-15%, 0);
 }
 
 @media (max-width: 768px) {
@@ -133,6 +153,14 @@
   
   .card .slider .swiper-container .swiper-wrapper .swiper-slide{
     height: auto;
+  }
+
+  .swiper-button-next{
+    display: none !important;
+  }
+
+  .swiper-button-prev{
+    display: none !important;
   }
 }
 

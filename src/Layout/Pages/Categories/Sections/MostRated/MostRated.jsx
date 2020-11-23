@@ -40,7 +40,7 @@ class MostRated extends React.Component {
                               "/" +
                               item.subCategory +
                               "/" +
-                              item.title
+                              item.id
                             }
                           >
                             View Details

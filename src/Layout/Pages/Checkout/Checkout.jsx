@@ -75,7 +75,7 @@ export default class Checkout extends React.Component {
                         .then((doc) => {
                           var product = doc.data();
                           product.id = doc.id;
-                          product.quantity = item.quantity;
+                          product.userquantity = item.quantity;
                           this.setState({
                             products: [...this.state.products, product],
                           });
@@ -128,7 +128,7 @@ export default class Checkout extends React.Component {
                   .then((doc) => {
                     var product = doc.data();
                     product.id = doc.id;
-                    product.quantity = item.quantity;
+                    product.userquantity = item.quantity;
                     this.setState({
                       products: [...this.state.products, product],
                       loading: false,
@@ -214,7 +214,7 @@ export default class Checkout extends React.Component {
             products.forEach(product => {
               if (product.quantity > 0) {
                 firebase.firestore().collection('products').doc(product.id).update({
-                  quantity: product.quantity - 1
+                  quantity: product.quantity - product.userquantity
                 })
               }
             })
@@ -407,7 +407,7 @@ export default class Checkout extends React.Component {
       shipping +=
         this.state.products[i].shippingCharge * this.state.cart[i].quantity;
     }
-    total = shipping + subTotal - this.state.points;
+    total = subTotal;
     if (this.state.coupon !== "") {
       if (
         this.state.coupon.active
@@ -416,13 +416,14 @@ export default class Checkout extends React.Component {
           total -= this.state.coupon.value;
           value = this.state.coupon.value;
         } else {
-          value = total * (this.state.coupon.value / 100);
+          value = Math.round(total * (this.state.coupon.value / 100));
           total -= value;
         }
       }
     } else {
       value = 0;
     }
+    total += shipping - this.state.points;
 
     return (
       <div className="checkout">
@@ -627,15 +628,15 @@ export default class Checkout extends React.Component {
                     <p className="sub-title">Subtotal</p>
                     <p>&#8377; {subTotal}</p>
                   </div>
-                  <div className="shipping-sub">
-                    <p className="sub-title">Shipping</p>
-                    <p>+ &#8377; {shipping}</p>
-                  </div>
                   <div className="discount-sub">
                     <p className="sub-title">
                       Discount ({this.state.coupon.name})
                   </p>
                     <p>- &#8377; {value}</p>
+                  </div>
+                  <div className="shipping-sub">
+                    <p className="sub-title">Shipping</p>
+                    <p>+ &#8377; {shipping}</p>
                   </div>
                   <div className="points-sub">
                     <p className="sub-title">Points ({this.state.points})</p>
