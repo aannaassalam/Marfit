@@ -1,7 +1,6 @@
 import React from "react";
 import "./MobileMiniNav.css";
 import firebase from "firebase";
-import img from "./insta.svg";
 import newImage from "../../../assets/new.png";
 import saleImage from "../../../assets/sale.png";
 

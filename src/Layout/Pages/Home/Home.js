@@ -46,11 +46,6 @@ export default class Home extends React.Component {
 	}
 
 	async componentDidMount() {
-		var data = {
-			something: "something brew",
-		};
-		var res = await axios.post("http://localhost:5000/some", data);
-		alert(res.data);
 		firebase
 			.firestore()
 			.collection("settings")

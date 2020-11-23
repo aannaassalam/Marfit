@@ -59,7 +59,7 @@ export default class Navbar extends React.Component {
 				firebase
 					.firestore()
 					.collection("users")
-					.where("email", "==", user.email)
+					.where("uid", "==", user.uid)
 					.onSnapshot((snap) => {
 						snap.docs.forEach((doc) => {
 							console.log(doc.data());
