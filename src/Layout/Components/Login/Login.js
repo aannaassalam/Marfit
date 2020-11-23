@@ -369,6 +369,7 @@ export default class Login extends React.Component {
 					this.setState({
 						loading: false,
 					});
+					alert("No such account found with this phone number");
 				}
 			});
 	};
@@ -388,6 +389,122 @@ export default class Login extends React.Component {
 				showPassword: true,
 			});
 		}
+	};
+
+	handleGoogleLogin = () => {
+		var props = this.props;
+		var provider = new firebase.auth.GoogleAuthProvider();
+		provider.setCustomParameters({
+			login_hint: "user@example.com",
+		});
+		firebase
+			.auth()
+			.signInWithPopup(provider)
+			.then(function (result) {
+				// This gives you a Google Access Token. You can use it to access the Google API.
+				var token = result.credential.accessToken;
+				// The signed-in user info.
+				var user = result.user;
+				firebase
+					.firestore()
+					.collection("users")
+					.where("email", "==", user.email)
+					.get()
+					.then((snap) => {
+						if (snap.size === 0) {
+							firebase
+								.firestore()
+								.collection("users")
+								.add({
+									email: user.email,
+									name: user.displayName,
+									orders: [],
+									addresses: [],
+									phone: "",
+									dob: "",
+									gender: "",
+									alt: "",
+									cart: [],
+									wishlist: [],
+									referalID: "",
+									points: 0,
+									uid: user.uid,
+								})
+								.then(() => {
+									props.login(true);
+									props.close(false);
+								})
+								.catch((err) => {
+									toaster.notify(err.message);
+								});
+						} else {
+							props.login(true);
+							props.close(false);
+						}
+					});
+				// ...
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
+	};
+
+	handleFacebookLogin = () => {
+		var props = this.props;
+		var provider = new firebase.auth.GoogleAuthProvider();
+		provider.setCustomParameters({
+			login_hint: "user@example.com",
+		});
+		firebase
+			.auth()
+			.signInWithPopup(provider)
+			.then(function (result) {
+				// This gives you a Google Access Token. You can use it to access the Google API.
+				var token = result.credential.accessToken;
+				// The signed-in user info.
+				var user = result.user;
+				firebase
+					.firestore()
+					.collection("users")
+					.where("email", "==", user.email)
+					.get()
+					.then((snap) => {
+						if (snap.size === 0) {
+							firebase
+								.firestore()
+								.collection("users")
+								.add({
+									email: user.email,
+									name: user.displayName,
+									orders: [],
+									addresses: [],
+									phone: "",
+									dob: "",
+									gender: "",
+									alt: "",
+									cart: [],
+									wishlist: [],
+									referalID: "",
+									points: 0,
+									uid: user.uid,
+								})
+								.then(() => {
+									props.login(true);
+									props.close(false);
+								})
+								.catch((err) => {
+									toaster.notify(err.message);
+								});
+						} else {
+							props.login(true);
+							props.close(false);
+						}
+					});
+				// ...
+			})
+			.catch(function (error) {
+				console.log(error);
+			});
 	};
 
 	render() {
@@ -437,8 +554,8 @@ export default class Login extends React.Component {
 								<div className='horizontal'></div>
 							</div>
 							<div className='social'>
-								<img src={google} alt='Google Image' />
-								<img src={fb} alt='Facebook Image' />
+								<img src={google} alt='Google Image' onClick={this.handleGoogleLogin} />
+								{/* <img src={fb} alt='Facebook Image' /> */}
 							</div>
 							<div className='already-customer'>
 								<p>
@@ -542,8 +659,8 @@ export default class Login extends React.Component {
 										<div className='horizontal'></div>
 									</div>
 									<div className='social'>
-										<img src={google} alt='Google Image' onClick={signInWithGoogle} />
-										<img src={fb} alt='Facebook Image' />
+										<img src={google} alt='Google Image' onClick={this.handleGoogleLogin} />
+										{/* <img src={fb} alt='Facebook Image' /> */}
 									</div>
 									<div className='already-customer'>
 										<p>
