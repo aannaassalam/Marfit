@@ -1,111 +1,111 @@
 .card-cont {
-  height: 280px;
-  width: 240px;
-  border-top: 1px solid rgba(0, 0, 0, 0.03);
-  border-left: 1px solid rgba(0, 0, 0, 0.1);
-  box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
-  position: relative;
-  background-color: white;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-bottom: 7px;
-  cursor: pointer;
-  margin: 0 1rem 1rem 0rem;
-  text-decoration: none;
-  color: black;
+	height: 280px;
+	width: 240px;
+	border-top: 1px solid rgba(0, 0, 0, 0.03);
+	border-left: 1px solid rgba(0, 0, 0, 0.1);
+	box-shadow: 1px 2px 3px rgba(0, 0, 0, 0.2);
+	position: relative;
+	background-color: white;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	padding-bottom: 7px;
+	cursor: pointer;
+	margin: 0 1rem 1rem 0rem;
+	text-decoration: none;
+	color: black;
 }
 
 .card-cont .circle {
-  width: 25px;
-  height: 25px;
-  border-radius: 50%;
-  box-shadow: 1px 1px 3px lightgray;
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #fff;
-  z-index: 99;
+	width: 25px;
+	height: 25px;
+	border-radius: 50%;
+	box-shadow: 1px 1px 3px lightgray;
+	position: absolute;
+	top: 10px;
+	right: 10px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #fff;
+	z-index: 99;
 }
 
 .card-cont .circle i {
-  color: lightgray;
+	color: lightgray;
 }
 
 .card-cont .img-container {
-  width: 90%;
-  height: 60%;
-  margin-top: 10px;
+	width: 90%;
+	height: 60%;
+	margin-top: 10px;
 }
 
 .card-cont .img-container img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
 }
 
 .card-cont .short-description {
-  display: flex;
-  flex-direction: column;
-  margin-top: 14px;
-  justify-content: space-around;
-  text-decoration: none;
-  color: #000;
-  width: 80%;
+	display: flex;
+	flex-direction: column;
+	margin-top: 14px;
+	justify-content: space-around;
+	text-decoration: none;
+	color: #000;
+	width: 80%;
 }
 
 .card-cont .short-description .item-title {
-  font-weight: 400;
-  font-size: 14px;
-  margin-bottom: 7px;
+	font-weight: 400;
+	font-size: 14px;
+	margin-bottom: 7px;
 }
 
 .card-cont .short-description .price-flex {
-  display: flex;
-  flex-direction: row;
+	display: flex;
+	flex-direction: row;
 }
 
 .card-cont .short-description .item-price {
-  font-size: 14px;
-  margin-bottom: 7px;
+	font-size: 14px;
+	margin-bottom: 7px;
 }
 
 .card-cont .short-description .price-flex .price-line-through {
-  text-decoration: line-through;
-  color: grey;
-  margin-right: 10px;
-  font-size: 13px;
+	text-decoration: line-through;
+	color: grey;
+	margin-right: 10px;
+	font-size: 13px;
 }
 
 .card-cont .short-description .price-flex .discount {
-  font-weight: bold;
-  color: #FB6B25;
-  font-size: 13px;
+	font-weight: bold;
+	color: #fb6b25;
+	font-size: 13px;
 }
 
-.card-cont .circle .red{
-  color: red;
+.card-cont .circle .red {
+	color: red;
 }
 
-@media(max-width: 768px){
-  .card-cont {
-    height: 250px;
-    width: 210px;
-  }
+@media (max-width: 768px) {
+	.card-cont {
+		height: 300px;
+		width: 210px;
+	}
 }
 
-@media only screen and (max-width: 580px){
-  .card-cont{
-    width: 45% !important;
-    margin-right: 0.6rem !important;
-  }
-  .swiper-slide .card-cont{
-    width: 95% !important;
-    margin-right: 0.6rem !important;
-    margin-bottom: 0 !important;
-  }
+@media only screen and (max-width: 580px) {
+	.card-cont {
+		width: 45% !important;
+		margin-right: 0.6rem !important;
+	}
+	.swiper-slide .card-cont {
+		width: 95% !important;
+		margin-right: 0.6rem !important;
+		margin-bottom: 0 !important;
+	}
 }
