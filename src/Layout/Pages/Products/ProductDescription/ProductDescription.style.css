@@ -361,13 +361,10 @@
 .product-desc .description-section .other-details .size-cont .size {
 	/* width: 185px; */
 	height: 30px;
-	border: 1px solid grey;
-	border-radius: 5px;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
 	cursor: pointer;
-	overflow: hidden;
 	user-select: none;
 }
 
@@ -379,6 +376,21 @@
 	font-weight: bold;
 	display: flex;
 	align-items: center;
+	border: 1px solid grey;
+	border-right: 0;
+	border-left: 0;
+}
+
+.product-desc .description-section .other-details .size-cont .size p:nth-child(1) {
+	border-left: 1px solid grey;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+.product-desc .description-section .other-details .size-cont .size p:last-child {
+	border-right: 1px solid grey;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
 }
 
 .product-desc .description-section .other-details .size-cont .size .sizeSelected {
@@ -391,31 +403,61 @@
 }
 
 .product-desc .description-section .other-details .color-cont .colors {
-	/* width: 180px; */
 	height: 30px;
-	border: 1px solid grey;
 	border-radius: 5px;
 	display: flex;
 	flex-direction: row;
-	align-items: center;
 	cursor: pointer;
-	overflow: hidden;
 	user-select: none;
+	align-items: center;
 }
 
-.product-desc .description-section .other-details .color-cont .colors p {
-	padding: 0px 12px;
+.product-desc .description-section .other-details .color-cont .colors .color {
+	color: #000;
+	margin: 0;
+	font-size: 14px;
+	font-weight: bold;
 	height: 100%;
 	display: flex;
 	align-items: center;
-	text-align: center;
-	font-size: 14px;
-	font-weight: bold;
+	justify-content: center;
+	padding: 0 12px;
+	border: 1px solid grey;
+	border-left: 0;
+	border-right: 0;
 }
 
-.product-desc .description-section .other-details .color-cont .colors .colorSelected {
+.product-desc .description-section .other-details .color-cont .colors .color-selected {
 	background-color: orangered;
 	color: #ffffff;
+}
+
+.product-desc .description-section .other-details .color-cont .colors .color:nth-child(1) {
+	border-left: 1px solid grey;
+	border-top-left-radius: 5px;
+	border-bottom-left-radius: 5px;
+}
+
+.product-desc .description-section .other-details .color-cont .colors .color:last-child {
+	border-right: 1px solid grey;
+	border-top-right-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+
+.product-desc .description-section .other-details .out-of-stock-text {
+	margin-right: 2rem;
+}
+
+.product-desc .description-section .other-details .out-of-stock-text h1 {
+	color: #000;
+	font-weight: bold;
+	font-size: 1.5rem;
+}
+
+.product-desc .description-section .other-details .out-of-stock-text p {
+	color: #464646;
+	font-weight: bold;
+	font-size: 1rem;
 }
 
 .product-desc .description-section .product-details {
