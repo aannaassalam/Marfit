@@ -10,6 +10,8 @@ import toaster from "toasted-notes";
 import moment from "moment";
 import ReactImageMagnify from "react-image-magnify";
 import firebase from "firebase";
+import { batch } from "react-redux";
+import { Link } from "react-router-dom";
 
 const pageVariants = {
 	initial: {
@@ -54,36 +56,61 @@ export default class ProductDesc extends React.Component {
 	}
 
 	componentDidMount() {
+		firebase.auth().onAuthStateChanged((user) => {
+			if (user) {
+				this.handleInit();
+				firebase
+					.firestore()
+					.collection("users")
+					.where("uid", "==", user.uid)
+					.get()
+					.then((snap) => {
+						snap.forEach((doc) => {
+							var wishlist = doc.data().wishlist;
+							// productShow["isWished"] = false;
+							wishlist.forEach((item) => {
+								if (item === this.props.match.params.id3) {
+									this.setState({
+										isWished: true,
+									});
+								}
+							});
+							this.setState({
+								cart: doc.data().cart,
+								currentUser: doc.data().email,
+							});
+						});
+					});
+			} else {
+				this.handleInit();
+				this.setState({
+					cart: JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [],
+					currentUser: "",
+				});
+			}
+		});
+	}
+
+	handleInit = () => {
 		firebase
 			.firestore()
 			.collection("products")
 			.onSnapshot((snap) => {
 				var products = [];
+				var productShow = {};
+				var simProducts = [];
+				var colors = [];
 				snap.docChanges().forEach((changes) => {
 					var p = changes.doc.data();
 					p.id = changes.doc.id;
 					products.push(p);
-
-					var productShow = {};
-					var simProducts = [];
-					var colors = [];
-					products.forEach((product) => {
+				});
+				if (products.length === snap.size) {
+					products.forEach(async (product) => {
 						if (product.category.toLowerCase() === this.props.match.params.id1.toLowerCase()) {
 							if (product.subCategory.toLowerCase() === this.props.match.params.id2.toLowerCase()) {
 								if (product.id === this.props.match.params.id3) {
 									productShow = product;
-									firebase
-										.firestore()
-										.collection("products")
-										.where("batch", "==", productShow.batch)
-										.onSnapshot((snap) => {
-											snap.docChanges().forEach((changes) => {
-												var data = {};
-												data.color = changes.doc.data().color;
-												data.id = changes.doc.id;
-												colors.push(data);
-											});
-										});
 								} else {
 									var sim = product.id;
 									simProducts.push(sim);
@@ -91,50 +118,24 @@ export default class ProductDesc extends React.Component {
 							}
 						}
 					});
-					console.log(productShow);
-					//
-					firebase.auth().onAuthStateChanged((user) => {
-						if (user) {
-							firebase
-								.firestore()
-								.collection("users")
-								.where("uid", "==", user.uid)
-								.get()
-								.then((snap) => {
-									snap.forEach((doc) => {
-										var wishlist = doc.data().wishlist;
-										// productShow["isWished"] = false;
-										wishlist.forEach((item) => {
-											if (item === this.state.product.id) {
-												this.setState({
-													isWished: true,
-												});
-											}
-										});
-										this.setState({
-											product: productShow,
-											simProducts: simProducts,
-											loading: false,
-											cart: doc.data().cart,
-											currentUser: doc.data().email,
-											colors: colors,
-										});
-									});
-								});
-						} else {
-							this.setState({
-								product: productShow,
-								simProducts: simProducts,
-								loading: false,
-								cart: JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [],
-								currentUser: "",
-								colors: colors,
-							});
+					products.forEach(async (product) => {
+						if (product.category.toLowerCase() === this.props.match.params.id1.toLowerCase()) {
+							if (product.subCategory.toLowerCase() === this.props.match.params.id2.toLowerCase()) {
+								if (productShow.batch && product.batch === "dhghrtght54") {
+									colors.push(product);
+								}
+							}
 						}
 					});
-				});
+					this.setState({
+						product: productShow,
+						simProducts: simProducts,
+						colors: colors,
+						loading: false,
+					});
+				}
 			});
-	}
+	};
 
 	AddToCart = () => {
 		// var concatinateQuantity = this.state.product;
@@ -502,84 +503,94 @@ export default class ProductDesc extends React.Component {
 											</div>
 										</div>
 										<div className='other-details'>
-											<div className='quantity-cont'>
-												<p className='title-tag'>Quantity</p>
-												<div className='quantity'>
-													<span className='symbol' onClick={this.handleMinus}>
-														-
-													</span>
-													<span>{this.state.usersQuantity}</span>
-													<span className='symbol' onClick={this.handlePlus}>
-														+
-													</span>
-												</div>
-											</div>
-											<div className='size-cont'>
-												<p className='title-tag'>Size</p>
-												<div className='size'>
-													<p
-														className={this.state.sizeSelected === "XS" ? "sizeSelected" : null}
-														onClick={() => {
-															this.setState({ sizeSelected: "XS" });
-														}}>
-														XS
-													</p>
-													<p
-														className={this.state.sizeSelected === "S" ? "sizeSelected" : null}
-														onClick={() => {
-															this.setState({ sizeSelected: "S" });
-														}}>
-														S
-													</p>
-													<p
-														className={this.state.sizeSelected === "M" ? "sizeSelected" : null}
-														onClick={() => {
-															this.setState({ sizeSelected: "M" });
-														}}>
-														M
-													</p>
-													<p
-														className={this.state.sizeSelected === "L" ? "sizeSelected" : null}
-														onClick={() => {
-															this.setState({ sizeSelected: "L" });
-														}}>
-														L
-													</p>
-													<p
-														className={this.state.sizeSelected === "XL" ? "sizeSelected" : null}
-														onClick={() => {
-															this.setState({ sizeSelected: "XL" });
-														}}>
-														XL
-													</p>
-												</div>
-											</div>
-											{this.state.colors.length > 1 ? (
-												<div className='color-cont'>
-													<p className='title-tag'>Color</p>
-													<div className='colors'>
-														{this.state.colors.map((color) => {
-															return (
-																<p
-																	className={color.color === this.state.product.color ? "colorSelected" : null}
-																	onClick={() => {
-																		window.location.href =
-																			"/Category/" +
-																			this.props.match.params.id1 +
-																			"/" +
-																			this.props.match.params.id2 +
-																			"/" +
-																			color.id
-																				? color.id
-																				: null;
-																	}}>
-																	{color.color}
-																</p>
-															);
-														})}
+											{this.state.product.quantity > 0 ? (
+												<>
+													<div className='quantity-cont'>
+														<p className='title-tag'>Quantity</p>
+														<div className='quantity'>
+															<span className='symbol' onClick={this.handleMinus}>
+																-
+															</span>
+															<span>{this.state.usersQuantity}</span>
+															<span className='symbol' onClick={this.handlePlus}>
+																+
+															</span>
+														</div>
 													</div>
+													<div className='size-cont'>
+														<p className='title-tag'>Size</p>
+														<div className='size'>
+															<p
+																className={this.state.sizeSelected === "XS" ? "sizeSelected" : null}
+																onClick={() => {
+																	this.setState({ sizeSelected: "XS" });
+																}}>
+																XS
+															</p>
+															<p
+																className={this.state.sizeSelected === "S" ? "sizeSelected" : null}
+																onClick={() => {
+																	this.setState({ sizeSelected: "S" });
+																}}>
+																S
+															</p>
+															<p
+																className={this.state.sizeSelected === "M" ? "sizeSelected" : null}
+																onClick={() => {
+																	this.setState({ sizeSelected: "M" });
+																}}>
+																M
+															</p>
+															<p
+																className={this.state.sizeSelected === "L" ? "sizeSelected" : null}
+																onClick={() => {
+																	this.setState({ sizeSelected: "L" });
+																}}>
+																L
+															</p>
+															<p
+																className={this.state.sizeSelected === "XL" ? "sizeSelected" : null}
+																onClick={() => {
+																	this.setState({ sizeSelected: "XL" });
+																}}>
+																XL
+															</p>
+														</div>
+													</div>
+													{this.state.colors.length > 1 ? (
+														<div className='color-cont'>
+															<p className='title-tag'>Color</p>
+															<div className='colors'>
+																{this.state.colors.map((color) => {
+																	return (
+																		<Link
+																			className={
+																				color.color === this.state.product.color
+																					? "color color-selected"
+																					: "color"
+																			}
+																			to={
+																				"/Category/" +
+																				this.props.match.params.id1 +
+																				"/" +
+																				this.props.match.params.id2 +
+																				"/" +
+																				color.id
+																			}>
+																			{color.color}
+																		</Link>
+																	);
+																})}
+															</div>
+														</div>
+													) : null}
+												</>
+											) : (
+												<div className='out-of-stock-text'>
+													<h1>Sold Out</h1>
+													<p>This item is currently out of stock</p>
 												</div>
-											) : null}
+											)}
 										</div>
 										<div className='product-details'>
 											<h3>Product Details</h3>
