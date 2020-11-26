@@ -8,12 +8,12 @@ export default class FeatureItems extends React.Component {
     return (
       <div className="poster">
         <div className="image">
-          <img src={poster} alt="poster" />
-          <div className="title">
+          <img src={this.props.add.url} alt="poster" />
+          {/* <div className="title">
             <img src={title} alt="title" />
             <p>New Summer Collection is Here Now!</p>
-          </div>
-          <a href="#">
+          </div> */}
+          <a href={this.props.add.link}>
             <i className="fas fa-arrow-right"></i>
             <p>
               <i className="italics">CLICK TO EXPLORE</i>

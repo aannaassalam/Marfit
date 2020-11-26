@@ -3,12 +3,33 @@ import left from '../../../../../assets/left.png';
 import right from '../../../../../assets/right.png';
 import marfit from '../../../../../assets/Marfit.png'
 import './About.css';
+import firebase from "firebase";
 
 export default class About extends React.Component{
+
+    constructor(props){
+        super(props);
+        this.state = {
+            aboutLeft: "",
+            aboutRight: ""
+        }
+    }
+
+    componentDidMount() {
+        firebase.firestore().collection('settings').onSnapshot(snap => {
+            snap.docChanges().forEach(doc => {
+                this.setState({
+                    aboutLeft: doc.data().aboutLeft,
+                    aboutRight: doc.data().aboutRight,
+                })
+            })
+        })
+    }
+
     render(){
         return(
             <div className="about">
-                <img src={left} alt="Left-AboutImage"/>
+                <img src={this.state.aboutLeft} alt="Left-AboutImage"/>
                 <div className="white-container">
                     <img src={marfit} alt="Marfit Logo"/>
                     <p>With marfit it gets as premium as possible! Marfit aims at taking
@@ -18,7 +39,7 @@ export default class About extends React.Component{
                         a niche value.
                     </p>
                 </div>
-                <img src={right} alt="Right-AboutImage" className="last"/>
+                <img src={this.state.aboutRight} alt="Right-AboutImage" className="last"/>
             </div>
         )
     }

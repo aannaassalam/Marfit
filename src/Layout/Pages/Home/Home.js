@@ -42,6 +42,9 @@ export default class Home extends React.Component {
 			data2: "",
 			sliders: "",
 			loading: true,
+			add1: {},
+			add2: {},
+			add3: {},
 		};
 	}
 
@@ -55,6 +58,9 @@ export default class Home extends React.Component {
 						data1: changes.doc.data().slider1,
 						data2: changes.doc.data().slider2,
 						sliders: changes.doc.data().sliders,
+						add1: changes.doc.data().bottomBanner1,
+						add2: changes.doc.data().bottomBanner2,
+						add3: changes.doc.data().bottomBanner3,
 						loading: false,
 					});
 				});
@@ -70,13 +76,13 @@ export default class Home extends React.Component {
 					<motion.div initial='initial' animate='in' exit='out' variants={pageVariants} transition={pageTransition}>
 						<MobileMiniNav />
 						<Banner />
-						<FeatureItems />
+						<FeatureItems add={this.state.add1} />
 						<Slider data={this.state.sliders[0].products} title={this.state.sliders[0].title} view={this.state.viewAll} />
-						<Add />
+						<Add add={this.state.add2} />
 						<Slider data={this.state.sliders[1].products} title={this.state.sliders[1].title} view={this.state.viewAll} />
 						<About />
 						<Slider data={this.state.sliders[2].products} title={this.state.sliders[2].title} view={this.state.viewAll} />
-						<Add />
+						<Add add={this.state.add3} />
 						{this.state.sliders &&
 							this.state.sliders.map((slider, index) => {
 								if (index > 2) {
