@@ -81,6 +81,7 @@ class Dashboard extends React.Component {
 			editEmail: "",
 			redeem: "",
 			selectedTab: "",
+			user: ''
 		};
 	}
 
@@ -929,8 +930,8 @@ class Dashboard extends React.Component {
 											<div className='referanimation'>
 												<Lottie
 													options={{ animationData: refer }}
-													width={300}
-													height={300}
+													width={280}
+													height={280}
 													style={{ position: "absolute", top: 0 }}
 												/>
 											</div>
@@ -980,12 +981,12 @@ class Dashboard extends React.Component {
 											<div className='redeemCard'>
 												<Lottie
 													options={{ animationData: redeem }}
-													width={350}
-													height={350}
+													width={270}
+													height={270}
 													style={{ position: "absolute", top: "-100px" }}
 												/>
 											</div>
-											<div className='redeemCode'>
+												<div className='redeemCode'>
 												<div className='redeemInput'>
 													<input
 														type='text'

@@ -418,6 +418,9 @@ export default class Navbar extends React.Component {
 													</a>
 												</div>
 											</div>
+											<a className="profileMobile" href="/Dashboard/Profile">
+												<i className='fas fa-user'></i>
+											</a>
 										</>
 									) : (
 										<a

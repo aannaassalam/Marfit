@@ -357,10 +357,6 @@
 	transition: transform 0.2s, margin 0.5s;
 }
 
-.navbar .nav-container .third-container .links:hover {
-	transform: translateY(-5px);
-}
-
 .navbar .nav-container .third-container .search-icon {
 	color: #fff;
 	display: none;
@@ -390,20 +386,11 @@
 	background-color: #fb641b;
 	font-size: 13px;
 }
-/* .navbar .nav-container .third-container .links:hover:last-child p:last-child{
-  position: absolute;
-  top:-15px;
-  left: 0;
-} */
 
 .navbar .nav-container .third-container a.login-signup {
 	color: #fb641b;
 	display: flex;
 	transition: transform 0.2s;
-}
-
-.navbar .nav-container .third-container a.login-signup:hover {
-	transform: translateY(-5px);
 }
 
 .navbar .nav-container .third-container a.login-signup p {
@@ -495,6 +482,11 @@
 	height: 50px;
 	color: #fb641b;
 	transition: all 0.1s;
+}
+
+.navbar .nav-container .third-container .profileMobile i{
+	color: #fb641b;
+	display: none;
 }
 
 .navbar .nav-container .third-container .options .option-links p {
@@ -744,8 +736,8 @@
 		align-items: center;
 		justify-content: center;
 	}
-	#userLogin {
-		display: none;
+	.navbar .nav-container .third-container .profileMobile i{
+		display: block;
 	}
 }
 

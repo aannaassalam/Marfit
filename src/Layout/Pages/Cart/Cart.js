@@ -281,7 +281,7 @@ export default class Cart extends React.Component {
 					snap.forEach((doc) => {
 						var cart = doc.data().cart;
 						cart.forEach((item) => {
-							if (item.id === id && item.quantity < item.max) {
+							if (item.id === id && item.quantity < parseInt(item.max)) {
 								item.quantity += 1;
 							}
 						});

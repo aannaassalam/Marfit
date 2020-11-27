@@ -516,7 +516,7 @@
 
 .dashboard-container .content .referMain{
   width: 100%;
-  height: 90%;
+  height: 87%;
 }
 
 .dashboard-container .content .referMain .referanimation {
@@ -642,7 +642,7 @@
 
 .dashboard-container .content .redeem-cont{
   width: 100%;
-  height: 89%;
+  height: 87%;
 }
 
 .dashboard-container .content .redeem-cont .redeemCard {
@@ -877,7 +877,9 @@
   }
   .dashboard-container .sidebar .menu {
     margin: 0;
-    padding: 1.5rem 1.5rem;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
     white-space: nowrap;
   }
 
@@ -887,15 +889,33 @@
 
   .dashboard-container .sidebar .menu-active {
     margin: 0;
-    padding: 1.5rem 1.5rem;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
     border-right: none;
     border-bottom: 7px solid #fb641b;
-    display: inline-block;
     white-space: nowrap;
     font-size: 1rem;
   }
-  .dashboard-container .content .referCode .referInput {
-    width: 75%;
+  .dashboard-container .content .address-cont .address{
+    height: auto;
+    padding: 10px 0;
+  }
+  .dashboard-container .content .address-cont .address .paras{
+    width: 70%;
+  }
+  .dashboard-container .content .address-cont .address .actions{
+    width: 20%;
+    padding: 0;
+  }
+  .dashboard-container .content .editTab .inputs{
+    width: 100%;
+  }
+  .dashboard-container .content .editTab .inputs .region{
+    width: 95%;
+  }
+  .dashboard-container .content .editTab .inputs input{
+    width: 95%;
   }
   .dashboard-container .content .addtab .inputs .region, .dashboard-container .content .addtab .inputs input{
     width: 95%;

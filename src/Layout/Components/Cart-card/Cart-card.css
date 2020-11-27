@@ -104,6 +104,10 @@
     align-items: center;
 }
 
+.items .description .counter .symbol.grey{
+    color: grey;
+}
+
 .items .description .remove-link{
     position: absolute;
     right: 5px;

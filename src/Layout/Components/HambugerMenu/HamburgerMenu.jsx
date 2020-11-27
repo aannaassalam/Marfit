@@ -6,7 +6,7 @@ import firebase from 'firebase';
 
 export default class HamburgerMenu extends React.Component {
 
-  constructor(props){
+  constructor(props) {
     super(props);
     this.state = {
       categories: [],
@@ -46,19 +46,46 @@ export default class HamburgerMenu extends React.Component {
             ></i>
           </div>
           <div className="ham-list">
+            {this.props.login ? (
+              <p
+                className="box orange"
+                onClick={() => {
+                  this.props.logout();
+                  this.props.close();
+                }}
+              >
+                <span style={{ cursor: "pointer", userSelect: "none" }}>
+                  Logout
+                </span>
+                <i className="fa fa-sign-out-alt fa-1x"></i>
+              </p>
+            ) : (
+                <p
+                  className="box orange"
+                  onClick={() => {
+                    this.props.handleLogin();
+                    this.props.close();
+                  }}
+                >
+                  <span style={{ cursor: "pointer", userSelect: "none" }}>
+                    Login
+                </span>
+                  <i className="fa fa-caret-right fa-1x"></i>
+                </p>
+              )}
             <Link to="/" className="box" onClick={() => this.props.close()}>
               <p>Home</p>
             </Link>
             <Link to="/NewArrivals" className="box hide" onClick={() => this.props.close()}>
-              <p style={{color: "#fb641b"}}>New Arrivals</p>
+              <p style={{ color: "#fb641b" }}>New Arrivals</p>
             </Link>
             <Link to="/Sale" className="box hide" onClick={() => this.props.close()}>
-              <p style={{color: "#fb641b"}}>Sale</p>
+              <p style={{ color: "#fb641b" }}>Sale</p>
             </Link>
             <div className="MiniNav">
-            {this.state.categories.map((cat, index) => {
+              {this.state.categories.map((cat, index) => {
                 return (
-                  <div className={this.state.open === index ? "MiniNav-category opened box" : "MiniNav-category box"} key={index} onClick={() => this.state.open === index ? this.setState({open: null}) : this.setState({open: index})}>
+                  <div className={this.state.open === index ? "MiniNav-category opened box" : "MiniNav-category box"} key={index} onClick={() => this.state.open === index ? this.setState({ open: null }) : this.setState({ open: index })}>
                     <p>{cat.name} <i className={this.state.open === index ? "fa fa-chevron-down fa-1x open" : "fa fa-chevron-down fa-1x"}></i></p>
                     <div className="subcategory-options">
                       {cat.subcategories.map((sub, index) => {
@@ -74,30 +101,30 @@ export default class HamburgerMenu extends React.Component {
                     </div>
                   </div>
                 );
-            })}
-              </div>
+              })}
+            </div>
             {this.props.login ? (
               <>
-              <Link to="/Dashboard/Orders" className="box disappear" onClick={() => this.props.close()}>
-                <p>Orders</p>
-              </Link>
-              <Link
-                to="/Dashboard/Wishlist"
-                className="box disappear"
-                id="wishlist"
-                onClick={() => this.props.close()}
-              >
-                <p href="#">Wishlist</p>
-              </Link>
-              <Link to="/Dashboard/Profile" className="box disappear" onClick={() => this.props.close()}>
-                <p>Profile</p>
-              </Link>
-              <Link to="/Dashboard/Address" className="box disappear" onClick={() => this.props.close()}>
-                <p>Address</p>
-              </Link>
-              <Link to="/Dashboard/Refer" className="box disappear" onClick={() => this.props.close()}>
-                <p>Refer & Earn</p>
-              </Link>
+                <Link to="/Dashboard/Orders" className="box disappear" onClick={() => this.props.close()}>
+                  <p>Orders</p>
+                </Link>
+                <Link
+                  to="/Dashboard/Wishlist"
+                  className="box disappear"
+                  id="wishlist"
+                  onClick={() => this.props.close()}
+                >
+                  <p href="#">Wishlist</p>
+                </Link>
+                <Link to="/Dashboard/Profile" className="box disappear" onClick={() => this.props.close()}>
+                  <p>Profile</p>
+                </Link>
+                <Link to="/Dashboard/Address" className="box disappear" onClick={() => this.props.close()}>
+                  <p>Address</p>
+                </Link>
+                <Link to="/Dashboard/Refer" className="box disappear" onClick={() => this.props.close()}>
+                  <p>Refer & Earn</p>
+                </Link>
               </>
             ) : null}
             <Link to="#" className="box" onClick={() => this.props.close()}>
@@ -113,33 +140,6 @@ export default class HamburgerMenu extends React.Component {
             >
               <span>Cart</span>
             </p>
-            {this.props.login ? (
-              <p
-                className="box orange"
-                onClick={() => {
-                  this.props.logout();
-                  this.props.close();
-                }}
-              >
-                <span style={{ cursor: "pointer", userSelect: "none" }}>
-                  Logout
-                </span>
-                <i className="fa fa-sign-out-alt fa-1x"></i>
-              </p>
-            ) : (
-              <p
-                className="box orange"
-                onClick={() => {
-                  this.props.handleLogin();
-                  this.props.close();
-                }}
-              >
-                <span style={{ cursor: "pointer", userSelect: "none" }}>
-                  Login
-                </span>
-                <i className="fa fa-caret-right fa-1x"></i>
-              </p>
-            )}
           </div>
         </div>
         <div className="blank" onClick={() => this.props.close()}></div>

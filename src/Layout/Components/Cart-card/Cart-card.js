@@ -64,12 +64,22 @@ export default class CartCard extends React.Component {
                       -
                     </span>
                     <span>{this.props.item.quantity}</span>
-                    <span
+                    {
+                      this.props.item.quantity === parseInt(this.props.item.max)
+                        ?
+                        <span
+                      className="symbol grey"
+                    >
+                          +
+                    </span>
+                        :
+                        <span
                       className="symbol"
                       onClick={() => this.props.handleplus()}
                     >
                       +
                     </span>
+                    }
                   </div>
                   <div
                     onClick={() => {

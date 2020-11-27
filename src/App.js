@@ -2,7 +2,6 @@ import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Switch, Route, useLocation } from "react-router-dom";
 import "./App.css";
-import Couponbar from "./Layout/Components/Couponbar/Couponbar";
 import Navbar from "./Layout/Components/Navbar/Navbar";
 import MiniNav from "./Layout/Components/MiniNav/MiniNav";
 import Home from "./Layout/Pages/Home/Home";
@@ -29,7 +28,6 @@ function App() {
 	};
 	return (
 		<div className='App'>
-			<Couponbar />
 			<Navbar ref={child} />
 			<MiniNav />
 			<AnimatePresence>

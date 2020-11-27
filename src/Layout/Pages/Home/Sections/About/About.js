@@ -17,10 +17,10 @@ export default class About extends React.Component{
 
     componentDidMount() {
         firebase.firestore().collection('settings').onSnapshot(snap => {
-            snap.docChanges().forEach(doc => {
+            snap.docChanges().forEach(changes => {
                 this.setState({
-                    aboutLeft: doc.data().aboutLeft,
-                    aboutRight: doc.data().aboutRight,
+                    aboutLeft: changes.doc.data().aboutLeft,
+                    aboutRight: changes.doc.data().aboutRight,
                 })
             })
         })
