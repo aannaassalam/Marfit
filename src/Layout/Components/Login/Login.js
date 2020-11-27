@@ -29,6 +29,10 @@ export default class Login extends React.Component {
 			showNext: false,
 			showOtp: false,
 			showPassword: false,
+			c1: "",
+			c2: "",
+			c3: "",
+			c4: "",
 		};
 	}
 
@@ -507,6 +511,10 @@ export default class Login extends React.Component {
 			});
 	};
 
+	handleChangeCode = (e) => {
+		this.setState({ [e.target.name]: e.target.value });
+	}
+
 	render() {
 		return (
 			<div className='login-container'>
@@ -544,10 +552,10 @@ export default class Login extends React.Component {
 							{this.state.loading ? (
 								<Lottie options={{ animationData: loading }} width={50} height={50} />
 							) : (
-								<button type='button' id='btn' onClick={this.handleRegister}>
-									Register
-								</button>
-							)}
+									<button type='button' id='btn' onClick={this.handleRegister}>
+										Register
+									</button>
+								)}
 							<div className='lines'>
 								<div className='horizontal'></div>
 								<div className='or'>OR</div>
@@ -564,113 +572,157 @@ export default class Login extends React.Component {
 							</div>
 						</div>
 					) : (
-						<div className='login-form'>
-							<div className='marfit-img'>
-								<img src={logo} alt='Marfit logo' />
-								<img src={marfit} alt='Marfit title' />
-							</div>
-							{this.state.forgotpass ? (
-								<div className='resetPass'>
-									<i
-										className='fas fa-arrow-left'
-										onClick={() =>
-											this.setState({
-												forgotpass: false,
-											})
-										}></i>
-									<div className='sendmail'>
-										<input type='email' name='resetEmail' placeholder='Enter your Email' onChange={this.handleChange} />
-										{this.state.loading ? (
-											<Lottie options={{ animationData: loading }} width={50} height={50} />
-										) : (
-											<button type='button' onClick={this.resetPassword}>
-												<p>Reset Password</p>
-											</button>
-										)}
-									</div>
+							<div className='login-form'>
+								<div className='marfit-img'>
+									<img src={logo} alt='Marfit logo' />
+									<img src={marfit} alt='Marfit title' />
 								</div>
-							) : (
-								<>
-									{this.state.showPassword ? (
-										<div className='input-fields'>
-											<input type='email' name='email' id='user-email' placeholder='Enter Email' onChange={this.handleChange} />
-											<div className='pass'>
-												<input
-													type='password'
-													name='password'
-													id='user-password'
-													placeholder='Enter Password'
-													onChange={this.handleChange}
-												/>
-												<p
-													onClick={() =>
-														this.setState({
-															forgotpass: true,
-														})
-													}>
-													Forgot password?
+								{this.state.forgotpass ? (
+									<div className='resetPass'>
+										<i
+											className='fas fa-arrow-left'
+											onClick={() =>
+												this.setState({
+													forgotpass: false,
+												})
+											}></i>
+										<div className='sendmail'>
+											<input type='email' name='resetEmail' placeholder='Enter your Email' onChange={this.handleChange} />
+											{this.state.loading ? (
+												<Lottie options={{ animationData: loading }} width={50} height={50} />
+											) : (
+													<button type='button' onClick={this.resetPassword}>
+														<p>Reset Password</p>
+													</button>
+												)}
+										</div>
+									</div>
+								) : (
+										<>
+											{this.state.showPassword ? (
+												<div className='input-fields'>
+													<input type='email' name='email' id='user-email' placeholder='Enter Email' onChange={this.handleChange} />
+													<div className='pass'>
+														<input
+															type='password'
+															name='password'
+															id='user-password'
+															placeholder='Enter Password'
+															onChange={this.handleChange}
+														/>
+														<p
+															onClick={() =>
+																this.setState({
+																	forgotpass: true,
+																})
+															}>
+															Forgot password?
+												</p>
+													</div>
+												</div>
+											) : (
+													<>
+														<div className='input-fields'>
+															<input
+																type='email'
+																name='email'
+																id='user-email'
+																placeholder='Enter Email or Phone Number'
+																onChange={this.handleChange}
+															/>
+														</div>
+														<div className="otp-cont">
+															<div className='vrf'>
+																<h1>Enter verification code</h1>
+																<p>Enter 4 digit verification code send to your email address</p>
+															</div>
+															<div className="verification-cont">
+																<div className="code-verification">
+																	<input
+																		id="c1"
+																		name="c1"
+																		value={this.state.c1}
+																		type='text'
+																		onChange={this.handleChangeCode}
+																	/>
+																	<input
+																		id="c2"
+																		name="c2"
+																		value={this.state.c2}
+																		type='text'
+																		onChange={this.handleChangeCode}
+																	/>
+																	<input
+																		id="c3"
+																		name="c3"
+																		value={this.state.c3}
+																		type='text'
+																		onChange={this.handleChangeCode}
+																	/>
+																	<input
+																		id="c4"
+																		name="c4"
+																		value={this.state.c4}
+																		type='text'
+																		onChange={this.handleChangeCode}
+																	/>
+																</div>
+																<div className="button-verification">
+																	<button className="btn-cancel">Cancel</button>
+																	<button className="btn-register">Register</button>
+																</div>
+															</div>
+														</div>
+													</>
+												)}
+
+											{this.state.showNext ? (
+												<>
+													{this.state.loadingNext ? (
+														<Lottie options={{ animationData: loading }} width={80} height={80} />
+													) : (
+															<>
+																{this.state.showOtp ? (
+																	<button type='button' onClick={this.handlePhoneLogin}>
+																		Verify & Login
+																	</button>
+																) : (
+																		<button type='button' onClick={this.handleLogin}>
+																			Login
+																		</button>
+																	)}
+															</>
+														)}
+												</>
+											) : (
+													<>
+														{this.state.loadingNext ? (
+															<Lottie options={{ animationData: loading }} width={80} height={80} />
+														) : (
+																<button className="btn-next" type='button' onClick={this.handleNext}>
+																	Next
+																</button>
+															)}
+													</>
+												)}
+											<div className='lines'>
+												<div className='horizontal'></div>
+												<div className='or'>OR</div>
+												<div className='horizontal'></div>
+											</div>
+											<div className='social'>
+												<img src={google} alt='Google Image' onClick={this.handleGoogleLogin} />
+												{/* <img src={fb} alt='Facebook Image' /> */}
+											</div>
+											<div className='already-customer'>
+												<p>
+													Not a Customer. <a onClick={() => this.setState({ toggle: "register" })}>Register</a>
 												</p>
 											</div>
-										</div>
-									) : (
-										<div className='input-fields'>
-											<input
-												type='email'
-												name='email'
-												id='user-email'
-												placeholder='Enter Email or Phone Number'
-												onChange={this.handleChange}
-											/>
-										</div>
-									)}
-
-									{this.state.showNext ? (
-										<>
-											{this.state.loadingNext ? (
-												<Lottie options={{ animationData: loading }} width={80} height={80} />
-											) : (
-												<>
-													{this.state.showOtp ? (
-														<button type='button' onClick={this.handlePhoneLogin}>
-															Verify & Login
-														</button>
-													) : (
-														<button type='button' onClick={this.handleLogin}>
-															Login
-														</button>
-													)}
-												</>
-											)}
-										</>
-									) : (
-										<>
-											{this.state.loadingNext ? (
-												<Lottie options={{ animationData: loading }} width={80} height={80} />
-											) : (
-												<button type='button' onClick={this.handleNext}>
-													Next
-												</button>
-											)}
 										</>
 									)}
-									<div className='lines'>
-										<div className='horizontal'></div>
-										<div className='or'>OR</div>
-										<div className='horizontal'></div>
-									</div>
-									<div className='social'>
-										<img src={google} alt='Google Image' onClick={this.handleGoogleLogin} />
-										{/* <img src={fb} alt='Facebook Image' /> */}
-									</div>
-									<div className='already-customer'>
-										<p>
-											Not a Customer. <a onClick={() => this.setState({ toggle: "register" })}>Register</a>
-										</p>
-									</div>
-								</>
-							)}
-						</div>
-					)}
+							</div>
+						)}
 				</div>
 			</div>
 		);
