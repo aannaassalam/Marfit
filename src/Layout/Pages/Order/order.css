@@ -121,9 +121,13 @@
   width: 0;
   height: 0;
 }
+
+.icon .done:last-child i::after {
+  bottom: 15px;
+}
 .icon .done i::after {
   content: "";
-  width: 115px;
+  width: 132px;
   height: 3px;
   position: absolute;
   right: 25px;

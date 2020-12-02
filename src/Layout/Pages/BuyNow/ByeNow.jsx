@@ -7,7 +7,7 @@ import loading from "../../../assets/loading.json";
 import Lottie from "lottie-react-web";
 import Loader from "../../Components/Loader/Loader";
 import CartCard from "../../Components/Cart-card/Cart-card";
-
+import axios from "axios";
 export default class ByeNow extends React.Component {
   constructor(props) {
     super(props);
@@ -48,8 +48,8 @@ export default class ByeNow extends React.Component {
             snap.forEach((doc) => {
               if (doc.data().addresses.length === 0) {
                 this.setState({
-                  addAddress: true
-                })
+                  addAddress: true,
+                });
               }
               this.setState(
                 {
@@ -61,60 +61,73 @@ export default class ByeNow extends React.Component {
                   userID: doc.id,
                 },
                 () => {
-                  firebase.firestore().collection("products").doc(this.props.match.params.item).onSnapshot(doc => {
-                    var product = doc.data();
-                    product.id = doc.id;
-                    product.userquantity = this.props.match.params.quantity;
-                    console.log(product);
-                    this.setState({
-                      product: product
-                    })
-                  })
+                  firebase
+                    .firestore()
+                    .collection("products")
+                    .doc(this.props.match.params.item)
+                    .onSnapshot((doc) => {
+                      var product = doc.data();
+                      product.id = doc.id;
+                      product.userquantity = this.props.match.params.quantity;
+                      console.log(product);
+                      this.setState({
+                        product: product,
+                      });
+                    });
                   this.state.currentUser.name.includes(" ")
                     ? this.setState({
-                      //first name
-                      firstName: this.state.currentUser.name.substr(
-                        0,
-                        this.state.currentUser.name.indexOf(" ")
-                      ),
-                      //last name
-                      lastName: this.state.currentUser.name.substr(
-                        this.state.currentUser.name.indexOf(" "),
-                        this.state.currentUser.name.length
-                      ),
-                      loading: false,
-                    })
+                        //first name
+                        firstName: this.state.currentUser.name.substr(
+                          0,
+                          this.state.currentUser.name.indexOf(" ")
+                        ),
+                        //last name
+                        lastName: this.state.currentUser.name.substr(
+                          this.state.currentUser.name.indexOf(" "),
+                          this.state.currentUser.name.length
+                        ),
+                        loading: false,
+                      })
                     : this.setState({
-                      firstName: this.state.currentUser.name,
-                      loading: false,
-                    });
+                        firstName: this.state.currentUser.name,
+                        loading: false,
+                      });
                 }
               );
             });
           });
       } else {
-        firebase.firestore().collection("products").doc(this.props.match.params.item).onSnapshot(doc => {
-          var product = doc.data();
-          product.id = doc.id;
-          product.userquantity = this.props.match.params.quantity;
-          this.setState({
-            product: product,
-            points: 0,
-            userID: "",
-            loading: false,
-            addAddress: true
-          })
-        })
-      };
-    })
+        firebase
+          .firestore()
+          .collection("products")
+          .doc(this.props.match.params.item)
+          .onSnapshot((doc) => {
+            var product = doc.data();
+            product.id = doc.id;
+            product.userquantity = this.props.match.params.quantity;
+            this.setState({
+              product: product,
+              points: 0,
+              userID: "",
+              loading: false,
+              addAddress: true,
+            });
+          });
+      }
+    });
   }
 
   handlePay = async (total, subtotal, shipping) => {
     var userExist = false;
     if (this.state.currentUser.length === 0) {
-      await firebase.firestore().collection("users").where("email", "==", this.state.email).get().then(() => {
-        userExist = true;
-      })
+      await firebase
+        .firestore()
+        .collection("users")
+        .where("email", "==", this.state.email)
+        .get()
+        .then(() => {
+          userExist = true;
+        });
     }
     if (!userExist) {
       if (
@@ -153,9 +166,13 @@ export default class ByeNow extends React.Component {
           })
           .then((res) => {
             if (product.quantity > 0) {
-              firebase.firestore().collection('products').doc(product.id).update({
-                quantity: product.quantity - product.userquantity
-              })
+              firebase
+                .firestore()
+                .collection("products")
+                .doc(product.id)
+                .update({
+                  quantity: product.quantity - product.userquantity,
+                });
             }
             if (this.state.currentUser.email) {
               firebase
@@ -178,7 +195,7 @@ export default class ByeNow extends React.Component {
                       city: this.state.city,
                       pincode: this.state.pincode,
                     };
-                    console.log(address)
+                    console.log(address);
                     addresses.push(address);
                   }
                   var orders = doc.data().orders;
@@ -194,10 +211,22 @@ export default class ByeNow extends React.Component {
                     })
                     .then(() => {
                       window.location.href = "/Orders/" + res.id;
+                      const data = {
+                        email: this.state.email,
+                        subject: this.state.product.title,
+                        message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id} direct Bought`,
+                      };
+                      axios.post("http://localhost:5000/api/sendemail", data);
                     });
                 });
             } else {
               window.location.href = "/Orders/" + res.id;
+              const data = {
+                email: this.state.email,
+                subject: this.state.product.title,
+                message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id} direct Bought`,
+              };
+              axios.post("http://localhost:5000/api/sendemail", data);
             }
           });
         //   const options = {
@@ -293,12 +322,11 @@ export default class ByeNow extends React.Component {
         //   };
         //   const rzp1 = new window.Razorpay(options);
         //   rzp1.open();
-        // } 
+        // }
       } else {
         if (!this.state.addAddress) {
           toaster.notify("Please select any address");
-        }
-        else {
+        } else {
           toaster.notify("Please Fill in all the fields");
         }
       }
@@ -327,13 +355,14 @@ export default class ByeNow extends React.Component {
       pincode: address.pincode,
       email: address.email,
       address: address.address,
-      selectedAddress: index
-    })
-  }
+      selectedAddress: index,
+    });
+  };
 
   render() {
     var subtotal = this.state.product.sp;
-    var shipping = this.state.product.shippingCharge * this.props.match.params.quantity;
+    var shipping =
+      this.state.product.shippingCharge * this.props.match.params.quantity;
     var total = subtotal + shipping;
 
     return (
@@ -341,222 +370,236 @@ export default class ByeNow extends React.Component {
         {this.state.loading ? (
           <Loader />
         ) : (
-            <>
-              <div className="left">
-                {this.state.currentUser !== "" ? null : (
-                  <div className="already">
-                    <p>
-                      Already have an account?{" "}
-                      <span onClick={() => this.setState({ openLogin: true })}>
-                        Log in
+          <>
+            <div className="left">
+              {this.state.currentUser !== "" ? null : (
+                <div className="already">
+                  <p>
+                    Already have an account?{" "}
+                    <span onClick={() => this.setState({ openLogin: true })}>
+                      Log in
                     </span>
-                    </p>
-                  </div>
-                )}
+                  </p>
+                </div>
+              )}
 
-                <main className="info">
-                  {
-                    !this.state.addAddress ?
-                      <div className="addressInput">
-                        {this.state.addresses.map((address, index) => {
-                          if (this.state.selectedAddress === index) {
-                            return (
-                              <div className="address selected" key={index} onClick={() => this.handleAddress(index)}>
-                                <div className="paras">
-                                  <p>Address {index + 1} :</p>
-                                  <p>
-                                    {address.firstName} {address.lastName}
-                                  </p>
-                                  <p>{address.address}</p>
-                                </div>
-                                <div className="circle">
-                                </div>
-                              </div>
-                            )
-                          } else {
-                            return (
-                              <div className="address" key={index} onClick={() => this.handleAddress(index)}>
-                                <div className="paras">
-                                  <p>Address {index + 1} :</p>
-                                  <p>
-                                    {address.firstName} {address.lastName}
-                                  </p>
-                                  <p>{address.address}</p>
-                                </div>
-                                <div className="circle">
-                                </div>
-                              </div>
-                            )
-                          }
-                        })}
-                        <div className="addAddress" onClick={() => this.setState({
-                          addAddress: true
-                        })}>
-                          <div className="plus">
-                            <i className="fas fa-plus"></i>
+              <main className="info">
+                {!this.state.addAddress ? (
+                  <div className="addressInput">
+                    {this.state.addresses.map((address, index) => {
+                      if (this.state.selectedAddress === index) {
+                        return (
+                          <div
+                            className="address selected"
+                            key={index}
+                            onClick={() => this.handleAddress(index)}
+                          >
+                            <div className="paras">
+                              <p>Address {index + 1} :</p>
+                              <p>
+                                {address.firstName} {address.lastName}
+                              </p>
+                              <p>{address.address}</p>
+                            </div>
+                            <div className="circle"></div>
                           </div>
-                          <p>Add New Address</p>
-                        </div>
+                        );
+                      } else {
+                        return (
+                          <div
+                            className="address"
+                            key={index}
+                            onClick={() => this.handleAddress(index)}
+                          >
+                            <div className="paras">
+                              <p>Address {index + 1} :</p>
+                              <p>
+                                {address.firstName} {address.lastName}
+                              </p>
+                              <p>{address.address}</p>
+                            </div>
+                            <div className="circle"></div>
+                          </div>
+                        );
+                      }
+                    })}
+                    <div
+                      className="addAddress"
+                      onClick={() =>
+                        this.setState({
+                          addAddress: true,
+                        })
+                      }
+                    >
+                      <div className="plus">
+                        <i className="fas fa-plus"></i>
                       </div>
-                      :
-                      <>
-                        <div className="contact">
-                          <div className="contact-label">
-                            <p className="heading">Contact information</p>
-                          </div>
-                          <input
-                            type="email"
-                            className="email-input"
-                            placeholder="Email"
-                            name="email"
-                            value={this.state.email}
-                            onChange={this.handleChange}
-                          />
-                        </div>
-                        <div className="shipping">
-                          <h2>Shipping address</h2>
-                          <div className="input-name">
-                            <input
-                              type="text"
-                              placeholder="First name"
-                              name="firstName"
-                              id="firstName"
-                              required
-                              value={this.state.firstName}
-                              onChange={this.handleChange}
-                            />
-                            <input
-                              type="text"
-                              placeholder="Last name"
-                              name="lastName"
-                              id="lastName"
-                              required
-                              value={this.state.lastName}
-                              onChange={this.handleChange}
-                            />
-                          </div>
-                          <input
-                            type="text"
-                            placeholder="Address"
-                            name="address"
-                            id="address"
-                            required
-                            value={this.state.address}
-                            onChange={this.handleChange}
-                          />
-                          <input
-                            type="text"
-                            placeholder="Appartment, suite, etc. (optional)"
-                            name="appartment"
-                            id="appartment"
-                            value={this.state.appartment}
-                            onChange={this.handleChange}
-                          />
-                          <div className="region">
-                            <input
-                              type="text"
-                              placeholder="Country / Nation"
-                              name="country"
-                              required
-                              id="country"
-                              value={this.state.country}
-                              onChange={this.handleChange}
-                            />
-                            <input
-                              type="text"
-                              placeholder="State"
-                              name="state"
-                              required
-                              id="state"
-                              value={this.state.state}
-                              onChange={this.handleChange}
-                            />
-                          </div>
-                          <div className="region">
-                            <input
-                              type="text"
-                              placeholder="City"
-                              name="city"
-                              required
-                              id="city"
-                              value={this.state.city}
-                              onChange={this.handleChange}
-                            />
-                            <input
-                              type="text"
-                              placeholder="Pincode"
-                              name="pincode"
-                              required
-                              id="pincode"
-                              value={this.state.pincode}
-                              onChange={this.handleChange}
-                            />
-                          </div>
-                          <input
-                            type="text"
-                            name="phone"
-                            id="phone"
-                            placeholder="Phone"
-                            value={this.state.phone}
-                            onChange={this.handleChange}
-                          />
-                        </div>
-                      </>
-                  }
-                </main>
-                <div className="placeOrder">
-                  <a>
-                    <i className="fas fa-chevron-left"></i>Return to cart
-                </a>
-                  <div
-                    className="checkoutbtn"
-                    onClick={() => {
-                      this.handlePay(total, subtotal, shipping);
-                    }}
-                  >
-                    <a>Place an Order</a>
+                      <p>Add New Address</p>
+                    </div>
                   </div>
+                ) : (
+                  <>
+                    <div className="contact">
+                      <div className="contact-label">
+                        <p className="heading">Contact information</p>
+                      </div>
+                      <input
+                        type="email"
+                        className="email-input"
+                        placeholder="Email"
+                        name="email"
+                        value={this.state.email}
+                        onChange={this.handleChange}
+                      />
+                    </div>
+                    <div className="shipping">
+                      <h2>Shipping address</h2>
+                      <div className="input-name">
+                        <input
+                          type="text"
+                          placeholder="First name"
+                          name="firstName"
+                          id="firstName"
+                          required
+                          value={this.state.firstName}
+                          onChange={this.handleChange}
+                        />
+                        <input
+                          type="text"
+                          placeholder="Last name"
+                          name="lastName"
+                          id="lastName"
+                          required
+                          value={this.state.lastName}
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                      <input
+                        type="text"
+                        placeholder="Address"
+                        name="address"
+                        id="address"
+                        required
+                        value={this.state.address}
+                        onChange={this.handleChange}
+                      />
+                      <input
+                        type="text"
+                        placeholder="Appartment, suite, etc. (optional)"
+                        name="appartment"
+                        id="appartment"
+                        value={this.state.appartment}
+                        onChange={this.handleChange}
+                      />
+                      <div className="region">
+                        <input
+                          type="text"
+                          placeholder="Country / Nation"
+                          name="country"
+                          required
+                          id="country"
+                          value={this.state.country}
+                          onChange={this.handleChange}
+                        />
+                        <input
+                          type="text"
+                          placeholder="State"
+                          name="state"
+                          required
+                          id="state"
+                          value={this.state.state}
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                      <div className="region">
+                        <input
+                          type="text"
+                          placeholder="City"
+                          name="city"
+                          required
+                          id="city"
+                          value={this.state.city}
+                          onChange={this.handleChange}
+                        />
+                        <input
+                          type="text"
+                          placeholder="Pincode"
+                          name="pincode"
+                          required
+                          id="pincode"
+                          value={this.state.pincode}
+                          onChange={this.handleChange}
+                        />
+                      </div>
+                      <input
+                        type="text"
+                        name="phone"
+                        id="phone"
+                        placeholder="Phone"
+                        value={this.state.phone}
+                        onChange={this.handleChange}
+                      />
+                    </div>
+                  </>
+                )}
+              </main>
+              <div className="placeOrder">
+                <a>
+                  <i className="fas fa-chevron-left"></i>Return to cart
+                </a>
+                <div
+                  className="checkoutbtn"
+                  onClick={() => {
+                    this.handlePay(total, subtotal, shipping);
+                  }}
+                >
+                  <a>Place an Order</a>
                 </div>
               </div>
-              <div className="right">
-                <div className="items-container">
-                  <CartCard item={{ id: this.props.match.params.item }} show={false} quantity={this.props.match.params.quantity} />
+            </div>
+            <div className="right">
+              <div className="items-container">
+                <CartCard
+                  item={{ id: this.props.match.params.item }}
+                  show={false}
+                  quantity={this.props.match.params.quantity}
+                />
+              </div>
+              <div className="order-details">
+                <div className="sub">
+                  <p className="sub-title">Subtotal</p>
+                  <p>&#8377; {subtotal}</p>
                 </div>
-                <div className="order-details">
-                  <div className="sub">
-                    <p className="sub-title">Subtotal</p>
-                    <p>&#8377; {subtotal}</p>
-                  </div>
-                  <div className="shipping-sub">
-                    <p className="sub-title">Shipping</p>
-                    <p>+ &#8377; {shipping}</p>
-                  </div>
-                  {/* <div className="discount-sub">
+                <div className="shipping-sub">
+                  <p className="sub-title">Shipping</p>
+                  <p>+ &#8377; {shipping}</p>
+                </div>
+                {/* <div className="discount-sub">
                   <p className="sub-title">
                     Discount ({this.state.coupon.name})
                   </p>
                   <p>- &#8377; {value}</p>
                 </div> */}
-                  <div className="points-sub">
-                    <p className="sub-title">Points ({this.state.points})</p>
-                    <p>- &#8377; {this.state.points}</p>
-                  </div>
-                </div>
-                <div className="total">
-                  <p>TOTAL</p>
-                  <p>&#8377; {total}</p>
+                <div className="points-sub">
+                  <p className="sub-title">Points ({this.state.points})</p>
+                  <p>- &#8377; {this.state.points}</p>
                 </div>
               </div>
-              {this.state.openLogin ? (
-                <Login
-                  close={(toggle) => this.setState({ openLogin: toggle })}
-                  login={(toggle) => {
-                    this.setState({ loginStatus: toggle });
-                  }}
-                />
-              ) : null}
-            </>
-          )}
+              <div className="total">
+                <p>TOTAL</p>
+                <p>&#8377; {total}</p>
+              </div>
+            </div>
+            {this.state.openLogin ? (
+              <Login
+                close={(toggle) => this.setState({ openLogin: toggle })}
+                login={(toggle) => {
+                  this.setState({ loginStatus: toggle });
+                }}
+              />
+            ) : null}
+          </>
+        )}
       </div>
     );
   }
