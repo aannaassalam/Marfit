@@ -360,16 +360,18 @@
   width: 100%;
   margin-top: 15px;
 }
-.login-container .login .login-form .otp-cont .vrf {
+
+.otp-cont .vrf {
   display: flex;
   flex-direction: column;
   margin-left: 35px;
 }
 
-.login-container .login .login-form .otp-cont .vrf p {
+.otp-cont .vrf p {
   color: #a5a5a5;
 }
-.login-container .login .login-form .otp-cont .verification-cont {
+
+.otp-cont .verification-cont {
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
@@ -377,27 +379,24 @@
   justify-content: center;
 }
 
-.login-container
-  .login
-  .login-form
-  .otp-cont
-  .verification-cont
-  .code-verification {
-  margin: 0.5rem 1rem;
-  width: 70%;
-  height: 40px;
+.otp-cont .verification-cont .code-verification {
+  margin: 0.5rem 0;
+  height: 45px;
+  width: 19%;
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
 }
 
-.login-container
-  .login
-  .login-form
-  .otp-cont
-  .verification-cont
-  .code-verification
-  input {
-  width: 20%;
+.otp-cont .verification-cont .code-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0;
+  width: 80%;
+}
+
+.otp-cont .verification-cont .code-verification input {
+  width: 100%;
   height: 100%;
   text-align: center;
   background-color: #f4f6f8;
@@ -408,7 +407,7 @@
   border-radius: 5px;
 }
 
-.login-container .login .login-form .otp-cont .button-verification {
+.otp-cont .button-verification {
   display: flex;
   justify-content: space-between;
   width: 82%;
@@ -416,7 +415,7 @@
   margin-top: 12px;
 }
 
-.login-container .login .login-form .otp-cont .button-verification .btn-cancel,
+.otp-cont .button-verification .btn-cancel,
 .otp-cont .button-verification .btn-register {
   width: 80px;
   background-color: #ef6f0b;

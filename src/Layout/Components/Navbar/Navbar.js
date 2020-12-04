@@ -13,6 +13,7 @@ import Loader from "../Loader/Loader";
 import Lottie from "lottie-react-web";
 import { firestore } from "firebase";
 import { Thumbs } from "swiper";
+import Axios from "axios";
 
 export default class Navbar extends React.Component {
   constructor(props) {
