@@ -434,7 +434,7 @@ export default class Login extends React.Component {
                       message:
                         "You just login to mafit website, We welcome you",
                     };
-                    axios.post("http://localhost:5000/api/sendemail", data);
+                    axios.post("http://localhost:5000/api/sendMessage", data);
                   })
                   .catch((err) => {
                     console.log(err);
@@ -458,15 +458,15 @@ export default class Login extends React.Component {
       alert("Please enter a valid email or phone number");
     }
     if (!this.state.email.includes("@") && this.state.email.length === 10) {
-      // const message = "Please enter this OTP to verify your login: 4036";
-      // var data = {
-      //   apikey: "aP2UPmYzGCo-LZzL6YvkaHmEO6EzazQYQKwBA83czl",
-      //   numbers: ["8017036489"],
-      //   sender: "TXTLCL",
-      //   message: "1024",
-      // };
-      // var res = await axios.post("http://localhost:5000/api/sendMessage", data);
-      // console.log(res.data);
+      const message = "Please enter this OTP to verify your login: 4036";
+      var data = {
+        apikey: "aP2UPmYzGCo-LZzL6YvkaHmEO6EzazQYQKwBA83czl",
+        numbers: ["8017036489"],
+        sender: "TXTLCL",
+        message: "1024",
+      };
+      var res = await axios.post("http://localhost:5000/api/sendMessage", data);
+      console.log(res.data);
       this.setState({
         showOTP: true,
         showNext: true,
