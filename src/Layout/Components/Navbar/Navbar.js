@@ -542,7 +542,6 @@ export default class Navbar extends React.Component {
                       className="login-signup"
                       onClick={() => {
                         this.setState({ login: true });
-                        this.props.handleOverflow(true);
                       }}
                       id="userLogin"
                     >
@@ -577,7 +576,6 @@ export default class Navbar extends React.Component {
                 login={(toggle) => {
                   this.handleLoginStatus(toggle);
                 }}
-                handleOverflow={(toggle) => this.props.handleOverflow(toggle)}
               />
             ) : null}
           </div>

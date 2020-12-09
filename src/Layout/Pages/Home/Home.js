@@ -57,8 +57,6 @@ export default class Home extends React.Component {
       .onSnapshot((snap) => {
         snap.docChanges().forEach((changes) => {
           this.setState({
-            data1: changes.doc.data().slider1,
-            data2: changes.doc.data().slider2,
             sliders: changes.doc.data().sliders,
             add1: changes.doc.data().bottomBanner1,
             add2: changes.doc.data().bottomBanner2,

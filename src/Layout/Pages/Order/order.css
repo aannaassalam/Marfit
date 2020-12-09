@@ -160,7 +160,6 @@
   margin-bottom: 15px;
 }
 .status .icon_text {
-  height: 60px;
   padding: 0.5rem;
 }
 .status .icon_text h2 {
@@ -314,6 +313,11 @@
 .order_update .order-status .activity h5,
 .order_update .order-status .activity p {
   margin-bottom: 5px;
+}
+
+.order_update .noUpdates {
+  margin: 10px 0 20px;
+  font-size: 16px;
 }
 
 .sidebar .items-container {
@@ -489,7 +493,7 @@
   bottom: 0;
   width: 40%;
   height: fit-content;
-  width: 35%;
+  width: 350px;
   border-radius: 10px;
 }
 .rating-cont .rating-modal .modal-head {
@@ -644,11 +648,23 @@
   }
 }
 
+@media (max-width: 768px) {
+  .container-main {
+    height: auto;
+  }
+  /* .message p {
+    margin: 0 !important;
+    width: auto;
+  } */
+}
+
 @media (max-width: 540px) {
   .content .wrap .main main {
     padding: 50px 0;
+    width: 90%;
   }
   .content_information {
+    margin-left: 20px;
     flex-direction: column;
   }
   .text_area_a,
@@ -658,11 +674,8 @@
   .text_area_b h3 {
     margin-left: 0;
   }
-  .customer_information h2 {
-    margin-left: 0 !important;
-  }
   .customer_information {
-    padding: 0 15px;
+    padding: 0.5rem;
   }
   .content .wrap .main main .login_form .a,
   .content .wrap .main main .login_form .b {

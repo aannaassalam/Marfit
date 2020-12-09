@@ -184,200 +184,126 @@ export default class Checkout extends React.Component {
         this.state.pincode.length > 0 &&
         this.state.firstName.length > 0
       ) {
-        var products = [];
-        this.state.products.forEach((product) => {
-          product.rate = false;
-          products.push(product);
-        });
-        firebase
-          .firestore()
-          .collection("orders")
-          .add({
-            products: products,
-            date: new Date(),
-            points: this.state.points,
-            email: this.state.email,
-            address: this.state.address,
-            appartment: this.state.appartment,
-            city: this.state.city,
-            country: this.state.country,
-            pincode: this.state.pincode,
-            phone: this.state.phone,
-            state: this.state.state,
-            coupon: this.state.coupon,
-            name: this.state.firstName + " " + this.state.lastName,
-            total: total,
-            shipping: shipping,
-            tag: "user",
-            status: "Pending",
-          })
-          .then((res) => {
-            products.forEach((product) => {
-              if (product.quantity > 0) {
-                firebase
-                  .firestore()
-                  .collection("products")
-                  .doc(product.id)
-                  .update({
-                    quantity: product.quantity - product.userquantity,
-                  });
-              }
-            });
-            if (this.state.currentUser.email) {
+        const options = {
+          key: "rzp_test_GLsJlJZsykHTEw",
+          name: "Marfit",
+          amount: total * 100,
+          handler: async (response) => {
+            try {
+              var products = [];
+              this.state.products.forEach((product) => {
+                product.rate = false;
+                products.push(product);
+              });
               firebase
                 .firestore()
-                .collection("users")
-                .doc(this.state.userID)
-                .get()
-                .then((doc) => {
-                  var addresses = doc.data().addresses;
-                  if (this.state.addAddress) {
-                    var address = {
-                      address: this.state.address,
+                .collection("orders")
+                .add({
+                  products: products,
+                  date: new Date(),
+                  points: this.state.points,
+                  email: this.state.email,
+                  address: this.state.address,
+                  appartment: this.state.appartment,
+                  city: this.state.city,
+                  country: this.state.country,
+                  pincode: this.state.pincode,
+                  phone: this.state.phone,
+                  state: this.state.state,
+                  coupon: this.state.coupon,
+                  name: this.state.firstName + " " + this.state.lastName,
+                  total: total,
+                  shipping: shipping,
+                  tag: "user",
+                  status: [0],
+                  tracking: "",
+                })
+                .then((res) => {
+                  products.forEach((product) => {
+                    if (product.quantity > 0) {
+                      firebase
+                        .firestore()
+                        .collection("products")
+                        .doc(product.id)
+                        .update({
+                          quantity: product.quantity - product.userquantity,
+                        });
+                    }
+                  });
+                  if (this.state.currentUser.email) {
+                    firebase
+                      .firestore()
+                      .collection("users")
+                      .doc(this.state.userID)
+                      .get()
+                      .then((doc) => {
+                        var addresses = doc.data().addresses;
+                        if (this.state.addAddress) {
+                          var address = {
+                            address: this.state.address,
+                            email: this.state.email,
+                            phone: this.state.phone,
+                            state: this.state.state,
+                            country: this.state.country,
+                            firstName: this.state.firstName,
+                            lastName: this.state.lastName,
+                            appartment: this.state.appartment,
+                            city: this.state.city,
+                            pincode: this.state.pincode,
+                          };
+                          addresses.push(address);
+                        }
+                        var orders = doc.data().orders;
+                        orders.push(res.id);
+                        firebase
+                          .firestore()
+                          .collection("users")
+                          .doc(this.state.userID)
+                          .update({
+                            orders: orders,
+                            addresses: addresses,
+                            cart: [],
+                            points: 0,
+                          })
+                          .then(() => {
+                            window.location.href = "/Orders/" + res.id;
+                            const data = {
+                              email: this.state.email,
+                              subject: this.state.products[0].title,
+                              message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id}`,
+                            };
+                            axios.post(
+                              "http://localhost:5000/api/sendemail",
+                              data
+                            );
+                          });
+                      });
+                  } else {
+                    localStorage.setItem("cart", JSON.stringify([]));
+                    window.location.href = "/Orders/" + res.id;
+                    const data = {
                       email: this.state.email,
-                      phone: this.state.phone,
-                      state: this.state.state,
-                      country: this.state.country,
-                      firstName: this.state.firstName,
-                      lastName: this.state.lastName,
-                      appartment: this.state.appartment,
-                      city: this.state.city,
-                      pincode: this.state.pincode,
+                      subject: this.state.products[0].title,
+                      message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id}`,
                     };
-                    addresses.push(address);
+                    axios.post("http://localhost:5000/api/sendemail", data);
                   }
-                  var orders = doc.data().orders;
-                  orders.push(res.id);
-                  firebase
-                    .firestore()
-                    .collection("users")
-                    .doc(this.state.userID)
-                    .update({
-                      orders: orders,
-                      addresses: addresses,
-                      cart: [],
-                      points: 0,
-                    })
-                    .then(() => {
-                      window.location.href = "/Orders/" + res.id;
-                      const data = {
-                        email: this.state.email,
-                        subject: this.state.products[0].title,
-                        message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id}`,
-                      };
-                      axios.post("http://localhost:5000/api/sendemail", data);
-                    });
                 });
-            } else {
-              localStorage.setItem("cart", JSON.stringify([]));
-              window.location.href = "/Orders/" + res.id;
-              const data = {
-                email: this.state.email,
-                subject: this.state.products[0].title,
-                message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id}`,
-              };
-              axios.post("http://localhost:5000/api/sendemail", data);
+            } catch (err) {
+              toaster.notify("Oops! Something went wrong");
             }
-          });
-        //   const options = {
-        //     key: "rzp_test_GLsJlJZsykHTEw",
-        //     name: "Marfit",
-        //     amount: total * 100,
-        //     handler: async (response) => {
-        //       try {
-        //         // firebase
-        //         //   .firestore()
-        //         //   .collection("payments")
-        //         //   .add({
-        //         //     name: this.state.name,
-        //         //     phone: this.state.phone,
-        //         //     email: this.state.email,
-        //         //     paymentId: response.razorpay_payment_id,
-        //         //     amount: this.state.amount,
-        //         //   })
-        //         // .then(() => {
-        //         var products = [];
-        //         this.state.products.forEach((product) => {
-        //           product.rate = false;
-        //           products.push(product);
-        //         });
-        //         firebase
-        //           .firestore()
-        //           .collection("orders")
-        //           .add({
-        //             products: products,
-        //             date: new Date(),
-        //             points: this.state.points,
-        //             user: this.state.userID,
-        //             address: this.state.address,
-        //             appartment: this.state.appartment,
-        //             city: this.state.city,
-        //             country: this.state.country,
-        //             pincode: this.state.pincode,
-        //             phone: this.state.phone,
-        //             state: this.state.state,
-        //             coupon: this.state.coupon,
-        //             total: total,
-        //             shipping: shipping,
-        //             tag: "user",
-        //             status: "Pending",
-        //           })
-        //           .then((res) => {
-        //             if (this.state.currentUser.length > 0) {
-        //               firebase
-        //                 .firestore()
-        //                 .collection("users")
-        //                 .doc(this.state.userID)
-        //                 .get()
-        //                 .then((doc) => {
-        //                   var orders = doc.data().orders;
-        //                   orders.push(res.id);
-        //                   firebase
-        //                     .firestore()
-        //                     .collection("users")
-        //                     .doc(this.state.userID)
-        //                     .update({
-        //                       orders: orders,
-        //                       cart: [],
-        //                       points: 0,
-        //                     })
-        //                     .then(() => {
-        //                       window.location.href = "/Orders/" + res.id;
-        //                     });
-        //                 });
-        //             } else {
-        //               firebase
-        //                 .firestore()
-        //                 .collection("users")
-        //                 .add({
-        //                   orders: [res.id],
-        //                   email: this.state.email,
-        //                   phone: this.state.phone,
-        //                   name: this.state.firstName + " " + this.state.lastName
-        //                 })
-        //                 .then(() => {
-        //                   // localStorage.removeItem("cart");
-        //                   window.location.href = "/Orders/" + res.id;
-        //                 });
-        //             }
-        //           });
-        //         // });
-        //       } catch (err) {
-        //         toaster.notify("Oops! Something went wrong");
-        //       }
-        //     },
-        //     prefill: {
-        //       name: this.state.firstName,
-        //       email: this.state.email,
-        //       contact: this.state.phone,
-        //     },
-        //     theme: {
-        //       color: "#2D499B",
-        //     },
-        //   };
-        //   const rzp1 = new window.Razorpay(options);
-        //   rzp1.open();
-        // }
+          },
+          prefill: {
+            name: this.state.firstName,
+            email: this.state.email,
+            contact: this.state.phone,
+          },
+          theme: {
+            color: "#2D499B",
+          },
+        };
+        const rzp1 = new window.Razorpay(options);
+        rzp1.open();
       } else {
         if (!this.state.addAddress) {
           toaster.notify("Please select any address");

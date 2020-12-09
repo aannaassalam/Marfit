@@ -27,21 +27,13 @@ function App() {
     child.current.handleInit();
   };
 
-  const child2 = React.createRef();
   return (
     <div className="App">
-      <Navbar
-        ref={child}
-        handleOverflow={(toggle) => child2.current.handleOverflow(toggle)}
-      />
+      <Navbar ref={child} />
       <MiniNav />
       <AnimatePresence>
         <Switch location={location} key={location.pathname}>
-          <Route
-            exact
-            path="/"
-            render={(routeProps) => <Home ref={child2} {...routeProps} />}
-          />
+          <Route exact path="/" component={Home} />
           <Route exact path="/Category/:id" component={CategoryList} />
           <Route exact path="/Category/:id1/:id2" component={ProductList} />
           <Route

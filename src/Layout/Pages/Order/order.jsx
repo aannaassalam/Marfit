@@ -59,24 +59,41 @@ export default class Order extends React.Component {
         this.setState(
           {
             order: doc.data(),
+            status: doc.data().status,
           },
           async () => {
             console.log(this.state.order.tracking);
             var data = {
               awb: this.state.order.tracking,
             };
-            var res = await axios.post(
-              "http://localhost:5000/api/trackOrder",
-              data
-            );
-            var status = this.state.status;
-            status.push(res.data.shipment_status);
-            this.setState({
-              trackStatus: res.data.track_status,
-              status: status,
-              shipmentActivities: res.data.shipment_track_activities,
-              trackUrl: res.data.track_url,
-            });
+            if (this.state.order.tracking) {
+              var res = await axios.post(
+                "http://localhost:5000/api/trackOrder",
+                data
+              );
+              var status = this.state.status;
+              if (!status.includes(res.data.track_status)) {
+                status.push(res.data.shipment_status);
+              }
+              this.setState(
+                {
+                  trackStatus: res.data.track_status,
+                  status: status,
+                  shipmentActivities: res.data.shipment_track_activities,
+                  trackUrl: res.data.track_url,
+                },
+                () => {
+                  firebase
+                    .firestore()
+                    .collection("orders")
+                    .doc(this.props.match.params.id)
+                    .update({
+                      status: this.state.status,
+                    });
+                }
+              );
+            }
+
             var products = [];
             this.state.order.products.map((product) => {
               if (product.rate === false) {
@@ -198,31 +215,6 @@ export default class Order extends React.Component {
               <div className="wrap">
                 <div className="main">
                   <main>
-                    {/* <div className="Title">
-                      <h2 className="title">
-                        Log in to view all order details
-                      </h2>
-                      <p className="text">
-                        You can find your order number in the receipt you
-                        received via email.
-                      </p>
-                    </div>
-                    <div className="login_form">
-                      <input
-                        className="a"
-                        type="email"
-                        placeholder="Email"
-                      ></input>
-                      <input
-                        className="b"
-                        type="text"
-                        placeholder="Order number"
-                      ></input>
-                      <button className="button" type="submit" class="btn">
-                        Log in
-                      </button>
-                    </div> */}
-
                     <div className="head">
                       <p>Thanks for placing your order...</p>
                     </div>
@@ -232,7 +224,12 @@ export default class Order extends React.Component {
                         <div className="icon">
                           <div
                             className={
-                              this.state.status.includes(1) ? "done" : "ordered"
+                              this.state.status.includes(0) ||
+                              this.state.status.includes(6) ||
+                              this.state.status.includes(17) ||
+                              this.state.status.includes(7)
+                                ? "done"
+                                : "ordered"
                             }
                           >
                             <i className="fas fa-check"></i>
@@ -241,7 +238,11 @@ export default class Order extends React.Component {
 
                           <div
                             className={
-                              this.state.status.includes(6) ? "done" : "packed"
+                              this.state.status.includes(6) ||
+                              this.state.status.includes(17) ||
+                              this.state.status.includes(7)
+                                ? "done"
+                                : "packed"
                             }
                           >
                             <i className="fas fa-box"></i>
@@ -250,7 +251,8 @@ export default class Order extends React.Component {
 
                           <div
                             className={
-                              this.state.status.includes(17)
+                              this.state.status.includes(17) ||
+                              this.state.status.includes(7)
                                 ? "done"
                                 : "out-for-delivery"
                             }
@@ -281,7 +283,8 @@ export default class Order extends React.Component {
                       <div className="order_update">
                         <h2>Order updates</h2>
                         <div className="order-status">
-                          {this.state.shipmentActivities &&
+                          {this.state.shipmentActivities.length > 0 ? (
+                            this.state.shipmentActivities &&
                             this.state.shipmentActivities.map((activity) => {
                               return (
                                 <div className="activity">
@@ -295,7 +298,12 @@ export default class Order extends React.Component {
                                   </p>
                                 </div>
                               );
-                            })}
+                            })
+                          ) : (
+                            <p className="noUpdates">
+                              Currently there are no updates available ...
+                            </p>
+                          )}
                         </div>
                       </div>
                       <div className="message">
@@ -367,7 +375,7 @@ export default class Order extends React.Component {
                 <p>&#8377; {this.state.order.total}</p>
               </div>
             </div>
-            {this.state.status.includes("delivered") ? (
+            {this.state.status.includes(7) ? (
               this.state.modal ? (
                 <div className="rating-cont">
                   <div className="rating-modal">

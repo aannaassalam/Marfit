@@ -2,16 +2,15 @@ import React from "react";
 import { Link } from "react-router-dom";
 import logo from "../../../assets/image_1.png";
 import "./HamburgerMenu.css";
-import firebase from 'firebase';
+import firebase from "firebase";
 
 export default class HamburgerMenu extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       categories: [],
-      open: null
-    }
+      open: null,
+    };
   }
 
   componentDidMount() {
@@ -60,33 +59,62 @@ export default class HamburgerMenu extends React.Component {
                 <i className="fa fa-sign-out-alt fa-1x"></i>
               </p>
             ) : (
-                <p
-                  className="box orange"
-                  onClick={() => {
-                    this.props.handleLogin();
-                    this.props.close();
-                  }}
-                >
-                  <span style={{ cursor: "pointer", userSelect: "none" }}>
-                    Login
+              <p
+                className="box orange"
+                onClick={() => {
+                  this.props.handleLogin();
+                  this.props.close();
+                }}
+              >
+                <span style={{ cursor: "pointer", userSelect: "none" }}>
+                  Login
                 </span>
-                  <i className="fa fa-caret-right fa-1x"></i>
-                </p>
-              )}
-            <Link to="/" className="box" onClick={() => this.props.close()}>
+                <i className="fa fa-caret-right fa-1x"></i>
+              </p>
+            )}
+            <a href="/" className="box" onClick={() => this.props.close()}>
               <p>Home</p>
-            </Link>
-            <Link to="/NewArrivals" className="box hide" onClick={() => this.props.close()}>
+            </a>
+            <a
+              href="/NewArrivals"
+              className="box hide"
+              onClick={() => this.props.close()}
+            >
               <p style={{ color: "#fb641b" }}>New Arrivals</p>
-            </Link>
-            <Link to="/Sale" className="box hide" onClick={() => this.props.close()}>
+            </a>
+            <a
+              href="/Sale"
+              className="box hide"
+              onClick={() => this.props.close()}
+            >
               <p style={{ color: "#fb641b" }}>Sale</p>
-            </Link>
+            </a>
             <div className="MiniNav">
               {this.state.categories.map((cat, index) => {
                 return (
-                  <div className={this.state.open === index ? "MiniNav-category opened box" : "MiniNav-category box"} key={index} onClick={() => this.state.open === index ? this.setState({ open: null }) : this.setState({ open: index })}>
-                    <p>{cat.name} <i className={this.state.open === index ? "fa fa-chevron-down fa-1x open" : "fa fa-chevron-down fa-1x"}></i></p>
+                  <div
+                    className={
+                      this.state.open === index
+                        ? "MiniNav-category opened box"
+                        : "MiniNav-category box"
+                    }
+                    key={index}
+                    onClick={() =>
+                      this.state.open === index
+                        ? this.setState({ open: null })
+                        : this.setState({ open: index })
+                    }
+                  >
+                    <p>
+                      {cat.name}{" "}
+                      <i
+                        className={
+                          this.state.open === index
+                            ? "fa fa-chevron-down fa-1x open"
+                            : "fa fa-chevron-down fa-1x"
+                        }
+                      ></i>
+                    </p>
                     <div className="subcategory-options">
                       {cat.subcategories.map((sub, index) => {
                         return (
@@ -105,31 +133,48 @@ export default class HamburgerMenu extends React.Component {
             </div>
             {this.props.login ? (
               <>
-                <Link to="/Dashboard/Orders" className="box disappear" onClick={() => this.props.close()}>
+                <a
+                  href="/Dashboard/Orders"
+                  className="box disappear"
+                  onClick={() => this.props.close()}
+                >
                   <p>Orders</p>
-                </Link>
-                <Link
+                </a>
+                <a
+                  href
                   to="/Dashboard/Wishlist"
                   className="box disappear"
                   id="wishlist"
                   onClick={() => this.props.close()}
                 >
                   <p href="#">Wishlist</p>
-                </Link>
-                <Link to="/Dashboard/Profile" className="box disappear" onClick={() => this.props.close()}>
+                </a>
+                <a
+                  href="/Dashboard/Profile"
+                  className="box disappear"
+                  onClick={() => this.props.close()}
+                >
                   <p>Profile</p>
-                </Link>
-                <Link to="/Dashboard/Address" className="box disappear" onClick={() => this.props.close()}>
+                </a>
+                <a
+                  href="/Dashboard/Address"
+                  className="box disappear"
+                  onClick={() => this.props.close()}
+                >
                   <p>Address</p>
-                </Link>
-                <Link to="/Dashboard/Refer" className="box disappear" onClick={() => this.props.close()}>
+                </a>
+                <a
+                  href="/Dashboard/Refer"
+                  className="box disappear"
+                  onClick={() => this.props.close()}
+                >
                   <p>Refer & Earn</p>
-                </Link>
+                </a>
               </>
             ) : null}
-            <Link to="#" className="box" onClick={() => this.props.close()}>
+            <a href="#" className="box" onClick={() => this.props.close()}>
               <p href="#">Contact us</p>
-            </Link>
+            </a>
             <p
               className="box"
               id="cart"

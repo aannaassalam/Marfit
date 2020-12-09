@@ -633,7 +633,6 @@ export default class Login extends React.Component {
             className="fa fa-times fa-1x"
             onClick={() => {
               this.props.close(false);
-              this.props.handleOverflow(false);
             }}
           ></i>
           {/* <button onClick={this.handlePhoneLogin}>Phone Login</button> */}
