@@ -40,7 +40,6 @@ export default class Checkout extends React.Component {
 
   componentDidMount() {
     firebase.auth().onAuthStateChanged((user) => {
-      console.log(user);
       if (user) {
         firebase
           .firestore()
@@ -77,6 +76,7 @@ export default class Checkout extends React.Component {
                           var product = doc.data();
                           product.id = doc.id;
                           product.userquantity = item.quantity;
+                          product.userSize = item.size;
                           this.setState({
                             products: [...this.state.products, product],
                           });
@@ -130,6 +130,7 @@ export default class Checkout extends React.Component {
                     var product = doc.data();
                     product.id = doc.id;
                     product.userquantity = item.quantity;
+                    product.userSize = item.size;
                     this.setState({
                       products: [...this.state.products, product],
                       loading: false,
@@ -220,6 +221,11 @@ export default class Checkout extends React.Component {
                 })
                 .then((res) => {
                   products.forEach((product) => {
+                    product.sizes.map((size, index) => {
+                      if (size.name === product.userSize) {
+                        size.quantity = size.quantity - product.userquantity;
+                      }
+                    });
                     if (product.quantity > 0) {
                       firebase
                         .firestore()
@@ -227,6 +233,7 @@ export default class Checkout extends React.Component {
                         .doc(product.id)
                         .update({
                           quantity: product.quantity - product.userquantity,
+                          sizes: product.sizes,
                         });
                     }
                   });

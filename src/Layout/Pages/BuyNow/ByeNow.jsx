@@ -69,7 +69,7 @@ export default class ByeNow extends React.Component {
                       var product = doc.data();
                       product.id = doc.id;
                       product.userquantity = this.props.match.params.quantity;
-                      console.log(product);
+                      product.userSize = this.props.match.params.size;
                       this.setState({
                         product: product,
                       });
@@ -105,6 +105,7 @@ export default class ByeNow extends React.Component {
             var product = doc.data();
             product.id = doc.id;
             product.userquantity = this.props.match.params.quantity;
+            product.userSize = this.props.match.params.size;
             this.setState({
               product: product,
               points: 0,
@@ -172,6 +173,11 @@ export default class ByeNow extends React.Component {
                   tracking: "",
                 })
                 .then((res) => {
+                  product.sizes.map((size) => {
+                    if (size.name === product.userSize) {
+                      size.quantity = size.quantity - product.userquantity;
+                    }
+                  });
                   if (product.quantity > 0) {
                     firebase
                       .firestore()
@@ -179,6 +185,7 @@ export default class ByeNow extends React.Component {
                       .doc(product.id)
                       .update({
                         quantity: product.quantity - product.userquantity,
+                        sizes: product.sizes,
                       });
                   }
                   if (this.state.currentUser.email) {

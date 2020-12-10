@@ -12,7 +12,6 @@ export default class CartCard extends React.Component {
   }
 
   componentDidMount() {
-    console.log(this.props.item);
     firebase
       .firestore()
       .collection("products")
@@ -64,22 +63,19 @@ export default class CartCard extends React.Component {
                       -
                     </span>
                     <span>{this.props.item.quantity}</span>
-                    {
-                      this.props.item.quantity === parseInt(this.props.item.max)
-                        ?
-                        <span
-                      className="symbol grey"
-                    >
-                          +
-                    </span>
-                        :
-                        <span
-                      className="symbol"
-                      onClick={() => this.props.handleplus()}
-                    >
-                      +
-                    </span>
-                    }
+                    {this.props.item.quantity ===
+                      parseInt(this.props.item.max) ||
+                    this.props.item.quantity ===
+                      parseInt(this.props.item.sizeMax) ? (
+                      <span className="symbol grey">+</span>
+                    ) : (
+                      <span
+                        className="symbol"
+                        onClick={() => this.props.handleplus()}
+                      >
+                        +
+                      </span>
+                    )}
                   </div>
                   <div
                     onClick={() => {

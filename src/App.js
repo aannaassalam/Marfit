@@ -51,7 +51,11 @@ function App() {
             path="/Cart/Checkout/coupon::coupon"
             component={Checkout}
           />
-          <Route exact path="/Checkout/:item/:quantity" component={ByeNow} />
+          <Route
+            exact
+            path="/Checkout/:item/:quantity/:size"
+            component={ByeNow}
+          />
           <Route exact path="/Orders/:id" component={Order} />
           <Route exact path="/Sale" component={Sale} />
           <Route exact path="/Products/:id" component={Viewall} />

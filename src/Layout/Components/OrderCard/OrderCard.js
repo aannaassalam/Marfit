@@ -46,7 +46,9 @@ export default class OrderCard extends React.Component {
               <p className="title">{this.props.item.title}</p>
               <div className="price-cont">
                 <p className="price">&#8377;{this.props.item.sp}</p>
-                <p className="quan">Quantity : {this.props.item.quantity}</p>
+                <p className="quan">
+                  Quantity : {this.props.item.userquantity}
+                </p>
               </div>
             </div>
           </div>
