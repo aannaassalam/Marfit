@@ -65,8 +65,9 @@ export default class CartCard extends React.Component {
                     <span>{this.props.item.quantity}</span>
                     {this.props.item.quantity ===
                       parseInt(this.props.item.max) ||
-                    this.props.item.quantity ===
-                      parseInt(this.props.item.sizeMax) ? (
+                    (this.props.item.quantity ===
+                      parseInt(this.props.item.sizeMax) &&
+                      !this.props.item.noSize) ? (
                       <span className="symbol grey">+</span>
                     ) : (
                       <span

@@ -154,7 +154,123 @@ export default class ProductDesc extends React.Component {
   };
 
   AddToCart = () => {
-    if (this.state.sizeSelected !== "") {
+    if (!this.state.product.noSize) {
+      if (this.state.sizeSelected !== "") {
+        this.setState({
+          addLoading: true,
+        });
+        if (firebase.auth().currentUser) {
+          firebase
+            .firestore()
+            .collection("users")
+            .where("uid", "==", firebase.auth().currentUser.uid)
+            .get()
+            .then((snap) => {
+              snap.forEach((doc) => {
+                var cart = doc.data().cart;
+                var found = false;
+                cart.forEach((item) => {
+                  if (item.id === this.state.product.id) {
+                    found = true;
+                  }
+                });
+                if (found === false) {
+                  var tempCart = {};
+                  tempCart.id = this.state.product.id;
+                  tempCart.quantity = this.state.usersQuantity;
+                  tempCart.size = this.state.sizeSelected;
+                  tempCart.max = this.state.product.max;
+                  tempCart.sizeMax = this.state.product.sizes[
+                    this.state.sizeIndex
+                  ].quantity;
+                  cart.push(tempCart);
+                  console.log(cart);
+                  firebase
+                    .firestore()
+                    .collection("users")
+                    .doc(doc.id)
+                    .update({
+                      cart: cart,
+                    })
+                    .then(() => {
+                      toaster.notify("Added to cart");
+                      this.setState({
+                        addLoading: false,
+                      });
+
+                      this.removeFromWishlist(this.state.product.id);
+                    });
+                } else {
+                  toaster.notify("Item already exist in your cart");
+                  this.setState({
+                    addLoading: false,
+                  });
+                }
+              });
+            });
+        } else {
+          var cart = JSON.parse(localStorage.getItem("cart"))
+            ? JSON.parse(localStorage.getItem("cart"))
+            : [];
+          if (cart.length > 0) {
+            cart.forEach((item) => {
+              if (item.id !== this.state.product.id) {
+                var tempCart = {};
+                tempCart.id = this.state.product.id;
+                tempCart.quantity = this.state.usersQuantity;
+                tempCart.size = this.state.sizeSelected;
+                tempCart.max = this.state.product.max;
+                tempCart.sizeMax = this.state.product.sizes[
+                  this.state.sizeIndex
+                ].quantity;
+                cart.push(tempCart);
+                this.setState(
+                  {
+                    cart: cart,
+                    addloading: false,
+                  },
+                  () => {
+                    var localCart = JSON.stringify(this.state.cart);
+                    localStorage.setItem("cart", localCart);
+                    toaster.notify("Added to cart");
+                    this.props.handleParent();
+                  }
+                );
+              } else {
+                toaster.notify("Item already exist in your cart");
+                this.setState({
+                  addLoading: false,
+                });
+              }
+            });
+          } else {
+            var tempCart = {};
+            tempCart.id = this.state.product.id;
+            tempCart.quantity = this.state.usersQuantity;
+            tempCart.size = this.state.sizeSelected;
+            tempCart.max = this.state.product.max;
+            tempCart.sizeMax = this.state.product.sizes[
+              this.state.sizeIndex
+            ].quantity;
+            cart.push(tempCart);
+            this.setState(
+              {
+                cart: cart,
+                addloading: false,
+              },
+              () => {
+                var localCart = JSON.stringify(this.state.cart);
+                localStorage.setItem("cart", localCart);
+                toaster.notify("Added to cart");
+                this.props.handleParent();
+              }
+            );
+          }
+        }
+      } else {
+        toaster.notify("Please select a size !");
+      }
+    } else {
       this.setState({
         addLoading: true,
       });
@@ -177,11 +293,8 @@ export default class ProductDesc extends React.Component {
                 var tempCart = {};
                 tempCart.id = this.state.product.id;
                 tempCart.quantity = this.state.usersQuantity;
-                tempCart.size = this.state.sizeSelected;
+                tempCart.size = "null";
                 tempCart.max = this.state.product.max;
-                tempCart.sizeMax = this.state.product.sizes[
-                  this.state.sizeIndex
-                ].quantity;
                 cart.push(tempCart);
                 console.log(cart);
                 firebase
@@ -217,11 +330,8 @@ export default class ProductDesc extends React.Component {
               var tempCart = {};
               tempCart.id = this.state.product.id;
               tempCart.quantity = this.state.usersQuantity;
-              tempCart.size = this.state.sizeSelected;
+              tempCart.size = "null";
               tempCart.max = this.state.product.max;
-              tempCart.sizeMax = this.state.product.sizes[
-                this.state.sizeIndex
-              ].quantity;
               cart.push(tempCart);
               this.setState(
                 {
@@ -246,11 +356,8 @@ export default class ProductDesc extends React.Component {
           var tempCart = {};
           tempCart.id = this.state.product.id;
           tempCart.quantity = this.state.usersQuantity;
-          tempCart.size = this.state.sizeSelected;
+          tempCart.size = "null";
           tempCart.max = this.state.product.max;
-          tempCart.sizeMax = this.state.product.sizes[
-            this.state.sizeIndex
-          ].quantity;
           cart.push(tempCart);
           this.setState(
             {
@@ -266,8 +373,6 @@ export default class ProductDesc extends React.Component {
           );
         }
       }
-    } else {
-      toaster.notify("Please select a size !");
     }
   };
 
@@ -344,14 +449,23 @@ export default class ProductDesc extends React.Component {
 
   handlePlus = () => {
     var usersQuantity = this.state.usersQuantity;
-    if (
-      usersQuantity < this.state.product.max &&
-      usersQuantity < this.state.product.sizes[this.state.sizeIndex].quantity
-    ) {
-      usersQuantity += 1;
-      this.setState({
-        usersQuantity,
-      });
+    if (this.state.product.noSize) {
+      if (usersQuantity < this.state.product.max) {
+        usersQuantity += 1;
+        this.setState({
+          usersQuantity,
+        });
+      }
+    } else {
+      if (
+        usersQuantity < this.state.product.max &&
+        usersQuantity < this.state.product.sizes[this.state.sizeIndex].quantity
+      ) {
+        usersQuantity += 1;
+        this.setState({
+          usersQuantity,
+        });
+      }
     }
   };
 
@@ -529,16 +643,29 @@ export default class ProductDesc extends React.Component {
                           <div
                             className="option"
                             onClick={() => {
-                              if (this.state.sizeSelected !== "") {
+                              if (this.state.product.noSize) {
                                 window.location.href =
                                   "/Checkout/" +
                                   this.state.product.id +
                                   "/" +
                                   this.state.usersQuantity +
                                   "/" +
-                                  this.state.sizeSelected;
+                                  "null";
                               } else {
-                                toaster.notify("Please select a size !");
+                                if (
+                                  this.state.sizeSelected !== "" &&
+                                  !this.state.product.noSize
+                                ) {
+                                  window.location.href =
+                                    "/Checkout/" +
+                                    this.state.product.id +
+                                    "/" +
+                                    this.state.usersQuantity +
+                                    "/" +
+                                    this.state.sizeSelected;
+                                } else {
+                                  toaster.notify("Please select a size !");
+                                }
                               }
                             }}
                           >
@@ -597,7 +724,8 @@ export default class ProductDesc extends React.Component {
                             <p className="title-tag">Quantity</p>
                             <div
                               className={
-                                this.state.sizeSelected === ""
+                                this.state.sizeSelected === "" &&
+                                !this.state.product.noSize
                                   ? "quantity grey"
                                   : "quantity"
                               }
@@ -608,7 +736,8 @@ export default class ProductDesc extends React.Component {
                                 <span
                                   className="symbol"
                                   onClick={
-                                    this.state.sizeSelected === ""
+                                    this.state.sizeSelected === "" &&
+                                    !this.state.product.noSize
                                       ? null
                                       : this.handleMinus
                                   }
@@ -618,7 +747,10 @@ export default class ProductDesc extends React.Component {
                               )}
                               <span
                                 className={
-                                  this.state.sizeSelected === "" ? null : "grey"
+                                  this.state.sizeSelected === "" &&
+                                  !this.state.product.noSize
+                                    ? null
+                                    : "grey"
                                 }
                               >
                                 {this.state.usersQuantity}
@@ -630,7 +762,8 @@ export default class ProductDesc extends React.Component {
                                 <span
                                   className="symbol"
                                   onClick={
-                                    this.state.sizeSelected === ""
+                                    this.state.sizeSelected === "" &&
+                                    !this.state.product.noSize
                                       ? null
                                       : this.handlePlus
                                   }
@@ -640,35 +773,37 @@ export default class ProductDesc extends React.Component {
                               )}
                             </div>
                           </div>
-                          <div className="size-cont">
-                            <p className="title-tag">Size</p>
-                            <div className="size">
-                              {this.state.product.sizes.map((size, index) => {
-                                return size.quantity > 0 ? (
-                                  <p
-                                    className={
-                                      this.state.sizeSelected === size.name
-                                        ? "sizeSelected"
-                                        : null
-                                    }
-                                    onClick={() => {
-                                      this.setState({
-                                        sizeSelected: size.name,
-                                        usersQuantity: 1,
-                                        sizeIndex: index,
-                                      });
-                                    }}
-                                  >
-                                    {size.name.toUpperCase()}
-                                  </p>
-                                ) : (
-                                  <p className="grey">
-                                    {size.name.toUpperCase()}
-                                  </p>
-                                );
-                              })}
+                          {this.state.product.noSize ? null : (
+                            <div className="size-cont">
+                              <p className="title-tag">Size</p>
+                              <div className="size">
+                                {this.state.product.sizes.map((size, index) => {
+                                  return size.quantity > 0 ? (
+                                    <p
+                                      className={
+                                        this.state.sizeSelected === size.name
+                                          ? "sizeSelected"
+                                          : null
+                                      }
+                                      onClick={() => {
+                                        this.setState({
+                                          sizeSelected: size.name,
+                                          usersQuantity: 1,
+                                          sizeIndex: index,
+                                        });
+                                      }}
+                                    >
+                                      {size.name.toUpperCase()}
+                                    </p>
+                                  ) : (
+                                    <p className="grey">
+                                      {size.name.toUpperCase()}
+                                    </p>
+                                  );
+                                })}
+                              </div>
                             </div>
-                          </div>
+                          )}
                           {this.state.colors.length > 1 ? (
                             <div className="color-cont">
                               <p className="title-tag">Color</p>
@@ -713,15 +848,15 @@ export default class ProductDesc extends React.Component {
                       <ul>
                         <li>
                           <p className="darkgrey">Height</p>
-                          <p className="text">{this.state.product.height}</p>
+                          <p className="text">{this.state.product.height} mm</p>
                         </li>
                         <li>
                           <p className="darkgrey">Width</p>
-                          <p className="text">{this.state.product.width}</p>
+                          <p className="text">{this.state.product.width} mm</p>
                         </li>
                         <li>
                           <p className="darkgrey">Thickness</p>
-                          <p className="text">{this.state.product.thick}</p>
+                          <p className="text">{this.state.product.thick} mm</p>
                         </li>
                         {this.state.product.specifications &&
                           this.state.product.specifications.map((spec) => (

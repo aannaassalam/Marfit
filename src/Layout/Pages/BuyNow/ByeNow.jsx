@@ -33,6 +33,7 @@ export default class ByeNow extends React.Component {
       product: "",
       selectedAddress: null,
       addAddress: false,
+      paymentModal: false,
     };
   }
 
@@ -118,7 +119,134 @@ export default class ByeNow extends React.Component {
     });
   }
 
-  handlePay = async (total, subtotal, shipping) => {
+  handleAfterPay = (paymentMethod, total, subtotal, shipping) => {
+    var product = this.state.product;
+    product.rate = false;
+    firebase
+      .firestore()
+      .collection("orders")
+      .add({
+        products: [product],
+        date: new Date(),
+        email: this.state.email,
+        points: this.state.points,
+        address: this.state.address,
+        appartment: this.state.appartment,
+        city: this.state.city,
+        country: this.state.country,
+        pincode: this.state.pincode,
+        phone: this.state.phone,
+        state: this.state.state,
+        coupon: this.state.coupon,
+        name: this.state.firstName + " " + this.state.lastName,
+        total: total,
+        shipping: shipping,
+        tag: "guest",
+        status: [0],
+        tracking: "",
+        paymentMethod: paymentMethod,
+      })
+      .then((res) => {
+        if (!product.noSize) {
+          product.sizes.map((size) => {
+            if (size.name === product.userSize) {
+              size.quantity = size.quantity - product.userquantity;
+            }
+          });
+        }
+        if (product.quantity > 0) {
+          firebase
+            .firestore()
+            .collection("products")
+            .doc(product.id)
+            .update({
+              quantity: product.quantity - product.userquantity,
+              sizes: product.sizes,
+            });
+        }
+        if (this.state.currentUser.email) {
+          firebase
+            .firestore()
+            .collection("users")
+            .doc(this.state.userID)
+            .get()
+            .then((doc) => {
+              var addresses = doc.data().addresses;
+              if (this.state.addAddress) {
+                var address = {
+                  address: this.state.address,
+                  email: this.state.email,
+                  phone: this.state.phone,
+                  state: this.state.state,
+                  country: this.state.country,
+                  firstName: this.state.firstName,
+                  lastName: this.state.lastName,
+                  appartment: this.state.appartment,
+                  city: this.state.city,
+                  pincode: this.state.pincode,
+                };
+                console.log(address);
+                addresses.push(address);
+              }
+              var orders = doc.data().orders;
+              orders.push(res.id);
+              firebase
+                .firestore()
+                .collection("users")
+                .doc(this.state.userID)
+                .update({
+                  orders: orders,
+                  addresses: addresses,
+                  points: 0,
+                })
+                .then(() => {
+                  window.location.href = "/Orders/" + res.id;
+                  const data = {
+                    email: this.state.email,
+                    subject: this.state.product.title,
+                    message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id} direct Bought`,
+                  };
+                  axios.post("http://localhost:5000/api/sendemail", data);
+                });
+            });
+        } else {
+          window.location.href = "/Orders/" + res.id;
+          const data = {
+            email: this.state.email,
+            subject: this.state.product.title,
+            message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id} direct Bought`,
+          };
+          axios.post("http://localhost:5000/api/sendemail", data);
+        }
+      });
+  };
+
+  handlePay = (total, subtotal, shipping) => {
+    const options = {
+      key: "rzp_test_GLsJlJZsykHTEw",
+      name: "Marfit",
+      amount: total * 100,
+      handler: async (response) => {
+        try {
+          this.handleAfterPay("Online", total, subtotal, shipping);
+        } catch (err) {
+          toaster.notify("Oops! Something went wrong");
+        }
+      },
+      prefill: {
+        name: this.state.firstName,
+        email: this.state.email,
+        contact: this.state.phone,
+      },
+      theme: {
+        color: "#2D499B",
+      },
+    };
+    const rzp1 = new window.Razorpay(options);
+    rzp1.open();
+  };
+
+  handlePayModal = async () => {
     var userExist = false;
     if (this.state.currentUser.length === 0) {
       await firebase
@@ -141,126 +269,7 @@ export default class ByeNow extends React.Component {
         this.state.pincode.length > 0 &&
         this.state.firstName.length > 0
       ) {
-        const options = {
-          key: "rzp_test_GLsJlJZsykHTEw",
-          name: "Marfit",
-          amount: total * 100,
-          handler: async (response) => {
-            try {
-              var product = this.state.product;
-              product.rate = false;
-              firebase
-                .firestore()
-                .collection("orders")
-                .add({
-                  products: [product],
-                  date: new Date(),
-                  email: this.state.email,
-                  points: this.state.points,
-                  address: this.state.address,
-                  appartment: this.state.appartment,
-                  city: this.state.city,
-                  country: this.state.country,
-                  pincode: this.state.pincode,
-                  phone: this.state.phone,
-                  state: this.state.state,
-                  coupon: this.state.coupon,
-                  name: this.state.firstName + " " + this.state.lastName,
-                  total: total,
-                  shipping: shipping,
-                  tag: "guest",
-                  status: [0],
-                  tracking: "",
-                })
-                .then((res) => {
-                  product.sizes.map((size) => {
-                    if (size.name === product.userSize) {
-                      size.quantity = size.quantity - product.userquantity;
-                    }
-                  });
-                  if (product.quantity > 0) {
-                    firebase
-                      .firestore()
-                      .collection("products")
-                      .doc(product.id)
-                      .update({
-                        quantity: product.quantity - product.userquantity,
-                        sizes: product.sizes,
-                      });
-                  }
-                  if (this.state.currentUser.email) {
-                    firebase
-                      .firestore()
-                      .collection("users")
-                      .doc(this.state.userID)
-                      .get()
-                      .then((doc) => {
-                        var addresses = doc.data().addresses;
-                        if (this.state.addAddress) {
-                          var address = {
-                            address: this.state.address,
-                            email: this.state.email,
-                            phone: this.state.phone,
-                            state: this.state.state,
-                            country: this.state.country,
-                            firstName: this.state.firstName,
-                            lastName: this.state.lastName,
-                            appartment: this.state.appartment,
-                            city: this.state.city,
-                            pincode: this.state.pincode,
-                          };
-                          console.log(address);
-                          addresses.push(address);
-                        }
-                        var orders = doc.data().orders;
-                        orders.push(res.id);
-                        firebase
-                          .firestore()
-                          .collection("users")
-                          .doc(this.state.userID)
-                          .update({
-                            orders: orders,
-                            addresses: addresses,
-                            points: 0,
-                          })
-                          .then(() => {
-                            window.location.href = "/Orders/" + res.id;
-                            const data = {
-                              email: this.state.email,
-                              subject: this.state.product.title,
-                              message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id} direct Bought`,
-                            };
-                            axios.post(
-                              "http://localhost:5000/api/sendemail",
-                              data
-                            );
-                          });
-                      });
-                  } else {
-                    window.location.href = "/Orders/" + res.id;
-                    const data = {
-                      email: this.state.email,
-                      subject: this.state.product.title,
-                      message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id} direct Bought`,
-                    };
-                    axios.post("http://localhost:5000/api/sendemail", data);
-                  }
-                });
-            } catch (err) {
-              toaster.notify("Oops! Something went wrong");
-            }
-          },
-          prefill: {
-            name: this.state.firstName,
-            email: this.state.email,
-            contact: this.state.phone,
-          },
-          theme: {
-            color: "#2D499B",
-          },
-        };
-        const rzp1 = new window.Razorpay(options);
-        rzp1.open();
+        this.setState({ paymentModal: true });
       } else {
         if (!this.state.addAddress) {
           toaster.notify("Please select any address");
@@ -482,16 +491,16 @@ export default class ByeNow extends React.Component {
                 )}
               </main>
               <div className="placeOrder">
-                <a>
-                  <i className="fas fa-chevron-left"></i>Return to cart
-                </a>
-                <div
-                  className="checkoutbtn"
-                  onClick={() => {
-                    this.handlePay(total, subtotal, shipping);
-                  }}
-                >
-                  <a>Place an Order</a>
+                <p onClick={() => this.setState({ addAddress: false })}>
+                  {this.state.addAddress ? (
+                    <>
+                      <i className="fas fa-chevron-left"></i>{" "}
+                      <p>Go to Addresses</p>
+                    </>
+                  ) : null}
+                </p>
+                <div className="checkoutbtn" onClick={this.handlePayModal}>
+                  <p>Place an Order</p>
                 </div>
               </div>
             </div>
@@ -538,6 +547,42 @@ export default class ByeNow extends React.Component {
             ) : null}
           </>
         )}
+        {this.state.paymentModal ? (
+          <div className="paymentModalCont">
+            <div className="paymentModal">
+              <div className="head">
+                <i
+                  className="fas fa-times"
+                  onClick={() => this.setState({ paymentModal: false })}
+                ></i>
+              </div>
+              <div
+                className="online"
+                onClick={() => {
+                  this.handlePay(total, subtotal, shipping);
+                  this.setState({
+                    paymentModal: false,
+                  });
+                }}
+              >
+                Pay Online
+              </div>
+              <div
+                className="cod"
+                onClick={() =>
+                  this.handleAfterPay(
+                    "Cash on Delivery",
+                    total,
+                    subtotal,
+                    shipping
+                  )
+                }
+              >
+                COD
+              </div>
+            </div>
+          </div>
+        ) : null}
       </div>
     );
   }

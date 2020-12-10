@@ -46,13 +46,11 @@ export default class Cart extends React.Component {
                   .doc(item.id)
                   .get()
                   .then((doc) => {
-                    // alert(item.size);
                     if (doc.exists) {
                       console.log("53 Doc Exist:", doc.id);
                       var product = doc.data();
                       product.id = doc.id;
                       products.push(product);
-                      // alert(item.size);
                       product.sizes.forEach((size, index) => {
                         if (size.name === item.size) {
                           this.setState({
@@ -60,17 +58,30 @@ export default class Cart extends React.Component {
                           });
                         }
                       });
-                      if (
-                        (parseInt(
-                          doc.data().sizes[this.state.sizeIndex].quantity
-                        ) === 0 ||
-                          parseInt(doc.data().quantity) === 0) &&
-                        !this.state.outStockList.includes(item.id)
-                      ) {
-                        this.setState({
-                          outStockList: [...this.state.outStockList, item.id],
-                          outStock: true,
-                        });
+
+                      if (doc.data().noSize) {
+                        if (
+                          parseInt(doc.data().quantity) === 0 &&
+                          !this.state.outStockList.includes(item.id)
+                        ) {
+                          this.setState({
+                            outStockList: [...this.state.outStockList, item.id],
+                            outStock: true,
+                          });
+                        }
+                      } else {
+                        if (
+                          (parseInt(
+                            doc.data().sizes[this.state.sizeIndex].quantity
+                          ) === 0 ||
+                            parseInt(doc.data().quantity) === 0) &&
+                          !this.state.outStockList.includes(item.id)
+                        ) {
+                          this.setState({
+                            outStockList: [...this.state.outStockList, item.id],
+                            outStock: true,
+                          });
+                        }
                       }
                       if (products.length === change.doc.data().cart.length) {
                         var total = 0;
@@ -78,7 +89,6 @@ export default class Cart extends React.Component {
                           .data()
                           .cart.reverse()
                           .map((data, index) => {
-                            // alert(products[index].id + change.doc.data().cart[index].id + item.id)
                             if (data.id === products[index].id) {
                               total += products[index].sp * data.quantity;
                               console.log(total);
@@ -145,24 +155,35 @@ export default class Cart extends React.Component {
                       products: [...this.state.products, product],
                     });
                     product.sizes.forEach((size, index) => {
-                      alert(size.name, item.size);
                       if (size.name === item.size) {
                         this.setState({
                           sizeIndex: index,
                         });
                       }
                     });
-                    if (
-                      parseInt(doc.data().quantity) === 0 &&
-                      parseInt(
-                        doc.data().sizes[this.state.sizeIndex].quantity
-                      ) === 0 &&
-                      !this.state.outStockList.includes(item.id)
-                    ) {
-                      this.setState({
-                        outStockList: [...this.state.outStockList, item.id],
-                        outStock: true,
-                      });
+                    if (doc.data().noSize) {
+                      if (
+                        parseInt(doc.data().quantity) === 0 &&
+                        !this.state.outStockList.includes(item.id)
+                      ) {
+                        this.setState({
+                          outStockList: [...this.state.outStockList, item.id],
+                          outStock: true,
+                        });
+                      }
+                    } else {
+                      if (
+                        (parseInt(
+                          doc.data().sizes[this.state.sizeIndex].quantity
+                        ) === 0 ||
+                          parseInt(doc.data().quantity) === 0) &&
+                        !this.state.outStockList.includes(item.id)
+                      ) {
+                        this.setState({
+                          outStockList: [...this.state.outStockList, item.id],
+                          outStock: true,
+                        });
+                      }
                     }
                   }
                 });
