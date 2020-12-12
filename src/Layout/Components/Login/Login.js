@@ -32,6 +32,7 @@ export default class Login extends React.Component {
       resetEmail: "",
       referal: "",
       showNext: false,
+      otp: 0,
       showOTP: false,
       showPassword: false,
       c1: "",
@@ -114,7 +115,17 @@ export default class Login extends React.Component {
                             });
                             this.props.login(true);
                             this.props.close(false);
-                            // window.location.href = "/";
+                            const data = {
+                              email: this.state.email,
+                              subject: "Marfit",
+                              message:
+                                "You just got registered to mafit website, email",
+                            };
+                            axios.post(
+                              "http://localhost:5000/api/sendemail",
+                              data
+                            );
+                            window.location.href = "/";
                           })
                           .catch((err) => {
                             toaster.notify(err.message);
@@ -282,7 +293,7 @@ export default class Login extends React.Component {
             var data = {
               message: `Hey, your OTP is ${otp}`,
               email: this.state.email,
-              subject: "Verify your Mamaeatz Account",
+              subject: "Verify your Marfit Account",
             };
             var resp = await axios.post(
               "http://localhost:5000/api/sendemail",
@@ -633,6 +644,8 @@ export default class Login extends React.Component {
             className="fa fa-times fa-1x"
             onClick={() => {
               this.props.close(false);
+              document.body.setAttribute("style", "");
+              window.scrollTo(0, this.props.windowOffSet);
             }}
           ></i>
           {/* <button onClick={this.handlePhoneLogin}>Phone Login</button> */}
@@ -675,7 +688,14 @@ export default class Login extends React.Component {
                       <button
                         className="btn-cancel"
                         onClick={() => {
-                          this.setState({ showOTP: false, otp: 0 });
+                          this.setState({
+                            showOTP: false,
+                            otp: 0,
+                            c1: "",
+                            c2: "",
+                            c3: "",
+                            c4: "",
+                          });
                         }}
                       >
                         Cancel

@@ -2,15 +2,13 @@ import firebase from "firebase/app";
 import "firebase/firestore";
 import "firebase/auth";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBqCcCvs2_O1-DCxkXNZaJ99-WLGuu4VFE",
-  authDomain: "project-a0139.firebaseapp.com",
-  databaseURL: "https://project-a0139.firebaseio.com",
-  projectId: "project-a0139",
-  storageBucket: "project-a0139.appspot.com",
-  messagingSenderId: "138167120267",
-  appId: "1:138167120267:web:e50d2243da92458a047f8e",
-  measurementId: "G-JJ6QZPGSNM",
+var firebaseConfig = {
+  apiKey: "AIzaSyCz4kdeFlHjhmsuZUo7O_X3ZtcSvMbiuGM",
+  authDomain: "marfit-ecommerce.firebaseapp.com",
+  projectId: "marfit-ecommerce",
+  storageBucket: "marfit-ecommerce.appspot.com",
+  messagingSenderId: "23837773340",
+  appId: "1:23837773340:web:19c46737b7498756a399d9",
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);

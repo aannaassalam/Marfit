@@ -11,6 +11,7 @@ export default class HamburgerMenu extends React.Component {
       categories: [],
       open: null,
     };
+    this.windowOffSet = 0;
   }
 
   componentDidMount() {
@@ -41,7 +42,7 @@ export default class HamburgerMenu extends React.Component {
             </div>
             <i
               className="fa fa-times fa-1x"
-              onClick={() => this.props.close()}
+              onClick={() => this.props.close(this.windowOffSet)}
             ></i>
           </div>
           <div className="ham-list">
@@ -187,7 +188,10 @@ export default class HamburgerMenu extends React.Component {
             </p>
           </div>
         </div>
-        <div className="blank" onClick={() => this.props.close()}></div>
+        <div
+          className="blank"
+          onClick={() => this.props.close(this.windowOffSet)}
+        ></div>
       </div>
     );
   }

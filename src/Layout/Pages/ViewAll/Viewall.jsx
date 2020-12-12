@@ -12,7 +12,6 @@ export default class Viewall extends Component {
     this.state = {
       data: "",
       loading: true,
-      once: false,
     };
   }
 
@@ -28,39 +27,11 @@ export default class Viewall extends Component {
               this.setState({
                 data: item,
                 loading: false,
-                once: true,
               });
-              console.log("hh");
             }
           });
         });
       });
-    if (!this.state.once) {
-      firebase
-        .firestore()
-        .collection("settings")
-        .onSnapshot((snap) => {
-          snap.docChanges().forEach((changes) => {
-            if (
-              this.props.match.params.id === changes.doc.data().slider1.title
-            ) {
-              this.setState({
-                data: changes.doc.data().slider1,
-                loading: false,
-              });
-            } else {
-              if (
-                this.props.match.params.id === changes.doc.data().slider2.title
-              ) {
-                this.setState({
-                  data: changes.doc.data().slider2,
-                  loading: false,
-                });
-              }
-            }
-          });
-        });
-    }
   }
 
   render() {

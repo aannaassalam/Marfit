@@ -34,7 +34,9 @@ export default class Navbar extends React.Component {
       search: "",
       cartSize: 0,
       currentScroll: "",
+      hamburgerOffSet: 0,
     };
+    this.windowOffSet = 0;
   }
 
   componentDidMount() {
@@ -103,9 +105,18 @@ export default class Navbar extends React.Component {
   };
 
   handleCart = () => {
-    this.setState({
-      showCart: true,
-    });
+    this.setState(
+      {
+        showCart: true,
+      },
+      () => {
+        this.windowOffSet = window.scrollY;
+        document.body.setAttribute(
+          "style",
+          `position: fixed; top: -${this.windowOffSet}px; left: 0; right: 0;`
+        );
+      }
+    );
   };
 
   handleSearch = (e) => {
@@ -149,14 +160,30 @@ export default class Navbar extends React.Component {
   };
 
   handleCartClose = () => {
-    this.setState({
-      showCart: false,
-    });
+    this.setState(
+      {
+        showCart: false,
+      },
+      () => {
+        document.body.setAttribute("style", "");
+        window.scrollTo(0, this.windowOffSet);
+      }
+    );
   };
 
   handleLoginStatus = (toggle) => {
     this.setState({
       loginStatus: toggle,
+    });
+  };
+
+  handleLogin = () => {
+    this.setState({ login: true }, () => {
+      this.windowOffSet = window.scrollY;
+      document.body.setAttribute(
+        "style",
+        `position: fixed; top: -${this.windowOffSet}px; left: 0; right: 0;`
+      );
     });
   };
 
@@ -179,8 +206,9 @@ export default class Navbar extends React.Component {
             <div className="navScrollContainer">
               <i
                 className="fa fa-bars fa-2x"
-                onClick={() => this.setState({ showMenu: true })}
-                aria-hidden="true"
+                onClick={() => {
+                  this.setState({ showMenu: true });
+                }}
               ></i>
               <div className="searchContainer">
                 <div className="input-container">
@@ -208,7 +236,9 @@ export default class Navbar extends React.Component {
               >
                 <i
                   className="fa fa-bars fa-2x"
-                  onClick={() => this.setState({ showMenu: true })}
+                  onClick={() => {
+                    this.setState({ showMenu: true });
+                  }}
                   aria-hidden="true"
                 ></i>
                 <a href="/" className="logo">
@@ -349,9 +379,7 @@ export default class Navbar extends React.Component {
                       <a
                         style={{ cursor: "pointer", userSelect: "none" }}
                         className="login-signup"
-                        onClick={() => {
-                          this.setState({ login: true });
-                        }}
+                        onClick={this.handleLogin}
                         id="userLogin"
                       >
                         <i className="fas fa-user"></i>
@@ -380,6 +408,7 @@ export default class Navbar extends React.Component {
                   login={(toggle) => {
                     this.handleLoginStatus(toggle);
                   }}
+                  windowOffSet={this.windowOffSet}
                 />
               ) : null}
             </div>
@@ -395,7 +424,9 @@ export default class Navbar extends React.Component {
             >
               <i
                 className="fa fa-bars fa-2x"
-                onClick={() => this.setState({ showMenu: true })}
+                onClick={() => {
+                  this.setState({ showMenu: true });
+                }}
                 aria-hidden="true"
               ></i>
               <a href="/" className="logo">
@@ -540,9 +571,7 @@ export default class Navbar extends React.Component {
                     <a
                       style={{ cursor: "pointer", userSelect: "none" }}
                       className="login-signup"
-                      onClick={() => {
-                        this.setState({ login: true });
-                      }}
+                      onClick={this.handleLogin}
                       id="userLogin"
                     >
                       <i className="fas fa-user"></i>
@@ -576,6 +605,7 @@ export default class Navbar extends React.Component {
                 login={(toggle) => {
                   this.handleLoginStatus(toggle);
                 }}
+                windowOffSet={this.windowOffSet}
               />
             ) : null}
           </div>
@@ -585,7 +615,9 @@ export default class Navbar extends React.Component {
           cart={this.handleCart}
           logout={this.handleLogout}
           login={this.state.loginStatus}
-          close={() => this.setState({ showMenu: false })}
+          close={() => {
+            this.setState({ showMenu: false });
+          }}
           handleLogin={() => this.setState({ login: true })}
         />
 
