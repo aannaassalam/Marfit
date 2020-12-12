@@ -37,6 +37,7 @@ export default class Checkout extends React.Component {
       addAddress: false,
       paymentModal: false,
     };
+    this.windowOffSet = 0;
   }
 
   componentDidMount() {
@@ -319,7 +320,13 @@ export default class Checkout extends React.Component {
         this.state.pincode.length > 0 &&
         this.state.firstName.length > 0
       ) {
-        this.setState({ paymentModal: true });
+        this.setState({ paymentModal: true }, () => {
+          this.windowOffSet = window.scrollY;
+          document.body.setAttribute(
+            "style",
+            `position: fixed; top:-${this.windowOffSet}px; right: 0; left: 0`
+          );
+        });
       } else {
         if (!this.state.addAddress) {
           toaster.notify("Please select any address");
@@ -621,7 +628,12 @@ export default class Checkout extends React.Component {
               <div className="head">
                 <i
                   className="fas fa-times"
-                  onClick={() => this.setState({ paymentModal: false })}
+                  onClick={() =>
+                    this.setState({ paymentModal: false }, () => {
+                      document.body.setAttribute("style", "");
+                      window.scrollTo(0, this.windowOffSet);
+                    })
+                  }
                 ></i>
               </div>
               <div

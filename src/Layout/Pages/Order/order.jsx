@@ -33,6 +33,7 @@ export default class Order extends React.Component {
       shipmentActivities: [],
       trackUrl: "",
     };
+    this.windowOffSet = 0;
   }
 
   componentDidMount() {
@@ -110,6 +111,12 @@ export default class Order extends React.Component {
                   this.setState({
                     modal: false,
                   });
+                } else {
+                  this.windowOffSet = window.scrollY;
+                  document.body.setAttribute(
+                    "style",
+                    `position: fixed; top:-${this.windowOffSet}px; right: 0; left: 0;`
+                  );
                 }
               }
             );
@@ -130,7 +137,6 @@ export default class Order extends React.Component {
       btnLoading: true,
     });
     if (this.state.starCount > 0) {
-      console.log(this.state.rateProducts);
       firebase
         .firestore()
         .collection("products")
@@ -187,10 +193,16 @@ export default class Order extends React.Component {
                           reviewProductCount: this.state.reviewProductCount + 1,
                         });
                       } else {
-                        this.setState({
-                          modal: false,
-                          btnLoading: false,
-                        });
+                        this.setState(
+                          {
+                            modal: false,
+                            btnLoading: false,
+                          },
+                          () => {
+                            document.body.setAttribute("style", "");
+                            window.scrollTo(0, this.windowOffSet);
+                          }
+                        );
                       }
                     });
                 });
@@ -339,7 +351,15 @@ export default class Order extends React.Component {
                       <button
                         type="button"
                         className="continue"
-                        onClick={() => this.setState({ replacement: true })}
+                        onClick={() =>
+                          this.setState({ replacement: true }, () => {
+                            this.windowOffSet = window.scrollY;
+                            document.body.setAttribute(
+                              "style",
+                              `position: fixed; top: -${this.windowOffSet}px; right: 0; left:0;`
+                            );
+                          })
+                        }
                       >
                         Replacement
                       </button>
@@ -383,7 +403,12 @@ export default class Order extends React.Component {
                       <p>How was the product ?</p>
                       <i
                         className="fas fa-times"
-                        onClick={() => this.setState({ modal: false })}
+                        onClick={() =>
+                          this.setState({ modal: false }, () => {
+                            document.body.setAttribute("style", "");
+                            window.scrollTo(0, this.windowOffSet);
+                          })
+                        }
                       ></i>
                     </div>
                     <div className="modal-body">
@@ -502,7 +527,12 @@ export default class Order extends React.Component {
 
                     <i
                       className="fas fa-times"
-                      onClick={() => this.setState({ replacement: false })}
+                      onClick={() =>
+                        this.setState({ replacement: false }, () => {
+                          document.body.setAttribute("style", "");
+                          window.scrollTo(0, this.windowOffSet);
+                        })
+                      }
                     ></i>
                   </div>
                   <div className="modal-body">
