@@ -44,8 +44,12 @@ export default class MiniNav extends React.Component {
 									<div className='category-options'>
 										{cat.subcategories.map((sub, index) => {
 											return (
-												<a href={"/Category/" + cat.name + "/" + sub.name} key={index}>
-													{sub.name}
+												<a
+													href={"/Category/" + cat.name + "/" + sub.name}
+													key={index}
+													style={{ display: "flex", alignItems: "center" }}>
+													<img src={sub.image} style={{ width: "30px", height: "30px", marginRight: "10px" }} />
+													<p>{sub.name}</p>
 												</a>
 											);
 										})}
