@@ -115,7 +115,7 @@
   text-transform: lowercase;
 }
 
-.login-container .login .register-form button {
+.login-container .login .register-form .btn-next {
   width: 80%;
   height: 45px;
   font-size: 16px;
@@ -253,7 +253,7 @@
   margin: 3px 0 7px;
 }
 
-.login-container .login .login-form button {
+.login-container .login .login-form .btn-next {
   width: 80%;
   height: 45px;
   font-size: 16px;
@@ -361,8 +361,74 @@
   margin-top: 15px;
 }
 
-@media(max-width: 1024px){
-  .login-container .login{
+.otp-cont .vrf {
+  display: flex;
+  flex-direction: column;
+  margin-left: 35px;
+}
+
+.otp-cont .vrf p {
+  color: #a5a5a5;
+}
+
+.otp-cont .verification-cont {
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.otp-cont .verification-cont .code-verification {
+  margin: 0.5rem 0;
+  height: 45px;
+  width: 19%;
+  display: flex;
+  flex-direction: column;
+}
+
+.otp-cont .verification-cont .code-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 15px 0;
+  width: 80%;
+}
+
+.otp-cont .verification-cont .code-verification input {
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  background-color: #f4f6f8;
+  border: none;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+  font-size: 25px;
+  border: 1px solid lightgray;
+  border-radius: 5px;
+}
+
+.otp-cont .button-verification {
+  display: flex;
+  justify-content: space-between;
+  width: 82%;
+  height: 100%;
+  margin-top: 12px;
+}
+
+.otp-cont .button-verification .btn-cancel,
+.otp-cont .button-verification .btn-register {
+  width: 80px;
+  background-color: #ef6f0b;
+  outline: none;
+  border: 1px solid #ef6f0b;
+  color: white;
+  border-radius: 10px;
+  font-weight: bold;
+  height: 37px;
+  cursor: pointer;
+}
+@media (max-width: 1024px) {
+  .login-container .login {
     width: 65%;
   }
 }

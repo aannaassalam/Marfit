@@ -2,9 +2,10 @@
   width: 100%;
   background-color: #eef0f3;
   position: relative;
+  overflow: hidden;
 }
 
-.main .load{
+.main .load {
   margin-top: 10px;
   height: 79vh;
   width: 100%;

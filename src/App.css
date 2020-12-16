@@ -1,17 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Mulish:wght@500;600;700;800&display=swap');
-*,body{
+@import url("https://fonts.googleapis.com/css2?family=Mulish:wght@500;600;700;800&display=swap");
+*,
+body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Mulish', sans-serif;
+  font-family: "Mulish", sans-serif;
 }
 
-a{
-  text-decoration:none;
+/* body {
+  position: fixed;
+  top: 0;
+  right: 0;
+} */
+
+a {
+  text-decoration: none;
 }
 
-.App{
+.App {
   background-color: #eef0f3;
   position: relative;
   -webkit-tap-highlight-color: transparent;
+  /* overflow-y: hidden; */
 }

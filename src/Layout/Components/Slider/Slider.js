@@ -39,24 +39,24 @@ export default class Slider extends React.Component {
 		});
 	}
 
-	handleValid = (data) => {
-		data.map((item, index) => {
-			firebase
-				.firestore()
-				.collection("products")
-				.doc(item)
-				.get()
-				.then((snap) => {
-					return snap ? (
-						<div className='swiper-slide' key={index}>
-							<Card item={item} />
-						</div>
-					) : (
-						<div>HIII</div>
-					);
-				});
-		});
-	};
+	// handleValid = (data) => {
+	// 	data.map((item, index) => {
+	// 		firebase
+	// 			.firestore()
+	// 			.collection("products")
+	// 			.doc(item)
+	// 			.get()
+	// 			.then((snap) => {
+	// 				return snap ? (
+	// 					<div className='swiper-slide' key={index}>
+	// 						<Card item={item} />
+	// 					</div>
+	// 				) : (
+	// 					null
+	// 				);
+	// 			});
+	// 	});
+	// };
 
 	render() {
 		return (

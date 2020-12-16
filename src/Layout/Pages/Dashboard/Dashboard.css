@@ -271,7 +271,7 @@
   overflow-y: scroll;
 }
 
-.dashboard-container .content .address-cont .fa-arrow-left{
+.dashboard-container .content .address-cont .fa-arrow-left {
   height: 40px;
   font-size: 22px;
   cursor: pointer;
@@ -305,7 +305,7 @@
   margin-left: 15px;
 }
 
-.dashboard-container .content .address-cont .address .actions{
+.dashboard-container .content .address-cont .address .actions {
   width: 20%;
   display: flex;
   align-items: center;
@@ -340,9 +340,9 @@
   color: white;
 }
 
-.dashboard-container .content .addtab.active{
+.dashboard-container .content .addtab.active {
   transform: scale(1);
-  transition: transform .4s;
+  transition: transform 0.4s;
 }
 
 .dashboard-container .content .addtab {
@@ -353,7 +353,7 @@
   flex-direction: column;
   transform: scale(0);
   transform-origin: center;
-  transition: transform .4s;
+  transition: transform 0.4s;
 }
 
 .dashboard-container .content .addtab .inputs {
@@ -365,7 +365,7 @@
   align-items: center; */
 }
 
-.dashboard-container .content .addtab .inputs .region{
+.dashboard-container .content .addtab .inputs .region {
   width: 70%;
   display: flex;
   flex-direction: row;
@@ -373,7 +373,7 @@
   align-items: center;
 }
 
-.dashboard-container .content .addtab .inputs .region input{
+.dashboard-container .content .addtab .inputs .region input {
   width: 48%;
 }
 
@@ -394,7 +394,7 @@
 
 .dashboard-container .content .addtab .inputs button {
   cursor: pointer;
-  padding: .5rem 0;
+  padding: 0.5rem 0;
   width: 80px;
   background-color: #fb641b;
   color: #fff;
@@ -408,7 +408,7 @@
   justify-content: center;
 }
 
-.dashboard-container .content .addtab .inputs button p{
+.dashboard-container .content .addtab .inputs button p {
   width: fit-content;
 }
 
@@ -417,9 +417,9 @@
   width: fit-content;
 }
 
-.dashboard-container .content .editTab.active{
+.dashboard-container .content .editTab.active {
   transform: scale(1);
-  transition: transform .4s;
+  transition: transform 0.4s;
 }
 
 .dashboard-container .content .editTab {
@@ -430,7 +430,7 @@
   flex-direction: column;
   transform: scale(0);
   transform-origin: center;
-  transition: transform .4s;
+  transition: transform 0.4s;
 }
 
 .dashboard-container .content .editTab .inputs {
@@ -442,7 +442,7 @@
   align-items: center; */
 }
 
-.dashboard-container .content .editTab .inputs .region{
+.dashboard-container .content .editTab .inputs .region {
   width: 70%;
   display: flex;
   flex-direction: row;
@@ -450,7 +450,7 @@
   align-items: center;
 }
 
-.dashboard-container .content .editTab .inputs .region input{
+.dashboard-container .content .editTab .inputs .region input {
   width: 48%;
 }
 
@@ -471,7 +471,7 @@
 
 .dashboard-container .content .editTab .inputs button {
   cursor: pointer;
-  padding: .5rem 0;
+  padding: 0.5rem 0;
   width: 80px;
   background-color: #fb641b;
   color: #fff;
@@ -485,7 +485,7 @@
   justify-content: center;
 }
 
-.dashboard-container .content .editTab .inputs button p{
+.dashboard-container .content .editTab .inputs button p {
   width: fit-content;
 }
 
@@ -514,9 +514,9 @@
   margin-left: 15px;
 }
 
-.dashboard-container .content .referMain{
+.dashboard-container .content .referMain {
   width: 100%;
-  height: 90%;
+  height: 87%;
 }
 
 .dashboard-container .content .referMain .referanimation {
@@ -593,12 +593,30 @@
   transition: transform 0.5s;
 }
 
-.dashboard-container .content .referMain .referCode .referInput .copyButton:hover p {
+.dashboard-container
+  .content
+  .referMain
+  .referCode
+  .referInput
+  .copyButton:hover
+  p {
   margin-right: 5px;
 }
 
-.dashboard-container .content .referMain .referCode .referInput .copyButton:hover p,
-.dashboard-container .content .referMain .referCode .referInput .copyButton:hover i {
+.dashboard-container
+  .content
+  .referMain
+  .referCode
+  .referInput
+  .copyButton:hover
+  p,
+.dashboard-container
+  .content
+  .referMain
+  .referCode
+  .referInput
+  .copyButton:hover
+  i {
   transform: translateX(0);
 }
 
@@ -618,31 +636,70 @@
   align-items: center;
 }
 
-.dashboard-container .content .referMain .referCode .referInput .copiedButton p {
+.dashboard-container
+  .content
+  .referMain
+  .referCode
+  .referInput
+  .copiedButton
+  p {
   font-size: 14px;
   font-weight: 500;
   transform: translateX(5px);
   transition: transform 0.5s;
 }
 
-.dashboard-container .content .referMain .referCode .referInput .copiedButton i {
+.dashboard-container
+  .content
+  .referMain
+  .referCode
+  .referInput
+  .copiedButton
+  i {
   font-size: 14px;
   transform: translateX(250px);
   transition: transform 0.5s;
 }
 
-.dashboard-container .content .referMain .referCode .referInput .copiedButton:hover p {
+.dashboard-container
+  .content
+  .referMain
+  .referCode
+  .referInput
+  .copiedButton:hover
+  p {
   margin-right: 5px;
 }
 
-.dashboard-container .content .referMain .referCode .referInput .copiedButton:hover p,
-.dashboard-container .content .referMain .referCode .referInput .copiedButton:hover i {
+.dashboard-container
+  .content
+  .referMain
+  .referCode
+  .referInput
+  .copiedButton:hover
+  p,
+.dashboard-container
+  .content
+  .referMain
+  .referCode
+  .referInput
+  .copiedButton:hover
+  i {
   transform: translateX(0);
 }
 
-.dashboard-container .content .redeem-cont{
+.dashboard-container .redeemHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  /* padding: 0 1rem; */
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+.dashboard-container .content .redeem-cont {
   width: 100%;
-  height: 89%;
+  height: 80%;
 }
 
 .dashboard-container .content .redeem-cont .redeemCard {
@@ -693,11 +750,16 @@
   letter-spacing: 1.5px;
 }
 
-.dashboard-container .content .redeem-cont .redeemCode .redeemInput input::placeholder{
+.dashboard-container
+  .content
+  .redeem-cont
+  .redeemCode
+  .redeemInput
+  input::placeholder {
   text-align: center;
 }
 
-.dashboard-container .content .redeem-cont .redeemCode .redeemInput .redeem{
+.dashboard-container .content .redeem-cont .redeemCode .redeemInput .redeem {
   color: #fff;
   background-color: #ff7c3b;
   border-top-right-radius: 10px;
@@ -712,7 +774,12 @@
   position: relative;
 }
 
-.dashboard-container .content .redeem-cont .redeemCode .redeemInput .redeem.active{
+.dashboard-container
+  .content
+  .redeem-cont
+  .redeemCode
+  .redeemInput
+  .redeem.active {
   background-color: #fb641b;
   border: 1px solid #fb641b;
 }
@@ -808,7 +875,7 @@
   color: darkgray;
 } */
 
-@media(max-width: 1024px){
+@media (max-width: 1024px) {
   .dashboard-container .content .addtab .inputs {
     width: 100%;
   }
@@ -877,7 +944,9 @@
   }
   .dashboard-container .sidebar .menu {
     margin: 0;
-    padding: 1.5rem 1.5rem;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
     white-space: nowrap;
   }
 
@@ -887,17 +956,36 @@
 
   .dashboard-container .sidebar .menu-active {
     margin: 0;
-    padding: 1.5rem 1.5rem;
+    padding: 0 1rem;
+    display: flex;
+    align-items: center;
     border-right: none;
     border-bottom: 7px solid #fb641b;
-    display: inline-block;
     white-space: nowrap;
     font-size: 1rem;
   }
-  .dashboard-container .content .referCode .referInput {
-    width: 75%;
+  .dashboard-container .content .address-cont .address {
+    height: auto;
+    padding: 10px 0;
   }
-  .dashboard-container .content .addtab .inputs .region, .dashboard-container .content .addtab .inputs input{
+  .dashboard-container .content .address-cont .address .paras {
+    width: 70%;
+  }
+  .dashboard-container .content .address-cont .address .actions {
+    width: 20%;
+    padding: 0;
+  }
+  .dashboard-container .content .editTab .inputs {
+    width: 100%;
+  }
+  .dashboard-container .content .editTab .inputs .region {
+    width: 95%;
+  }
+  .dashboard-container .content .editTab .inputs input {
+    width: 95%;
+  }
+  .dashboard-container .content .addtab .inputs .region,
+  .dashboard-container .content .addtab .inputs input {
     width: 95%;
   }
   .dashboard-container .content .redeem-cont .redeemCode .redeemInput {

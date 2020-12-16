@@ -25,15 +25,15 @@ class OrdersComp extends Component {
       .collection("orders")
       .doc(this.props.item)
       .onSnapshot((order) => {
-            this.setState({
-              orderimg: order.data().products[0].images[0],
-              ordertitle: order.data().products[0].title,
-              orderdate: order.data().date,
-              ordertotal: order.data().total,
-              orderstatus: order.data().status,
-              totalproducts: order.data().products.length - 1,
-              loading: false
-            });
+        this.setState({
+          orderimg: order.data().products[0].images[0],
+          ordertitle: order.data().products[0].title,
+          orderdate: order.data().date,
+          ordertotal: order.data().total,
+          orderstatus: order.data().status,
+          totalproducts: order.data().products.length - 1,
+          loading: false,
+        });
       });
   }
 
@@ -61,7 +61,10 @@ class OrdersComp extends Component {
                   </p>
                 </h5>
                 {/* <p>Quantity : {data.quantity}</p> */}
-                <p>Order date : {moment(this.state.orderdate.toDate()).format("ll")}</p>
+                <p>
+                  Order date :{" "}
+                  {moment(this.state.orderdate.toDate()).format("ll")}
+                </p>
               </div>
             </div>
             <div className="part2">
@@ -70,10 +73,21 @@ class OrdersComp extends Component {
             <div className="part3">
               <div className="one">
                 <div className="indictionCircle"></div>
-                <p className="deliveryState">{this.state.orderstatus}</p>
+                <p className="deliveryState">
+                  {this.state.orderstatus.includes(7)
+                    ? "Delivered"
+                    : this.state.orderstatus.includes(17)
+                    ? "Out for Delivery"
+                    : this.state.orderstatus.includes(6)
+                    ? "Packed"
+                    : this.state.orderstatus.includes(0)
+                    ? "Ordered"
+                    : null}
+                </p>
               </div>
               <p className="deliveryDate">
-                Delivered on : {moment(this.state.orderdate.toDate()).format("ll")}
+                Delivered on :{" "}
+                {moment(this.state.orderdate.toDate()).format("ll")}
               </p>
             </div>
           </a>

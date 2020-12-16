@@ -44,8 +44,6 @@ export default class Footer extends React.Component {
 						</div>
 					</div>
 					<div className='container-2'>
-						<p className='label'>IT FEELS GREAT TO KNOW</p>
-						<input type='email' name='email' id='email' placeholder='Enter email address *' />
 						<div className='icons-pack'>
 							<a href='#'>
 								<i className='fab fa-facebook-f'></i>

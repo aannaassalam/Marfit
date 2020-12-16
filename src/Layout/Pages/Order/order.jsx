@@ -7,6 +7,8 @@ import circleLoading from "../../../assets/circular loading.json";
 import Lottie from "lottie-react-web";
 import toaster from "toasted-notes";
 import Loader from "../../Components/Loader/Loader";
+import axios from "axios";
+import moment from "moment";
 
 export default class Order extends React.Component {
   constructor(props) {
@@ -15,8 +17,9 @@ export default class Order extends React.Component {
       userEmail: "",
       order: "",
       loading: true,
-      status: ["ordered", "packed", "out", "delivered"],
+      status: [],
       replacement: false,
+      replacementReason: "",
       starCount: 0,
       review: "",
       reviewProductCount: 0,
@@ -25,7 +28,12 @@ export default class Order extends React.Component {
       btnLoading: false,
       rateProducts: [],
       userName: "",
+      trackStatus: 0,
+      shipmentStaus: 0,
+      shipmentActivities: [],
+      trackUrl: "",
     };
+    this.windowOffSet = 0;
   }
 
   componentDidMount() {
@@ -52,9 +60,41 @@ export default class Order extends React.Component {
         this.setState(
           {
             order: doc.data(),
-            loading: false,
+            status: doc.data().status,
           },
-          () => {
+          async () => {
+            console.log(this.state.order.tracking);
+            var data = {
+              awb: this.state.order.tracking,
+            };
+            if (this.state.order.tracking) {
+              var res = await axios.post(
+                "http://localhost:5000/api/trackOrder",
+                data
+              );
+              var status = this.state.status;
+              if (!status.includes(res.data.track_status)) {
+                status.push(res.data.shipment_status);
+              }
+              this.setState(
+                {
+                  trackStatus: res.data.track_status,
+                  status: status,
+                  shipmentActivities: res.data.shipment_track_activities,
+                  trackUrl: res.data.track_url,
+                },
+                () => {
+                  firebase
+                    .firestore()
+                    .collection("orders")
+                    .doc(this.props.match.params.id)
+                    .update({
+                      status: this.state.status,
+                    });
+                }
+              );
+            }
+
             var products = [];
             this.state.order.products.map((product) => {
               if (product.rate === false) {
@@ -64,12 +104,19 @@ export default class Order extends React.Component {
             this.setState(
               {
                 rateProducts: products,
+                loading: false,
               },
               () => {
                 if (this.state.rateProducts.length < 1) {
                   this.setState({
                     modal: false,
                   });
+                } else {
+                  this.windowOffSet = window.scrollY;
+                  document.body.setAttribute(
+                    "style",
+                    `position: fixed; top:-${this.windowOffSet}px; right: 0; left: 0;`
+                  );
                 }
               }
             );
@@ -90,7 +137,6 @@ export default class Order extends React.Component {
       btnLoading: true,
     });
     if (this.state.starCount > 0) {
-      console.log(this.state.rateProducts);
       firebase
         .firestore()
         .collection("products")
@@ -147,10 +193,16 @@ export default class Order extends React.Component {
                           reviewProductCount: this.state.reviewProductCount + 1,
                         });
                       } else {
-                        this.setState({
-                          modal: false,
-                          btnLoading: false,
-                        });
+                        this.setState(
+                          {
+                            modal: false,
+                            btnLoading: false,
+                          },
+                          () => {
+                            document.body.setAttribute("style", "");
+                            window.scrollTo(0, this.windowOffSet);
+                          }
+                        );
                       }
                     });
                 });
@@ -175,31 +227,6 @@ export default class Order extends React.Component {
               <div className="wrap">
                 <div className="main">
                   <main>
-                    {/* <div className="Title">
-                      <h2 className="title">
-                        Log in to view all order details
-                      </h2>
-                      <p className="text">
-                        You can find your order number in the receipt you
-                        received via email.
-                      </p>
-                    </div>
-                    <div className="login_form">
-                      <input
-                        className="a"
-                        type="email"
-                        placeholder="Email"
-                      ></input>
-                      <input
-                        className="b"
-                        type="text"
-                        placeholder="Order number"
-                      ></input>
-                      <button className="button" type="submit" class="btn">
-                        Log in
-                      </button>
-                    </div> */}
-
                     <div className="head">
                       <p>Thanks for placing your order...</p>
                     </div>
@@ -209,7 +236,10 @@ export default class Order extends React.Component {
                         <div className="icon">
                           <div
                             className={
-                              this.state.status.includes("ordered")
+                              this.state.status.includes(0) ||
+                              this.state.status.includes(6) ||
+                              this.state.status.includes(17) ||
+                              this.state.status.includes(7)
                                 ? "done"
                                 : "ordered"
                             }
@@ -220,7 +250,9 @@ export default class Order extends React.Component {
 
                           <div
                             className={
-                              this.state.status.includes("packed")
+                              this.state.status.includes(6) ||
+                              this.state.status.includes(17) ||
+                              this.state.status.includes(7)
                                 ? "done"
                                 : "packed"
                             }
@@ -231,7 +263,8 @@ export default class Order extends React.Component {
 
                           <div
                             className={
-                              this.state.status.includes("out")
+                              this.state.status.includes(17) ||
+                              this.state.status.includes(7)
                                 ? "done"
                                 : "out-for-delivery"
                             }
@@ -242,7 +275,7 @@ export default class Order extends React.Component {
 
                           <div
                             className={
-                              this.state.status.includes("delivered")
+                              this.state.status.includes(7)
                                 ? "done"
                                 : "delivered"
                             }
@@ -261,6 +294,29 @@ export default class Order extends React.Component {
                       </div>
                       <div className="order_update">
                         <h2>Order updates</h2>
+                        <div className="order-status">
+                          {this.state.shipmentActivities.length > 0 ? (
+                            this.state.shipmentActivities &&
+                            this.state.shipmentActivities.map((activity) => {
+                              return (
+                                <div className="activity">
+                                  <h5>Activity: {activity.activity}</h5>
+                                  <p>Location: {activity.location}</p>
+                                  <p>
+                                    Date:{" "}
+                                    {moment(activity.date).format(
+                                      "MMMM Do YYYY, h:mm a"
+                                    )}
+                                  </p>
+                                </div>
+                              );
+                            })
+                          ) : (
+                            <p className="noUpdates">
+                              Currently there are no updates available ...
+                            </p>
+                          )}
+                        </div>
                       </div>
                       <div className="message">
                         <p>
@@ -275,15 +331,11 @@ export default class Order extends React.Component {
                         <div className="content_information">
                           <div className="text_area_a">
                             <h3>Shipping address</h3>
-                            <p>Welcome to the website. </p>
-                            <h3>Shipping method</h3>
-                            <p>Welcome to the website. </p>
+                            <p>{this.state.order.address}</p>
                           </div>
                           <div className="text_area_b">
-                            <h3>Billing address</h3>
-                            <p>Welcome to the website.</p>
                             <h3>Payment method</h3>
-                            <p>Welcome to the website. </p>
+                            <p>{this.state.order.paymentMethod}</p>
                           </div>
                         </div>
                       </div>
@@ -299,7 +351,15 @@ export default class Order extends React.Component {
                       <button
                         type="button"
                         className="continue"
-                        onClick={() => this.setState({ replacement: true })}
+                        onClick={() =>
+                          this.setState({ replacement: true }, () => {
+                            this.windowOffSet = window.scrollY;
+                            document.body.setAttribute(
+                              "style",
+                              `position: fixed; top: -${this.windowOffSet}px; right: 0; left:0;`
+                            );
+                          })
+                        }
                       >
                         Replacement
                       </button>
@@ -335,7 +395,7 @@ export default class Order extends React.Component {
                 <p>&#8377; {this.state.order.total}</p>
               </div>
             </div>
-            {this.state.status.includes("delivered") ? (
+            {this.state.status.includes(7) ? (
               this.state.modal ? (
                 <div className="rating-cont">
                   <div className="rating-modal">
@@ -343,7 +403,12 @@ export default class Order extends React.Component {
                       <p>How was the product ?</p>
                       <i
                         className="fas fa-times"
-                        onClick={() => this.setState({ modal: false })}
+                        onClick={() =>
+                          this.setState({ modal: false }, () => {
+                            document.body.setAttribute("style", "");
+                            window.scrollTo(0, this.windowOffSet);
+                          })
+                        }
                       ></i>
                     </div>
                     <div className="modal-body">
@@ -462,30 +527,66 @@ export default class Order extends React.Component {
 
                     <i
                       className="fas fa-times"
-                      onClick={() => this.setState({ replacement: false })}
+                      onClick={() =>
+                        this.setState({ replacement: false }, () => {
+                          document.body.setAttribute("style", "");
+                          window.scrollTo(0, this.windowOffSet);
+                        })
+                      }
                     ></i>
                   </div>
                   <div className="modal-body">
                     <div className="dropdown">
-                      <button>Bought by mistake</button>
-                      <div class="dropdown-content">
-                        <a href="#">Bought by mistake</a>
-                        <a href="#">Better price available</a>
-                        <a href="#">Performance or quality not adequate</a>
-                        <a href="#">Incompatible or not useful</a>
-                        <a href="#">Product damaged, but shipping box OK</a>
-                        <a href="#">Item arrived too late</a>
-                        <a href="#">Missing parts or accessories</a>
-                        <a href="#">Both product and shipping box damaged</a>
-                        <a href="#">Wrong items was sent</a>
-                        <a href="#">Item defective or dosen't work</a>
-                        <a href="#">
-                          Received extra item i didn't buy (no refund neended)
-                        </a>
-                        <a href="#">No longer neended</a>
-                        <a href="#">Did not approve purchase</a>
-                        <a href="#">Inaccurate website description</a>
-                      </div>
+                      <select
+                        onChange={(e) =>
+                          this.setState({ replacementReason: e.target.value })
+                        }
+                      >
+                        <option selected value="Bought by mistake">
+                          Bought by mistake
+                        </option>
+                        <option value="Better price available">
+                          Better price available
+                        </option>
+                        <option value="Performance or quality not adequate">
+                          Performance or quality not adequate
+                        </option>
+                        <option value="Incompatible or not useful">
+                          Incompatible or not useful
+                        </option>
+                        <option value="Product damaged, but shipping box OK">
+                          Product damaged, but shipping box OK
+                        </option>
+                        <option value="Item arrived too late">
+                          Item arrived too late
+                        </option>
+                        <option value="Missing parts or accessories">
+                          Missing parts or accessories
+                        </option>
+                        <option value="Both product and shipping box damaged">
+                          Both product and shipping box damaged
+                        </option>
+                        <option value="Wrong items was sent">
+                          Wrong items was sent
+                        </option>
+                        <option value="Item defective or dosen't work">
+                          Item defective or dosen't work
+                        </option>
+                        <option value="Received item i didn't buy">
+                          Received item i didn't buy (no refund needed)
+                        </option>
+                        <option value="No longer neended">
+                          No longer neended
+                        </option>
+                        <option value="Did not approve purchase">
+                          Did not approve purchase
+                        </option>
+                        <option value="Inaccurate website description">
+                          Inaccurate website description
+                        </option>
+                      </select>
+                      {/* <button>Bought by mistake</button>
+                      <div class="dropdown-content"></div> */}
                     </div>
                     <button className="replace">Replace</button>
                   </div>
