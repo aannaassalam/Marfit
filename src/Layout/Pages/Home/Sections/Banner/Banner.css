@@ -1,16 +1,17 @@
 .panel-container {
 	width: 100%;
-	height: 450px;
+	height: 40vh;
+	/* height: 450px; */
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	background-color: #fff;
-	margin-top: 1rem;
 	user-select: none;
+	margin-top: 0.25rem;
+	padding-top: 0.5rem;
 }
 
 .panel {
-	width: 90%;
+	width: 95%;
 	height: 100%;
 	cursor: pointer;
 	border-radius: 10px;
@@ -28,11 +29,39 @@
 
 .panel .cont img {
 	width: 100%;
-	object-fit: fill;
+	object-fit: cover;
 }
 
 .swiper-pagination-bullet-active {
 	background-color: white !important;
+}
+
+.nextBut .line {
+	width: 20px;
+	height: 2px;
+	background-color: #464646;
+}
+
+.nextBut .line:nth-child(1) {
+	transform: rotate(40deg) translate(-2px, -5px);
+}
+
+.nextBut .line:nth-child(2) {
+	transform: rotate(-40deg) translate(-2px, 5px);
+}
+
+.prevBut .line {
+	width: 20px;
+	height: 2px;
+	background-color: #464646;
+}
+
+.prevBut .line:nth-child(1) {
+	transform: rotate(-40deg) translate(2px, -5px);
+}
+
+.prevBut .line:nth-child(2) {
+	transform: rotate(40deg) translate(2px, 5px);
 }
 
 @media (max-width: 1024px) {

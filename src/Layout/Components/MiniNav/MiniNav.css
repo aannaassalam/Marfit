@@ -8,6 +8,9 @@
 	background-color: #fff;
 	padding: 0 2rem;
 	align-items: center;
+	position: sticky;
+	top: 8vh;
+	z-index: 998;
 }
 
 .mini-container::-webkit-scrollbar {

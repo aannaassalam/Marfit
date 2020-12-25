@@ -1,0 +1,242 @@
+.productlist-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+}
+
+.productlist-container .categorylist-breadcrumb {
+  width: 100%;
+  height: 50px;
+  background-color: #f7f7f7;
+  border-bottom: 1.2px solid #e5e5e5;
+  box-shadow: inset 0px 1px 3px 0px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.productlist-container .categorylist-breadcrumb .breadcrumb-menu {
+  width: 85%;
+  max-width: 1500px;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.productlist-container .categorylist-breadcrumb .breadcrumb-menu .bd-menu-list {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.productlist-container
+  .categorylist-breadcrumb
+  .breadcrumb-menu
+  .bd-menu-list
+  a {
+  font-size: 14px;
+  margin-right: 14px;
+  text-decoration: none;
+  color: #414141;
+}
+
+.productlist-container
+  .categorylist-breadcrumb
+  .breadcrumb-menu
+  .bd-menu-list
+  a
+  i {
+  font-size: 10px;
+}
+
+.productlist-container
+  .categorylist-breadcrumb
+  .breadcrumb-menu
+  .bd-menu-stats {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.productlist-container
+  .categorylist-breadcrumb
+  .breadcrumb-menu
+  .bd-menu-stats
+  p {
+  font-size: 14px;
+  color: #414141;
+}
+
+.filter-header {
+  width: 85%;
+  max-width: 1500px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.filter-header .left {
+  width: 25%;
+  height: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.filter-header .left .filter {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.filter-header .left .filter img {
+  margin-right: 5px;
+  width: 25px;
+  height: 25px;
+}
+
+.filter-header .left .filter p {
+  font-size: 16px;
+  color: #515151;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.filter-header .left .filter-inPhone {
+  display: none;
+}
+
+.filter-header .left .filter-inPhone img {
+  margin-right: 5px;
+  width: 25px;
+  height: 25px;
+}
+
+.filter-header .left .filter-inPhone p {
+  font-size: 16px;
+  color: #515151;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+.filter-header .left .reset {
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.filter-header .left .reset button {
+  width: 70px;
+  height: 35px;
+  background-color: #fff;
+  border: 1px solid #c5c5c5;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #515151;
+  font-weight: 500;
+}
+
+.productlist-container .catalogue {
+  width: 85%;
+  max-width: 1500px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.productlist-container .catalogue .card-list-container {
+  width: 75%;
+  display: flex;
+  justify-content: center;
+}
+
+.productlist-container .catalogue .card-list {
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 0 0 0 1rem;
+  overflow-y: scroll;
+}
+
+.productlist-container .catalogue .filter{
+  width: 285px;
+}
+
+.productlist-container .catalogue .mobile-filter{
+  display: none;
+}
+.mobile-filter-active{
+  display: none;
+}
+
+@media(max-width: 1024px){
+  .productlist-container .catalogue {
+    width: 95%;
+  }
+  .filter-header {
+    width: 95%;
+  }
+  .productlist-container .catalogue .card-list-container {
+    width: 100%;
+  }
+}
+
+@media(max-width: 680px){
+  .productlist-container
+  .categorylist-breadcrumb
+  .breadcrumb-menu
+  .bd-menu-stats{
+    display: none;
+  }
+  .productlist-container .catalogue{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+  }
+  .filter-header .left {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+  .filter-header .left .filter {
+    display: none;
+  }  
+  .filter-header .left .filter-inPhone {
+    display: flex;
+    width: 50%;
+    height: 100%;
+    align-items: center;
+    justify-content: flex-start;
+  }
+  .productlist-container .catalogue .filter{
+    display: none;
+  }
+  .mobile-filter-active{
+    display: flex;
+    width: 100%;
+    height: 50%;
+  }
+}
+
+@media(max-width: 375px){
+  .productlist-container .catalogue .card-list {
+    padding:0;
+ }
+ .productlist-container .catalogue .card-list-container {
+  width: 100%;
+ }
+}

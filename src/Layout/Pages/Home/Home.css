@@ -1,16 +1,16 @@
 .main {
-  width: 100%;
-  background-color: #eef0f3;
-  position: relative;
-  overflow: hidden;
+	width: 100%;
+	background-color: #eef0f3;
+	position: relative;
+	overflow: hidden;
 }
 
 .main .load {
-  margin-top: 10px;
-  height: 79vh;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #fff;
+	margin-top: 10px;
+	height: 79vh;
+	width: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: #fff;
 }

@@ -19,52 +19,44 @@ import Viewall from "./Layout/Pages/ViewAll/Viewall";
 import NewArrival from "./Layout/Pages/NewArrival/NewArrival";
 import Loader from "./Layout/Components/Loader/Loader";
 import Sale from "./Layout/Pages/Sale/Sale";
+import SearchList from "./Layout/Pages/Search/SearchList.page";
 
 function App() {
-  const location = useLocation();
-  const child = React.createRef();
-  const handleParent = () => {
-    child.current.handleInit();
-  };
+	const location = useLocation();
+	const child = React.createRef();
+	const handleParent = () => {
+		child.current.handleInit();
+	};
 
-  return (
-    <div className="App">
-      <Navbar ref={child} />
-      <MiniNav />
-      <AnimatePresence>
-        <Switch location={location} key={location.pathname}>
-          <Route exact path="/" component={Home} />
-          <Route exact path="/Category/:id" component={CategoryList} />
-          <Route exact path="/Category/:id1/:id2" component={ProductList} />
-          <Route
-            exact
-            path="/Category/:id1/:id2/:id3"
-            render={(routeProps) => (
-              <ProductDesc handleParent={handleParent} {...routeProps} />
-            )}
-          />
-          <Route exact path="/Dashboard/:id" component={Dashboard} />
-          <Route exact path="/ComingSoon" component={ComingSoon} />
-          <Route exact path="/NewArrivals" component={NewArrival} />
-          <Route
-            exact
-            path="/Cart/Checkout/coupon::coupon"
-            component={Checkout}
-          />
-          <Route
-            exact
-            path="/Checkout/:item/:quantity/:size"
-            component={ByeNow}
-          />
-          <Route exact path="/Orders/:id" component={Order} />
-          <Route exact path="/Sale" component={Sale} />
-          <Route exact path="/Products/:id" component={Viewall} />
-          <Route exact path="*" component={NotFound} />
-        </Switch>
-      </AnimatePresence>
-      <Footer />
-    </div>
-  );
+	return (
+		<div className='App'>
+			<Navbar ref={child} />
+			<MiniNav />
+			<AnimatePresence>
+				<Switch location={location} key={location.pathname}>
+					<Route exact path='/' component={Home} />
+					<Route exact path='/Category/:id' component={CategoryList} />
+					<Route exact path='/Category/:id1/:id2' component={ProductList} />
+					<Route exact path='/Search/:id1' component={SearchList} />
+					<Route
+						exact
+						path='/Category/:id1/:id2/:id3'
+						render={(routeProps) => <ProductDesc handleParent={handleParent} {...routeProps} />}
+					/>
+					<Route exact path='/Dashboard/:id' component={Dashboard} />
+					<Route exact path='/ComingSoon' component={ComingSoon} />
+					<Route exact path='/NewArrivals' component={NewArrival} />
+					<Route exact path='/Cart/Checkout/coupon::coupon' component={Checkout} />
+					<Route exact path='/Checkout/:item/:quantity/:size' component={ByeNow} />
+					<Route exact path='/Orders/:id' component={Order} />
+					<Route exact path='/Sale' component={Sale} />
+					<Route exact path='/Products/:id' component={Viewall} />
+					<Route exact path='*' component={NotFound} />
+				</Switch>
+			</AnimatePresence>
+			<Footer />
+		</div>
+	);
 }
 
 export default App;
