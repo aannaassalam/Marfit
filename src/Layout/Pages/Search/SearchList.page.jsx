@@ -42,7 +42,7 @@ class SearchList extends React.Component {
 			categories: [],
 			filterProductList: [],
 			type: [],
-			outStock: false,
+			outStock: true,
 			loading: true,
 			month: 3,
 			min: 0,
@@ -51,6 +51,8 @@ class SearchList extends React.Component {
 			productLoading: false,
 			colors: [],
 			presentColor: "",
+			subcategory: "",
+			category: "",
 		};
 	}
 
@@ -91,19 +93,22 @@ class SearchList extends React.Component {
 						}
 					}
 				});
-				this.setState(
-					{
-						productList: productList,
-						filterProductList: productList,
-						colors: colors,
-						min: min,
-						max: max,
-						loading: false,
-					},
-					() => {
-						this.handleProductInStock();
+				productList.map((product) => {
+					if (min > product.sp) {
+						min = product.sp;
 					}
-				);
+					if (max < product.sp) {
+						max = product.sp;
+					}
+				});
+				this.setState({
+					productList: productList,
+					filterProductList: productList,
+					colors: colors,
+					min: min,
+					max: max,
+					loading: false,
+				});
 			});
 	};
 
@@ -218,26 +223,54 @@ class SearchList extends React.Component {
 	};
 
 	handleProductOutStock = () => {
-		var products = this.state.productList;
-		var newproducts = [];
-		products.forEach((product) => {
-			if (product.quantity === 0) {
-				newproducts.push(product);
-			}
-		});
 		this.setState(
 			{
-				filterProductList: [],
-				productLoading: true,
+				outStock: !this.state.outStock,
 			},
 			() => {
-				setTimeout(() => {
-					this.setState({
-						filterProductList: newproducts,
-						outStock: true,
-						productLoading: false,
+				if (this.state.outStock === false) {
+					var products = this.state.productList;
+					var newproducts = [];
+					products.forEach((product) => {
+						if (product.quantity === 0) {
+							newproducts.push(product);
+						}
 					});
-				}, 500);
+					this.setState(
+						{
+							filterProductList: [],
+							productLoading: true,
+						},
+						() => {
+							setTimeout(() => {
+								this.setState({
+									filterProductList: newproducts,
+									productLoading: false,
+								});
+							}, 500);
+						}
+					);
+				} else {
+					var products = this.state.productList;
+					var newproducts = [];
+					products.forEach((product) => {
+						newproducts.push(product);
+					});
+					this.setState(
+						{
+							filterProductList: [],
+							productLoading: true,
+						},
+						() => {
+							setTimeout(() => {
+								this.setState({
+									filterProductList: newproducts,
+									productLoading: false,
+								});
+							}, 500);
+						}
+					);
+				}
 			}
 		);
 	};
@@ -285,16 +318,27 @@ class SearchList extends React.Component {
 				filterProductList: [],
 			},
 			() => {
-				var products = [];
-				this.state.productList.forEach((product) => {
-					if (product.color === color) {
+				if (this.state.presentColor !== color) {
+					var products = [];
+					this.state.productList.forEach((product) => {
+						if (product.color === color) {
+							products.push(product);
+						}
+					});
+					this.setState({
+						filterProductList: products,
+						presentColor: color,
+					});
+				} else {
+					var products = [];
+					this.state.productList.forEach((product) => {
 						products.push(product);
-					}
-				});
-				this.setState({
-					filterProductList: products,
-					presentColor: color,
-				});
+					});
+					this.setState({
+						filterProductList: products,
+						presentColor: "",
+					});
+				}
 			}
 		);
 	};
@@ -461,10 +505,11 @@ class SearchList extends React.Component {
 								{/* Product List catalogue */}
 								<div className='catalogue'>
 									<div className='filter'>
-										{/* <Filter
+										<Filter
 											handleMonths={(e) => this.handleMonths(e)}
 											category={this.state.category}
-											subCat={this.props.match.params.id2}
+											categories={this.state.categories}
+											subcategory={this.state.subcategory}
 											type={this.state.type}
 											handleProductAddType={(e) => this.handleProductAddType(e)}
 											handleProductRemoveType={(e) => this.handleProductRemoveType(e)}
@@ -478,7 +523,7 @@ class SearchList extends React.Component {
 											colors={this.state.colors}
 											presentColor={this.state.presentColor}
 											handleColorFilter={(color) => this.handleColorFilter(color)}
-										/> */}
+										/>
 									</div>
 									<div className={this.state.filter ? "mobile-filter-active" : "mobile-filter"}>
 										{/* <Filter

@@ -19,7 +19,7 @@ const styles = {
 		bottom: "0",
 		font: "30px sans-serif",
 		color: "#464646",
-		backgroundColor: "rgba(255,255,255,0.8)",
+		backgroundColor: "rgba(255,255,255,0.5)",
 		display: "flex",
 		alignItems: "center",
 		justifyContent: "center",
