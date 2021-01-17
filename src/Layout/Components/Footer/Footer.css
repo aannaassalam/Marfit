@@ -7,6 +7,7 @@
   padding-bottom: 30px;
   margin-top: 50px;
   height: 77vh;
+  max-width: 1700px;
 }
 
 .footer .flex-container {
@@ -51,16 +52,16 @@
   height: 100%;
 }
 
-.footer .flex-container .container-1 .company-terms .company-items:last-child{
+.footer .flex-container .container-1 .company-terms .company-items:last-child {
   justify-content: flex-start;
 }
 
-.footer .flex-container .container-1 .company-terms .company-items:last-child h3{
+.footer .flex-container .container-1 .company-terms .company-items:last-child h3 {
   margin-bottom: 20px;
 }
 
 .footer .flex-container .container-1 .company-terms .company-items:last-child a,
-.footer .flex-container .container-1 .company-terms .company-items:last-child p{
+.footer .flex-container .container-1 .company-terms .company-items:last-child p {
   margin-bottom: 15px;
 }
 

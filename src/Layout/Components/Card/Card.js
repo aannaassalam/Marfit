@@ -21,7 +21,6 @@ export default class Card extends React.Component {
 	}
 
 	componentDidMount() {
-		console.log("24", this.props.item.sp);
 		if (typeof this.props.item === "object") {
 			firebase
 				.firestore()
@@ -209,51 +208,49 @@ export default class Card extends React.Component {
 		return (
 			<>
 				{this.state.item.title ? (
-					<div className={this.state.item.quantity > 0 ? 'card-cont' : 'card-cont grey'} onClick={this.state.item.quantity > 0 ? null : () => window.location.href = "/Category/" + this.state.item.category + "/" + this.state.item.subCategory + "/" + this.state.item.id}>
-						{
-							!this.state.item.quantity > 0
-								?
-								<p className="outOfStock">OUT OF STOCK</p>
-								:
-								null
-						}
+					<div
+						className={this.state.item.quantity > 0 ? "card-cont" : "card-cont grey"}
+						onClick={
+							this.state.item.quantity > 0
+								? null
+								: () => (window.location.href = "/Category/" + this.state.item.category + "/" + this.state.item.subCategory + "/" + this.state.item.id)
+						}>
+						{!this.state.item.quantity > 0 ? <p className='outOfStock'>OUT OF STOCK</p> : null}
 						{this.state.loading ? (
 							<Lottie options={{ animationData: Loading }} width={100} height={100} position={"absolute"} top={0} />
 						) : (
-								<>
-									<div className='img-container'>
-										<a
-											style={{ width: "100%", height: "100%" }}
-											href={"/Category/" + this.state.item.category + "/" + this.state.item.subCategory + "/" + this.state.item.id}>
-											<img src={this.state.item.images[0]} alt='Bag-Icon' />
-										</a>
-									</div>
-									{this.state.currentUser && this.state.currentUser.email ? (
-										<>
-											{this.state.isWished ? (
-												<div className='circle' onClick={() => this.removeFromWishlist(this.state.item.id)}>
-													<i className='red fa fa-heart'></i>
-												</div>
-											) : (
-													<div className='circle' onClick={() => this.addToWishlist(this.state.item.id)}>
-														<i className='fa fa-heart'></i>
-													</div>
-												)}
-										</>
-									) : null}
-
+							<>
+								<div className='img-container'>
 									<a
-										href={"/Category/" + this.state.item.category + "/" + this.state.item.subCategory + "/" + this.state.item.id}
-										className='short-description'>
-										<p className='item-title'>{this.state.item.title}</p>
-										<p className='item-price'>&#8377;{this.state.item.sp}</p>
-										<div className='price-flex'>
-											<p className='price-line-through'>&#8377;{this.state.item.cp}</p>
-											<p className='discount'>{100 - percent}% off</p>
-										</div>
+										style={{ width: "100%", height: "100%" }}
+										href={"/Category/" + this.state.item.category + "/" + this.state.item.subCategory + "/" + this.state.item.id}>
+										<img src={this.state.item.images[0]} alt='Bag-Icon' />
 									</a>
-								</>
-							)}
+								</div>
+								{this.state.currentUser && this.state.currentUser.email ? (
+									<>
+										{this.state.isWished ? (
+											<div className='circle' onClick={() => this.removeFromWishlist(this.state.item.id)}>
+												<i className='red fa fa-heart'></i>
+											</div>
+										) : (
+											<div className='circle' onClick={() => this.addToWishlist(this.state.item.id)}>
+												<i className='fa fa-heart'></i>
+											</div>
+										)}
+									</>
+								) : null}
+
+								<a href={"/Category/" + this.state.item.category + "/" + this.state.item.subCategory + "/" + this.state.item.id} className='short-description'>
+									<p className='item-title'>{this.state.item.title}</p>
+									<p className='item-price'>&#8377;{this.state.item.sp}</p>
+									<div className='price-flex'>
+										<p className='price-line-through'>&#8377;{this.state.item.cp}</p>
+										<p className='discount'>{100 - percent}% off</p>
+									</div>
+								</a>
+							</>
+						)}
 					</div>
 				) : null}
 			</>

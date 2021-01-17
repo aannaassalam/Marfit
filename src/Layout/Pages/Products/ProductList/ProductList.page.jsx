@@ -1,10 +1,8 @@
 import React from "react";
 import { motion } from "framer-motion";
 import "./ProductList.style.css";
-
-import filter from "./assets/filter.png";
 import Filter from "../../../Components/Filter/Filter.component";
-import Card from "../../../Components/Card/Card";
+import Card from "../../../Components/Card2/Card";
 import firebase from "firebase";
 import Lottie from "lottie-react-web";
 import empty from "../629-empty-box.json";
@@ -14,598 +12,619 @@ import loading from "../../../../assets/loading.json";
 import toaster from "toasted-notes";
 
 const pageVariants = {
-  initial: {
-    opacity: 0,
-    x: "-100vw",
-  },
-  in: {
-    opacity: 1,
-    x: 0,
-  },
-  out: {
-    opacity: 0,
-    x: 0,
-  },
+	initial: {
+		opacity: 0,
+		x: "-100vw",
+	},
+	in: {
+		opacity: 1,
+		x: 0,
+	},
+	out: {
+		opacity: 0,
+		x: 0,
+	},
 };
 
 const pageTransition = {
-  type: "spring",
-  damping: 20,
-  stiffness: 100,
+	type: "spring",
+	damping: 20,
+	stiffness: 100,
 };
 
 class ProductList extends React.Component {
-  constructor() {
-    super();
-    this.state = {
-      productList: [],
-      category: [],
-      filterProductList: [],
-      type: [],
-      outStock: false,
-      loading: true,
-      month: 3,
-      min: 0,
-      max: 0,
-      filter: false,
-      productLoading: false,
-      colors: [],
-      presentColor: ""
-    };
-  }
+	constructor() {
+		super();
+		this.state = {
+			productList: [],
+			categories: [],
+			filterProductList: [],
+			type: [],
+			outStock: true,
+			loading: true,
+			month: 3,
+			min: 0,
+			max: 0,
+			filter: false,
+			productLoading: false,
+			colors: [],
+			presentColor: "All",
+			subcategory: "All",
+			category: "All",
+			sortType: "Relevance",
+		};
+	}
 
-  componentDidMount() {
+	componentDidMount() {
+		this.handleInit();
+		firebase
+			.firestore()
+			.collection("settings")
+			.onSnapshot((snap) => {
+				snap.docChanges().forEach((change) => {
+					var categories = change.doc.data().categories;
+					var c, s;
+					categories.map((category) => {
+						if (category.name === this.props.match.params.id1) {
+							c = category;
+							category.subcategories.map((sub) => {
+								if (sub.name === this.props.match.params.id2) {
+									s = sub;
+								}
+							});
+						}
+					});
+					this.setState({
+						categories: categories,
+						category: c,
+						subcategory: s,
+					});
+				});
+			});
+	}
 
-    this.handleInit();
+	handleInit = () => {
+		var find1 = this.props.match.params.id1;
+		var find2 = this.props.match.params.id2;
+		firebase
+			.firestore()
+			.collection("products")
+			.orderBy("date", "desc")
+			.get()
+			.then((snap) => {
+				var productList = [];
+				var min = 100;
+				var max = 0;
+				var colors = [];
+				snap.forEach((doc) => {
+					var product = doc.data();
+					product.id = doc.id;
+					productList.push(product);
+					if (!colors.includes(doc.data().color)) {
+						colors.push(doc.data().color);
+					}
+				});
+				productList.map((product) => {
+					if (min > product.sp) {
+						min = product.sp;
+					}
+					if (max < product.sp) {
+						max = product.sp;
+					}
+				});
+				this.setState(
+					{
+						productList: productList,
+						filterProductList: productList,
+						colors: colors,
+						min: min,
+						max: max,
+						loading: false,
+					},
+					() => {
+						this.handleFilterIt();
+					}
+				);
+			});
+	};
 
-    firebase
-      .firestore()
-      .collection("settings")
-      .onSnapshot((snap) => {
-        snap.docChanges().forEach((change) => {
-          var categories = change.doc.data().categories;
-          categories.map((cat) => {
-            if (
-              cat.name.toLowerCase() ===
-              this.props.match.params.id1.toLowerCase()
-            ) {
-              this.setState(
-                {
-                  category: cat,
-                },
-                () => { }
-              );
-            }
-          });
-        });
-      });
-  }
+	handleMonths = (e) => {
+		var products = this.state.productList;
+		var newproducts = [];
+		products.map((product) => {
+			if (product.max >= e) {
+				newproducts.push(product);
+			}
+		});
+		this.setState({
+			filterProductList: newproducts,
+			month: e,
+		});
+	};
 
-  handleInit = () => {
-    firebase
-      .firestore()
-      .collection("products")
-      .get().then((snap) => {
-        var productList = [];
-        var min = 100;
-        var max = 0;
-        var colors = [];
-        snap.forEach((doc) => {
-          if (
-            this.props.match.params.id1 === doc.data().category &&
-            this.props.match.params.id2 === doc.data().subCategory
-          ) {
-            var product = doc.data();
-            product.id = doc.id;
-            productList.push(product);
-            if (!colors.includes(doc.data().color)) {
-              colors.push(doc.data().color);
-            }
-          }
-        });
-        productList.map(product => {
-          if (min > product.sp) {
-            min = product.sp
-          }
-          if (max < product.sp) {
-            max = product.sp
-          }
-        })
-        this.setState(
-          {
-            productList: productList,
-            filterProductList: productList,
-            colors: colors,
-            min: min,
-            max: max,
-            loading: false
-          },
-          () => {
-            this.handleProductInStock();
-          }
-        );
+	handleProductAddType = (e) => {
+		var products = this.state.productList;
+		var type = this.state.type;
+		type.push(e);
+		this.setState(
+			{
+				type: type,
+			},
+			() => {
+				var newproducts = [];
+				products.map((product) => {
+					if (this.state.type.includes(product.tag)) {
+						newproducts.push(product);
+					}
+				});
+				this.setState({
+					filterProductList: newproducts,
+				});
+			}
+		);
+	};
 
-      });
-  }
+	handleProductRemoveType = (e) => {
+		var products = this.state.productList;
+		var type = this.state.type;
+		var type2 = [];
+		type.map((t) => {
+			if (t !== e) {
+				type2.push(t);
+			}
+		});
+		this.setState(
+			{
+				type: type2,
+			},
+			() => {
+				if (this.state.type.length !== 0) {
+					var newproducts = [];
+					products.map((product) => {
+						if (this.state.type.includes(product.tag)) {
+							newproducts.push(product);
+						}
+					});
+					this.setState({
+						filterProductList: newproducts,
+					});
+				} else {
+					this.setState({
+						filterProductList: products,
+					});
+				}
+			}
+		);
+	};
 
-  handleMonths = (e) => {
-    var products = this.state.productList;
-    var newproducts = [];
-    products.map((product) => {
-      if (product.max >= e) {
-        newproducts.push(product);
-      }
-    });
-    this.setState({
-      filterProductList: newproducts,
-      month: e,
-    });
-  };
+	handleShowFilter = () => {
+		this.setState({
+			filter: !this.state.filter,
+		});
+	};
 
-  handleProductAddType = (e) => {
-    var products = this.state.productList;
-    var type = this.state.type;
-    type.push(e);
-    this.setState(
-      {
-        type: type,
-      },
-      () => {
-        var newproducts = [];
-        products.map((product) => {
-          if (this.state.type.includes(product.tag)) {
-            newproducts.push(product);
-          }
-        });
-        this.setState({
-          filterProductList: newproducts,
-        });
-      }
-    );
-  };
+	handleRentRange = (min, max) => {
+		this.setState(
+			{
+				min,
+				max,
+			},
+			() => {
+				this.handleFilterIt();
+			}
+		);
+	};
 
-  handleProductRemoveType = (e) => {
-    var products = this.state.productList;
-    var type = this.state.type;
-    var type2 = [];
-    type.map((t) => {
-      if (t !== e) {
-        type2.push(t);
-      }
-    });
-    this.setState(
-      {
-        type: type2,
-      },
-      () => {
-        if (this.state.type.length !== 0) {
-          var newproducts = [];
-          products.map((product) => {
-            if (this.state.type.includes(product.tag)) {
-              newproducts.push(product);
-            }
-          });
-          this.setState({
-            filterProductList: newproducts,
-          });
-        } else {
-          this.setState({
-            filterProductList: products,
-          });
-        }
-      }
-    );
-  };
+	handleProductOutStock = () => {
+		this.setState(
+			{
+				outStock: !this.state.outStock,
+			},
+			() => {
+				this.handleFilterIt();
+			}
+		);
+	};
 
-  handleShowFilter = () => {
-    this.setState({
-      filter: !this.state.filter
-    })
-  }
+	handleReset = () => {
+		var c, s;
+		this.state.categories.map((category) => {
+			if (category.name === this.props.match.params.id1) {
+				c = category;
+				category.subcategories.map((sub) => {
+					if (sub.name === this.props.match.params.id2) {
+						s = sub;
+					}
+				});
+			}
+		});
+		this.setState({
+			filterProductList: this.state.productList,
+			outStock: true,
+			type: [],
+			month: 3,
+			min: 100,
+			max: 5000,
+			presentColor: "All",
+			category: c,
+			subcategory: s,
+		});
+	};
 
-  handleRentRange = (min, max) => {
-    var products = this.state.productList;
-    var newproducts = [];
-    products.map((product) => {
-      if (product.sp >= min && product.sp <= max) {
-        newproducts.push(product);
-      }
-    });
-    this.setState({
-      productLoading: true,
-      filterProductList: [],
-      min: min,
-      max: max,
-    },
-      () => {
-        setTimeout(() => {
-          this.setState({
-            filterProductList: newproducts,
-            productLoading: false,
-          }, () => {
-            // if (this.state.outStock) {
-            //   this.handleProductOutStock();
-            // } else {
-            //   this.handleProductInStock();
-            // }
-          });
-        }, 500)
-      })
-  };
+	handleColorFilter = (color) => {
+		this.setState(
+			{
+				presentColor: color,
+			},
+			() => {
+				this.handleFilterIt();
+			}
+		);
+	};
 
-  handleProductOutStock = () => {
-    var products = this.state.productList;
-    var newproducts = [];
-    products.forEach((product) => {
-      if (product.quantity === 0) {
-        newproducts.push(product);
-      }
-    });
-    this.setState({
-      filterProductList: [],
-      productLoading: true,
-    }, () => {
-      setTimeout(() => {
-        this.setState({
-          filterProductList: newproducts,
-          outStock: true,
-          productLoading: false
-        });
-      }, 500)
-    })
-  };
+	handleCategory = (e) => {
+		this.setState(
+			{
+				category: e,
+				subcategory: "All",
+			},
+			() => {
+				this.handleFilterIt();
+			}
+		);
+	};
 
-  handleProductInStock = () => {
-    var products = this.state.productList;
-    var newproducts = [];
-    products.forEach((product) => {
-      if (product.quantity > 0) {
-        newproducts.push(product);
-      }
-    });
-    this.setState({
-      filterProductList: [],
-      productLoading: true
-    }, () => {
-      setTimeout(() => {
-        this.setState({
-          filterProductList: newproducts,
-          outStock: false,
-          productLoading: false
-        });
-      }, 500)
-    })
-  };
+	handleSubCategory = (e) => {
+		this.setState(
+			{
+				subcategory: e,
+			},
+			() => {
+				this.handleFilterIt();
+			}
+		);
+	};
 
-  handleReset = () => {
-    this.setState({
-      filterProductList: this.state.productList,
-      outStock: false,
-      type: [],
-      month: 3,
-      min: 100,
-      max: 5000,
-      presentColor: ""
-    });
-  };
+	handleSort = (e) => {
+		this.setState(
+			{
+				sortType: e,
+			},
+			() => {
+				this.handleFilterIt();
+			}
+		);
+	};
 
-  handleColorFilter = (color) => {
-    this.setState({
-      filterProductList: []
-    }, () => {
-      var products = [];
-      this.state.productList.forEach(product => {
-        if (product.color === color) {
-          products.push(product);
-        }
-      })
-      this.setState({
-        filterProductList: products,
-        presentColor: color
-      })
-    })
-  }
+	handleFilterIt = () => {
+		if (this.state.category !== "All") {
+			if (this.state.subcategory !== "All") {
+				var products = this.state.productList;
+				var newproducts = [];
+				products.forEach((product) => {
+					if (
+						product.category === this.state.category.name &&
+						product.subCategory === this.state.subcategory.name &&
+						product.sp >= this.state.min &&
+						product.sp <= this.state.max
+					) {
+						if (this.state.presentColor !== "All") {
+							if (product.color === this.state.presentColor) {
+								if (this.state.outStock === false) {
+									if (product.quantity > 0) {
+										newproducts.push(product);
+									}
+								} else {
+									newproducts.push(product);
+								}
+							}
+						} else {
+							if (this.state.outStock === false) {
+								if (product.quantity > 0) {
+									newproducts.push(product);
+								}
+							} else {
+								newproducts.push(product);
+							}
+						}
+					}
+				});
+				this.setState(
+					{
+						filterProductList: [],
+						productLoading: true,
+					},
+					() => {
+						this.handleSortIt(newproducts);
+					}
+				);
+			} else {
+				var products = this.state.productList;
+				var newproducts = [];
+				products.forEach((product) => {
+					if (product.category === this.state.category.name && product.sp >= this.state.min && product.sp <= this.state.max) {
+						if (this.state.presentColor !== "All") {
+							if (product.color === this.state.presentColor) {
+								if (this.state.outStock === false) {
+									if (product.quantity > 0) {
+										newproducts.push(product);
+									}
+								} else {
+									newproducts.push(product);
+								}
+							}
+						} else {
+							if (this.state.outStock === false) {
+								if (product.quantity > 0) {
+									newproducts.push(product);
+								}
+							} else {
+								newproducts.push(product);
+							}
+						}
+					}
+				});
+				this.setState(
+					{
+						filterProductList: [],
+						productLoading: true,
+					},
+					() => {
+						this.handleSortIt(newproducts);
+					}
+				);
+			}
+		} else {
+			var products = this.state.productList;
+			var newproducts = [];
+			products.map((product) => {
+				if (product.sp >= this.state.min && product.sp <= this.state.max) {
+					if (this.state.presentColor !== "All") {
+						if (product.color === this.state.presentColor) {
+							if (this.state.outStock === false) {
+								if (product.quantity > 0) {
+									newproducts.push(product);
+								}
+							} else {
+								newproducts.push(product);
+							}
+						}
+					} else {
+						if (this.state.outStock === false) {
+							if (product.quantity > 0) {
+								newproducts.push(product);
+							}
+						} else {
+							newproducts.push(product);
+						}
+					}
+				}
+			});
+			this.setState(
+				{
+					filterProductList: [],
+					productLoading: true,
+				},
+				() => {
+					this.handleSortIt(newproducts);
+				}
+			);
+		}
+	};
 
-  addToWishlist = (e) => {
-    if (firebase.auth().currentUser) {
-      firebase
-        .firestore()
-        .collection("users")
-        .where("email", "==", firebase.auth().currentUser.email)
-        .get()
-        .then((snap) => {
-          snap.forEach((doc) => {
-            var wishlist = doc.data().wishlist;
-            var found = false;
-            wishlist.map((item) => {
-              if (item.email === e.email && item.id === e.id) {
-                found = true;
-              }
-            });
-            if (found === false) {
-              e["isWished"] = true;
-              wishlist.push(e);
-              firebase
-                .firestore()
-                .collection("users")
-                .doc(doc.id)
-                .update({
-                  wishlist: wishlist,
-                })
-                .then(() => {
-                  toaster.notify("Added to your wishlist");
-                });
-            } else {
-              toaster.notify("Item already exists in your wishlist");
-            }
-          });
-        });
-    } else {
-      toaster.notify("Please Log in");
-    }
-  };
+	handleSortIt = (e) => {
+		var products = e;
+		if (this.state.sortType === "lth") {
+			products.sort((a, b) => (a.sp > b.sp ? 1 : -1));
+			this.setState({
+				filterProductList: products,
+				productLoading: false,
+			});
+		} else if (this.state.sortType === "htl") {
+			products.sort((a, b) => (a.sp < b.sp ? 1 : -1));
+			this.setState({
+				filterProductList: products,
+				productLoading: false,
+			});
+		} else {
+			this.setState({
+				filterProductList: products,
+				productLoading: false,
+			});
+		}
+	};
 
-  removeFromWishlist = (e) => {
-    firebase
-      .firestore()
-      .collection("users")
-      .where("email", "==", firebase.auth().currentUser.email)
-      .get()
-      .then((snap) => {
-        snap.forEach((doc) => {
-          var wishlist = doc.data().wishlist;
-          var newwishlist = [];
-          wishlist.map((item) => {
-            if (item.email === e.email && item.id === e.id) {
-            } else {
-              newwishlist.push(item);
-            }
-          });
-          firebase
-            .firestore()
-            .collection("users")
-            .doc(doc.id)
-            .update({
-              wishlist: newwishlist,
-            })
-            .then(() => {
-              toaster.notify(" Item removed from your wishlist");
-            });
-        });
-      });
-  };
+	addToWishlist = (e) => {
+		if (firebase.auth().currentUser) {
+			firebase
+				.firestore()
+				.collection("users")
+				.where("email", "==", firebase.auth().currentUser.email)
+				.get()
+				.then((snap) => {
+					snap.forEach((doc) => {
+						var wishlist = doc.data().wishlist;
+						var found = false;
+						wishlist.map((item) => {
+							if (item.email === e.email && item.id === e.id) {
+								found = true;
+							}
+						});
+						if (found === false) {
+							e["isWished"] = true;
+							wishlist.push(e);
+							firebase
+								.firestore()
+								.collection("users")
+								.doc(doc.id)
+								.update({
+									wishlist: wishlist,
+								})
+								.then(() => {
+									toaster.notify("Added to your wishlist");
+								});
+						} else {
+							toaster.notify("Item already exists in your wishlist");
+						}
+					});
+				});
+		} else {
+			toaster.notify("Please Log in");
+		}
+	};
 
-  render() {
-    return (
-      <>
-        {this.state.loading ? (
-          <Loader />
-        ) : (
-            <motion.div
-              initial="initial"
-              animate="in"
-              exit="out"
-              variants={pageVariants}
-              transition={pageTransition}
-              className="productlist-container"
-            >
-              <div className="categorylist-breadcrumb">
-                <div className="breadcrumb-menu">
-                  <div className="bd-menu-list">
-                    <a href="/" style={{ cursor: "pointer" }}>
-                      Home
-                    </a>
-                    <a>
-                      <i className="fas fa-chevron-right"></i>
-                    </a>
-                    <a
-                      href={"/Category/" + this.props.match.params.id1}
-                      style={{ cursor: "pointer" }}
-                    >
-                      {this.props.match.params.id1}
-                    </a>
-                    <a>
-                      <i className="fas fa-chevron-right"></i>
-                    </a>
-                    <a
-                      href={
-                        "/Category/" +
-                        this.props.match.params.id1 +
-                        "/" +
-                        this.props.match.params.id2
-                      }
-                      style={{ cursor: "pointer" }}
-                    >
-                      {this.props.match.params.id2}
-                    </a>
-                  </div>
+	removeFromWishlist = (e) => {
+		firebase
+			.firestore()
+			.collection("users")
+			.where("email", "==", firebase.auth().currentUser.email)
+			.get()
+			.then((snap) => {
+				snap.forEach((doc) => {
+					var wishlist = doc.data().wishlist;
+					var newwishlist = [];
+					wishlist.map((item) => {
+						if (item.email === e.email && item.id === e.id) {
+						} else {
+							newwishlist.push(item);
+						}
+					});
+					firebase
+						.firestore()
+						.collection("users")
+						.doc(doc.id)
+						.update({
+							wishlist: newwishlist,
+						})
+						.then(() => {
+							toaster.notify(" Item removed from your wishlist");
+						});
+				});
+			});
+	};
 
-                  <div className="bd-menu-stats">
-                    {this.props.match.params.id2 ? (
-                      <p>
-                        We have total {this.state.productList.length} products
-                        under <b>{this.props.match.params.id2}</b> category
-                      </p>
-                    ) : (
-                        <p>
-                          We have total {this.state.productList.length} products
-                        under <b>{this.props.match.params.id1}</b> category
-                        </p>
-                      )}
-                  </div>
-                </div>
-              </div>
-              {/* filter header */}
-              {this.state.productList.length === 0 ? (
-                <div
-                  style={{
-                    width: "100%",
-                    height: "85vh",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    flexDirection: "column",
-                  }}
-                >
-                  <Lottie
-                    options={{ animationData: empty }}
-                    width={200}
-                    height={200}
-                  />
-                  <p
-                    style={{
-                      fontSize: "16px",
-                      fontWeight: "bold",
-                      color: "#313131",
-                    }}
-                  >
-                    Sorry! we could not find any items
-                  </p>
-                </div>
-              ) : (
-                  <>
-                    <div className="filter-header">
-                      <div className="left">
-                        <div className="filter">
-                          <img src={filter} alt="filter-logo" />
-                          <p>Filters</p>
-                        </div>
-                        <div className="filter-inPhone" onClick={this.handleShowFilter}>
-                          <img src={filter} alt="filter-logo" />
-                          <p>Filter</p>
-                        </div>
-                        <div className="reset">
-                          <button onClick={this.handleReset}>Reset</button>
-                        </div>
-                      </div>
+	render() {
+		return (
+			<>
+				{this.state.loading ? (
+					<Loader />
+				) : (
+					<motion.div initial='initial' animate='in' exit='out' variants={pageVariants} transition={pageTransition} className='productlist-container'>
+						<div className='categorylist-breadcrumb'>
+							<div className='breadcrumb-menu'>
+								<div className='bd-menu-list'>
+									<a href='/' style={{ cursor: "pointer" }}>
+										Home
+									</a>
+									<a>
+										<i className='fas fa-chevron-right'></i>
+									</a>
+									<a href={"/Category/" + this.props.match.params.id1} style={{ cursor: "pointer" }}>
+										{this.props.match.params.id1}
+									</a>
+									<a>
+										<i className='fas fa-chevron-right'></i>
+									</a>
+									<a href={"/Category/" + this.props.match.params.id1 + "/" + this.props.match.params.id2} style={{ cursor: "pointer" }}>
+										{this.props.match.params.id2}
+									</a>
+								</div>
 
-                      {/* Tags */}
-                      <div className="right"></div>
-                    </div>
+								<div className='bd-menu-stats'>
+									{this.props.match.params.id2 ? (
+										<p>
+											We have total {this.state.filterProductList.length} products under <b>{this.props.match.params.id2}</b> sub-category
+										</p>
+									) : (
+										<p>
+											We have total {this.state.filterProductList.length} products under <b>{this.props.match.params.id1}</b> category
+										</p>
+									)}
+								</div>
+							</div>
+						</div>
+						{/* Product List catalogue */}
+						<div className='catalogue'>
+							<div className='filter'>
+								<Filter
+									category={this.state.category}
+									categories={this.state.categories}
+									subcategory={this.state.subcategory}
+									handleRentRange={(min, max) => this.handleRentRange(min, max)}
+									handleProductOutStock={this.handleProductOutStock}
+									sortType={this.state.sortType}
+									outStock={this.state.outStock}
+									min={this.state.min}
+									max={this.state.max}
+									month={this.state.month}
+									colors={this.state.colors}
+									presentColor={this.state.presentColor}
+									handleColorFilter={this.handleColorFilter}
+									handleCategory={this.handleCategory}
+									handleSubCategory={this.handleSubCategory}
+									handleReset={this.handleReset}
+									handleSort={this.handleSort}
+								/>
+							</div>
 
-                    {/* Product List catalogue */}
-                    <div className="catalogue">
-                      <div className="filter">
-                        <Filter
-                          handleMonths={(e) => this.handleMonths(e)}
-                          category={this.state.category}
-                          subCat={this.props.match.params.id2}
-                          type={this.state.type}
-                          handleProductAddType={(e) => this.handleProductAddType(e)}
-                          handleProductRemoveType={(e) =>
-                            this.handleProductRemoveType(e)
-                          }
-                          handleRentRange={(min, max) =>
-                            this.handleRentRange(min, max)
-                          }
-                          handleProductInStock={this.handleProductInStock}
-                          handleProductOutStock={this.handleProductOutStock}
-                          outStock={this.state.outStock}
-                          min={this.state.min}
-                          max={this.state.max}
-                          month={this.state.month}
-                          colors={this.state.colors}
-                          presentColor={this.state.presentColor}
-                          handleColorFilter={(color) => this.handleColorFilter(color)}
-                        />
-                      </div>
-                      <div className={this.state.filter ? "mobile-filter-active" : "mobile-filter"}>
-                        <Filter
-                          handleMonths={(e) => this.handleMonths(e)}
-                          category={this.state.category}
-                          subCat={this.props.match.params.id2}
-                          type={this.state.type}
-                          handleProductAddType={(e) => this.handleProductAddType(e)}
-                          handleProductRemoveType={(e) =>
-                            this.handleProductRemoveType(e)
-                          }
-                          handleRentRange={(min, max) =>
-                            this.handleRentRange(min, max)
-                          }
-                          handleProductInStock={this.handleProductInStock}
-                          handleProductOutStock={this.handleProductOutStock}
-                          outStock={this.state.outStock}
-                          min={this.state.min}
-                          max={this.state.max}
-                          month={this.state.month}
-                          colors={this.state.colors}
-                          presentColor={this.state.presentColor}
-                        />
-                      </div>
-
-                      <div className="card-list-container">
-                        {
-                          this.state.productLoading ?
-                            <div style={{
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              width: "100%",
-                              height: "100%"
-                            }}>
-                              <Lottie
-                                options={{ animationData: circular }}
-                                width={100}
-                                height={100}
-                              />
-                            </div>
-                            :
-                            <div className="card-list">
-                              {this.state.filterProductList.length > 0 ? (
-                                <>
-                                  {this.state.filterProductList.map((item, index) => {
-                                    return (
-                                      <Card
-                                        id1={this.props.match.params.id1}
-                                        id2={this.props.match.params.id2}
-                                        item={item}
-                                        addToWishlist={(e) => this.addToWishlist(e)}
-                                        removeFromWishlist={(e) =>
-                                          this.removeFromWishlist(e)
-                                        }
-                                        key={index}
-                                      />
-                                    );
-                                  })}
-                                </>
-                              ) : (
-                                  <div
-                                    style={{
-                                      width: "100%",
-                                      height: "85vh",
-                                      display: "flex",
-                                      alignItems: "center",
-                                      justifyContent: "center",
-                                      flexDirection: "column",
-                                    }}
-                                  >
-                                    <Lottie
-                                      options={{ animationData: empty }}
-                                      width={200}
-                                      height={200}
-                                    />
-                                    <p
-                                      style={{
-                                        fontSize: "16px",
-                                        fontWeight: "bold",
-                                        color: "#313131",
-                                      }}
-                                    >
-                                      Sorry! we could not find any items
-                            </p>
-                                  </div>
-                                )}
-                            </div>
-                        }
-                      </div>
-                    </div>
-                  </>
-                )}
-            </motion.div>
-          )}
-      </>
-    );
-  }
+							<div className='card-list-container'>
+								{this.state.productLoading ? (
+									<div
+										style={{
+											display: "flex",
+											alignItems: "center",
+											justifyContent: "center",
+											width: "100%",
+											height: "100%",
+										}}>
+										<Lottie options={{ animationData: circular }} width={100} height={100} />
+									</div>
+								) : (
+									<div className='card-list'>
+										{this.state.filterProductList.length > 0 ? (
+											<>
+												{this.state.filterProductList.map((item, index) => {
+													console.log(item.sp);
+													return (
+														<Card
+															item={item}
+															addToWishlist={(e) => this.addToWishlist(e)}
+															removeFromWishlist={(e) => this.removeFromWishlist(e)}
+															key={index}
+														/>
+													);
+												})}
+											</>
+										) : (
+											<div
+												style={{
+													width: "100%",
+													height: "85vh",
+													display: "flex",
+													alignItems: "center",
+													justifyContent: "center",
+													flexDirection: "column",
+												}}>
+												<Lottie options={{ animationData: empty }} width={200} height={200} />
+												<p
+													style={{
+														fontSize: "16px",
+														fontWeight: "bold",
+														color: "#313131",
+													}}>
+													Sorry! we could not find any items
+												</p>
+											</div>
+										)}
+									</div>
+								)}
+							</div>
+						</div>
+					</motion.div>
+				)}
+			</>
+		);
+	}
 }
 
 export default ProductList;

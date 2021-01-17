@@ -98,19 +98,6 @@ export default class Home extends React.Component {
 							})}
 					</motion.div>
 				)}
-
-				{/* 
-        <Slider
-          data={this.state.data}
-          title={this.state.sliderTitle}
-          view={this.state.viewAll}
-        />
-        <Slider
-          data={this.state.data}
-          title={this.state.sliderTitle}
-          view={this.state.viewAll}
-        /> */}
-				{/* <Toaster.success text="error"></Toaster.success> */}
 			</div>
 		);
 	}

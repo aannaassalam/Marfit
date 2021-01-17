@@ -3,11 +3,13 @@
 	background-color: #fff;
 	padding: 10px 15px;
 	padding-bottom: 0;
-	box-shadow: 4px 4px 12px darkgray;
-	border-bottom: 1px solid lightgray;
+	box-shadow: 2px 2px 6px darkgray;
 	/* box-shadow: 0 2px 6px 0 #dee0e2; */
-	margin: 1rem;
+	box-shadow: 0 2px 6px 0 #dee0e2;
+	margin: 1rem auto;
 	border-radius: 3px;
+	max-width:1700px;
+	width: 98%;
 }
 
 .card .card-title {

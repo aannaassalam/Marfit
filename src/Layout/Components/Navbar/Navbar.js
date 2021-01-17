@@ -1,19 +1,12 @@
 import React from "react";
 import "./Navbar.css";
 import logo from "../../../assets/image_1.png";
-import logo2 from "../../../assets/image_2.png";
 import title from "../../../assets/marfit-label.png";
-import title2 from "../../../assets/marfit-label2.png";
 import Cart from "../../Pages/Cart/Cart";
 import Login from "../Login/Login";
 import HamburgerMenu from "../HambugerMenu/HamburgerMenu";
 import firebase from "../../../config/firebaseConfig";
-import loading from "../../../assets/loading.json";
 import Loader from "../Loader/Loader";
-import Lottie from "lottie-react-web";
-import { firestore } from "firebase";
-import { Thumbs } from "swiper";
-import Axios from "axios";
 
 export default class Navbar extends React.Component {
 	constructor(props) {
@@ -71,13 +64,6 @@ export default class Navbar extends React.Component {
 			}
 		});
 		this.child.current.handleInit();
-		var input = document.getElementById("search");
-		input.addEventListener("keyup", function (event) {
-			if (event.keyCode === 13) {
-				event.preventDefault();
-				document.getElementById("myBtn").click();
-			}
-		});
 	};
 
 	handleScroll = () => {
@@ -113,7 +99,6 @@ export default class Navbar extends React.Component {
 		console.log(e.target.value);
 		this.setState({
 			[e.target.name]: e.target.value,
-			searchedItems: [],
 		});
 	};
 
@@ -153,6 +138,18 @@ export default class Navbar extends React.Component {
 			});
 	};
 
+	handleSearchIt = () => {
+		if (this.state.search.replace(/ /g, "").length > 2) {
+			window.location.href = "/Search/" + this.state.search;
+		}
+	};
+
+	handleKeyPress = (e) => {
+		if (e.key === "Enter") {
+			this.handleSearchIt();
+		}
+	};
+
 	render() {
 		return (
 			<nav className='navbar'>
@@ -173,10 +170,11 @@ export default class Navbar extends React.Component {
 										placeholder='What are you looking for ?'
 										onChange={this.handleSearch}
 										value={this.state.search}
+										onKeyPress={this.handleKeyPress}
 									/>
 								</div>
 								<button>
-									<i className='fa fa-search'></i>
+									<i className='fa fa-search' onClick={this.handleSearchIt}></i>
 								</button>
 							</div>
 						</div>
@@ -202,9 +200,10 @@ export default class Navbar extends React.Component {
 										placeholder='What are you looking for ?'
 										onChange={this.handleSearch}
 										value={this.state.search}
+										onKeyPress={this.handleKeyPress}
 									/>
 								</div>
-								<button id='search-btn'>
+								<button id='search-btn' onClick={this.handleSearchIt}>
 									<i className='fa fa-search'></i>
 								</button>
 								<div className={this.state.search.length > 0 ? "searchResult" : null}>
@@ -255,31 +254,19 @@ export default class Navbar extends React.Component {
 													</a>
 													{/* <div className="arrow-up"></div> */}
 													<div className='options'>
-														<a
-															href='/Dashboard/Profile'
-															className='option-links'
-															style={{ cursor: "pointer", userSelect: "none" }}>
+														<a href='/Dashboard/Profile' className='option-links' style={{ cursor: "pointer", userSelect: "none" }}>
 															<i className='fas fa-user'></i>
 															<p>Profile</p>
 														</a>
-														<a
-															href='/Dashboard/Wishlist'
-															className='option-links'
-															style={{ cursor: "pointer", userSelect: "none" }}>
+														<a href='/Dashboard/Wishlist' className='option-links' style={{ cursor: "pointer", userSelect: "none" }}>
 															<i className='fa fa-heart'></i>
 															<p>Wishlist</p>
 														</a>
-														<a
-															href='/Dashboard/Orders'
-															className='option-links'
-															style={{ cursor: "pointer", userSelect: "none" }}>
+														<a href='/Dashboard/Orders' className='option-links' style={{ cursor: "pointer", userSelect: "none" }}>
 															<i className='fas fa-shopping-bag'></i>
 															<p>Orders</p>
 														</a>
-														<a
-															className='option-links'
-															onClick={this.handleLogout}
-															style={{ cursor: "pointer", userSelect: "none" }}>
+														<a className='option-links' onClick={this.handleLogout} style={{ cursor: "pointer", userSelect: "none" }}>
 															<i className='fas fa-sign-out-alt'></i>
 															<p>Logout</p>
 														</a>
@@ -287,11 +274,7 @@ export default class Navbar extends React.Component {
 												</div>
 											</>
 										) : (
-											<a
-												style={{ cursor: "pointer", userSelect: "none" }}
-												className='login-signup'
-												onClick={this.handleLogin}
-												id='userLogin'>
+											<a style={{ cursor: "pointer", userSelect: "none" }} className='login-signup' onClick={this.handleLogin} id='userLogin'>
 												<i className='fas fa-user'></i>
 												<p>LOGIN/SIGN UP</p>
 											</a>
@@ -339,10 +322,11 @@ export default class Navbar extends React.Component {
 									placeholder='What are you looking for ?'
 									onChange={this.handleSearch}
 									value={this.state.search}
+									onKeyPress={this.handleKeyPress}
 								/>
 							</div>
 							<button>
-								<i className='fa fa-search'></i>
+								<i className='fa fa-search' onClick={this.handleSearchIt}></i>
 							</button>
 						</div>
 						<div className={this.state.searchbtn ? "third-container-none" : "third-container"}>
@@ -375,31 +359,19 @@ export default class Navbar extends React.Component {
 												</a>
 												{/* <div className="arrow-up"></div> */}
 												<div className='options'>
-													<a
-														href='/Dashboard/Profile'
-														className='option-links'
-														style={{ cursor: "pointer", userSelect: "none" }}>
+													<a href='/Dashboard/Profile' className='option-links' style={{ cursor: "pointer", userSelect: "none" }}>
 														<i className='fas fa-user'></i>
 														<p>Profile</p>
 													</a>
-													<a
-														href='/Dashboard/Wishlist'
-														className='option-links'
-														style={{ cursor: "pointer", userSelect: "none" }}>
+													<a href='/Dashboard/Wishlist' className='option-links' style={{ cursor: "pointer", userSelect: "none" }}>
 														<i className='fa fa-heart'></i>
 														<p>Wishlist</p>
 													</a>
-													<a
-														href='/Dashboard/Orders'
-														className='option-links'
-														style={{ cursor: "pointer", userSelect: "none" }}>
+													<a href='/Dashboard/Orders' className='option-links' style={{ cursor: "pointer", userSelect: "none" }}>
 														<i className='fas fa-shopping-bag'></i>
 														<p>Orders</p>
 													</a>
-													<a
-														className='option-links'
-														onClick={this.handleLogout}
-														style={{ cursor: "pointer", userSelect: "none" }}>
+													<a className='option-links' onClick={this.handleLogout} style={{ cursor: "pointer", userSelect: "none" }}>
 														<i className='fas fa-sign-out-alt'></i>
 														<p>Logout</p>
 													</a>
@@ -410,11 +382,7 @@ export default class Navbar extends React.Component {
 											</a>
 										</>
 									) : (
-										<a
-											style={{ cursor: "pointer", userSelect: "none" }}
-											className='login-signup'
-											onClick={this.handleLogin}
-											id='userLogin'>
+										<a style={{ cursor: "pointer", userSelect: "none" }} className='login-signup' onClick={this.handleLogin} id='userLogin'>
 											<i className='fas fa-user'></i>
 											<p>LOGIN/SIGN UP</p>
 										</a>
