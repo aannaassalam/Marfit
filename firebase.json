@@ -1,7 +1,6 @@
 {
   "hosting": {
-    "site": "marfit",
-    "public": "./build",
+    "public": "build",
     "ignore": [
       "firebase.json",
       "**/.*",

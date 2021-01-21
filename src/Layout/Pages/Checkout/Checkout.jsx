@@ -8,6 +8,7 @@ import Lottie from "lottie-react-web";
 import Loader from "../../Components/Loader/Loader";
 import CartCard from "../../Components/Cart-card/Cart-card";
 import axios from "axios";
+import link from '../../../fetchPath';
 
 export default class Checkout extends React.Component {
   constructor(props) {
@@ -256,7 +257,7 @@ export default class Checkout extends React.Component {
                     subject: this.state.products[0].title,
                     message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id}`,
                   };
-                  axios.post("http://localhost:5000/api/sendemail", data);
+                  axios.post(link+"/api/sendemail", data);
                 });
             });
         } else {
@@ -267,7 +268,7 @@ export default class Checkout extends React.Component {
             subject: this.state.products[0].title,
             message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id}`,
           };
-          axios.post("http://localhost:5000/api/sendemail", data);
+          axios.post(link+"/api/sendemail", data);
         }
       });
   };

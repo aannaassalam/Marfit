@@ -41,7 +41,7 @@ export default function Buttons(props) {
 	return (
 		<div style={styles.wrapper}>
 			{(loop || index !== 0) && (
-				<div style={prevBtnStyle} onClick={prevHandler}>
+				<div className='banner-button' style={prevBtnStyle} onClick={prevHandler}>
 					<div className='prevBut'>
 						<div className='line'></div>
 						<div className='line'></div>
@@ -49,7 +49,7 @@ export default function Buttons(props) {
 				</div>
 			)}
 			{(loop || index !== total - 1) && (
-				<div style={nextBtnStyle} onClick={nextHandler}>
+				<div className='banner-button' style={nextBtnStyle} onClick={nextHandler}>
 					<div className='nextBut'>
 						<div className='line'></div>
 						<div className='line'></div>

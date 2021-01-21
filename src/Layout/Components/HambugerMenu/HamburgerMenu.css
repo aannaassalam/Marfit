@@ -155,7 +155,7 @@
 .menu-ham .hamburger-menu .ham-list .box:hover,
 .menu-ham .hamburger-menu .ham-list #cart:hover,
 .menu-ham .hamburger-menu .ham-list #wishlist:hover {
-	background-color: lightgray;
+	background-color: #f5f5f5;
 }
 
 .menu-ham .hamburger-menu .ham-list .box:active,

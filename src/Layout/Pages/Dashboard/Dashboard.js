@@ -14,7 +14,6 @@ import redeem from "./8287-redeem-points-to-get-gift.json";
 import OrdersComp from "../../Components/OrdersComp/OrdersComp";
 import circular from "../../../assets/circular loading.json";
 import moment from "moment";
-import { Link } from "react-router-dom";
 
 const pageVariants = {
   initial: {
@@ -127,9 +126,9 @@ class Dashboard extends React.Component {
   };
 
   handleProfileSave = () => {
-    this.setState({
-      editProifleLoading: true,
-    });
+    // this.setState({
+    //   editProifleLoading: true,
+    // });
     firebase
       .firestore()
       .collection("users")
@@ -144,16 +143,17 @@ class Dashboard extends React.Component {
             .update({
               name: this.state.name,
               phone: this.state.phone,
-              alt: this.state.alt,
+              // alt: this.state.alt,
               gender: this.state.gender,
               dob: this.state.dob,
             })
             .then(() => {
               this.setState({
-                editProifleLoading: false,
+                // editProifleLoading: false,
                 editProifle: false,
               });
-              toaster.notfiy("Profile Updated");
+              toaster.notify('Profile Updated');
+              // toaster.notfiy("Profile Updated");
             });
         });
       });
@@ -539,26 +539,26 @@ class Dashboard extends React.Component {
                         {this.state.editProifle ? (
                           <div className="gender-group">
                             <div className="gender">
-                              {this.state.gender === "male" ? (
+                              {this.state.gender === "Male" ? (
                                 <i className="fas fa-dot-circle activated"></i>
                               ) : (
                                 <i
                                   class="far fa-circle"
                                   onClick={() =>
-                                    this.setState({ gender: "male" })
+                                    this.setState({ gender: "Male" })
                                   }
                                 ></i>
                               )}
                               <p>Male</p>
                             </div>
                             <div className="gender">
-                              {this.state.gender === "female" ? (
+                              {this.state.gender === "Female" ? (
                                 <i className="fas fa-dot-circle activated"></i>
                               ) : (
                                 <i
                                   className="far fa-circle "
                                   onClick={() =>
-                                    this.setState({ gender: "female" })
+                                    this.setState({ gender: "Female" })
                                   }
                                 ></i>
                               )}
@@ -595,7 +595,7 @@ class Dashboard extends React.Component {
                           </p>
                         )}
                       </div>
-                      <div className="input-group">
+                      {/* <div className="input-group">
                         <p className="title">Alternative No.</p>
                         {this.state.editProifle ? (
                           <input
@@ -615,7 +615,7 @@ class Dashboard extends React.Component {
                               : "N/A"}
                           </p>
                         )}
-                      </div>
+                      </div> */}
                     </div>
                     {this.state.editProifle ? (
                       <>

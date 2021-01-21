@@ -482,6 +482,14 @@ export default class ProductDesc extends React.Component {
   render() {
     var stars = 0;
     var review = 0;
+    var q=[];
+    for(var x=1;x<=this.state.product.quantity;x++)
+    {
+      if(x<=this.state.product.max)
+      {
+        q.push(x);
+      }
+    }
     if (this.state.product.title) {
       this.state.product.ratings.map((rate) => {
         stars += rate.stars;
@@ -701,6 +709,28 @@ export default class ProductDesc extends React.Component {
                         </>
                       ) : null}
                     </div>
+                    {
+                      this.state.product.ratings && this.state.product.ratings.length>0
+                      ?
+                      <div className="rating">
+                      <div className="rating-header">
+                        {this.state.product.ratings.length > 0 ? (
+                          <div className="rating-body">
+                            <div className="stars">
+                              <p>{stars}</p>
+                              <i className="fas fa-star"></i>
+                            </div>
+                            <p className="rating-size">
+                              {this.state.product.ratings.length} ratings{" "}
+                              {review > 0 ? "& " + review + " reviews" : null}
+                            </p>
+                          </div>
+                        ) : null}
+                      </div>
+                      </div>
+                      :
+                      null
+                    }
                     <div className="price">
                       <div className="product-price">
                         &#8377;{this.state.product.sp}
@@ -730,47 +760,19 @@ export default class ProductDesc extends React.Component {
                                   : "quantity"
                               }
                             >
-                              {this.state.usersQuantity === 1 ? (
-                                <span className="symbol grey">-</span>
-                              ) : (
-                                <span
-                                  className="symbol"
-                                  onClick={
-                                    this.state.sizeSelected === "" &&
-                                    !this.state.product.noSize
-                                      ? null
-                                      : this.handleMinus
-                                  }
-                                >
-                                  -
-                                </span>
-                              )}
-                              <span
-                                className={
-                                  this.state.sizeSelected === "" &&
-                                  !this.state.product.noSize
-                                    ? null
-                                    : "grey"
-                                }
-                              >
-                                {this.state.usersQuantity}
-                              </span>
-                              {this.state.usersQuantity ===
-                              parseInt(this.state.product.max) ? (
-                                <span className="symbol grey">+</span>
-                              ) : (
-                                <span
-                                  className="symbol"
-                                  onClick={
-                                    this.state.sizeSelected === "" &&
-                                    !this.state.product.noSize
-                                      ? null
-                                      : this.handlePlus
-                                  }
-                                >
-                                  +
-                                </span>
-                              )}
+                            <select style={{width:"100%",height:"100%",textAlign:'center',cursor:'pointer'}} value={this.state.quantity} onChange={(e)=>{
+                              this.setState({
+                                quantity:e.target.value
+                              })
+                            }}>
+                              {
+                                q.map(qaunt=>{
+                                  return(
+                                    <option value={qaunt}>{qaunt}</option>
+                                  )
+                                })
+                              }
+                            </select>
                             </div>
                           </div>
                           {this.state.product.noSize ? null : (
@@ -898,10 +900,12 @@ export default class ProductDesc extends React.Component {
                                 <div className="lower">
                                   <p className="user-name">{rating.name}</p>
                                   <p className="date">
+                                    on
+                                  </p>
+                                  <p className="date">
                                     {moment(
-                                      rating.date.toDate(),
-                                      "YYYYMMDD"
-                                    ).fromNow()}
+                                      rating.date.toDate()
+                                    ).format('DD-MM-YYYY')}
                                   </p>
                                 </div>
                               </div>

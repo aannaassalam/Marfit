@@ -20,6 +20,7 @@ import NewArrival from "./Layout/Pages/NewArrival/NewArrival";
 import Loader from "./Layout/Components/Loader/Loader";
 import Sale from "./Layout/Pages/Sale/Sale";
 import SearchList from "./Layout/Pages/Search/SearchList.page";
+import Cart from "./Layout/Pages/CheckOutCart/cart.page";
 
 function App() {
 	const location = useLocation();
@@ -46,6 +47,7 @@ function App() {
 					<Route exact path='/Dashboard/:id' component={Dashboard} />
 					<Route exact path='/ComingSoon' component={ComingSoon} />
 					<Route exact path='/NewArrivals' component={NewArrival} />
+					<Route exact path='/Cart' component={Cart} />
 					<Route exact path='/Cart/Checkout/coupon::coupon' component={Checkout} />
 					<Route exact path='/Checkout/:item/:quantity/:size' component={ByeNow} />
 					<Route exact path='/Orders/:id' component={Order} />

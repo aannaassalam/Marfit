@@ -1,7 +1,5 @@
 import React from 'react';
-import left from '../../../../../assets/left.png';
-import right from '../../../../../assets/right.png';
-import marfit from '../../../../../assets/Marfit.png'
+import marfit from '../../../../../assets/marfit-logo.png'
 import './About.css';
 import firebase from "firebase";
 

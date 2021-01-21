@@ -12,6 +12,7 @@ import Lottie from "lottie-react-web";
 import toaster from "toasted-notes";
 import "toasted-notes/src/styles.css";
 import axios from "axios";
+import link from '../../../fetchPath';
 
 const otpGenerator = require("otp-generator");
 
@@ -122,7 +123,7 @@ export default class Login extends React.Component {
                                 "You just got registered to mafit website, email",
                             };
                             axios.post(
-                              "http://localhost:5000/api/sendemail",
+                              link+"/api/sendemail",
                               data
                             );
                             window.location.href = "/";
@@ -200,7 +201,7 @@ export default class Login extends React.Component {
                     subject: "Marfit",
                     message: "You just got registered to mafit website, email",
                   };
-                  axios.post("http://localhost:5000/api/sendemail", data);
+                  axios.post(link+"/api/sendemail", data);
                   window.location.href = "/";
                 })
                 .catch((err) => {
@@ -296,7 +297,7 @@ export default class Login extends React.Component {
               subject: "Verify your Marfit Account",
             };
             var resp = await axios.post(
-              "http://localhost:5000/api/sendemail",
+              link+"/api/sendemail",
               data
             );
             console.log(resp);
@@ -368,7 +369,7 @@ export default class Login extends React.Component {
                         subject: "Marfit",
                         message: "You just login to mafit website, email",
                       };
-                      axios.post("http://localhost:5000/api/sendemail", data);
+                      axios.post(link+"/api/sendemail", data);
                     });
                 })
                 .catch((err) => {
@@ -445,7 +446,7 @@ export default class Login extends React.Component {
                       message:
                         "You just login to mafit website, We welcome you",
                     };
-                    axios.post("http://localhost:5000/api/sendMessage", data);
+                    axios.post(link+"/api/sendMessage", data);
                   })
                   .catch((err) => {
                     console.log(err);
@@ -476,8 +477,8 @@ export default class Login extends React.Component {
         sender: "TXTLCL",
         message: "1024",
       };
-      var res = await axios.post("http://localhost:5000/api/sendMessage", data);
-      console.log(res.data);
+      // var res = await axios.post(link+"/api/sendMessage", data);
+      // console.log(res.data);
       this.setState({
         showOTP: true,
         showNext: true,
@@ -621,12 +622,6 @@ export default class Login extends React.Component {
           this["c" + num].current.focus();
         } else if (value === "" && num2 > 0) {
           this["c" + num2].current.focus();
-        } else if (num3 === 4) {
-          if (this.state.toggle === "register") {
-            this.handleRegister();
-          } else {
-            this.handleLogin();
-          }
         }
       }
     );

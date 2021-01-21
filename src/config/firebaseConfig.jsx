@@ -3,12 +3,12 @@ import "firebase/firestore";
 import "firebase/auth";
 
 var firebaseConfig = {
-  apiKey: "AIzaSyCz4kdeFlHjhmsuZUo7O_X3ZtcSvMbiuGM",
-  authDomain: "marfit-ecommerce.firebaseapp.com",
-  projectId: "marfit-ecommerce",
-  storageBucket: "marfit-ecommerce.appspot.com",
-  messagingSenderId: "23837773340",
-  appId: "1:23837773340:web:19c46737b7498756a399d9",
+	apiKey: "AIzaSyBOnGgUPMWIXsoz08YsNguaTlSMxaZfsyc",
+	authDomain: "marfit-ea7ba.firebaseapp.com",
+	projectId: "marfit-ea7ba",
+	storageBucket: "marfit-ea7ba.appspot.com",
+	messagingSenderId: "337381636339",
+	appId: "1:337381636339:web:162c20d4a81bea8074df86",
 };
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);

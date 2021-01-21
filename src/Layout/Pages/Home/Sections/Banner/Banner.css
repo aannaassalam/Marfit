@@ -83,4 +83,7 @@
 		width: 95%;
 		height: 100%;
 	}
+	.panel .banner-button{
+		display: none !important;
+	}
 }

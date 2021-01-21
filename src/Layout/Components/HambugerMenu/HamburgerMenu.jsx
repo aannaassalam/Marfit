@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import logo from "../../../assets/image_1.png";
 import "./HamburgerMenu.css";
 import firebase from "firebase";
+import { auth } from "../../../config/firebaseConfig";
 
 export default class HamburgerMenu extends React.Component {
   constructor(props) {
@@ -10,11 +11,24 @@ export default class HamburgerMenu extends React.Component {
     this.state = {
       categories: [],
       open: null,
+      currentUser:{}
     };
     this.windowOffSet = 0;
   }
 
   componentDidMount() {
+    firebase.auth().onAuthStateChanged(user=>{
+      if(user){
+        firebase.firestore().collection('users').where('email',"==",user.email)
+        .get().then(snap=>{
+          snap.forEach(doc=>{
+            this.setState({
+              currentUser:doc.data()
+            })
+          })
+        })
+      }
+    })
     firebase
       .firestore()
       .collection("settings")
@@ -123,7 +137,7 @@ export default class HamburgerMenu extends React.Component {
                             href={"/Category/" + cat.name + "/" + sub.name}
                             key={index}
                           >
-                            {sub.name}
+                            <img src={sub.image} style={{width:'30px',objectFit:'contain',marginRight:"5px"}}/> {sub.name}
                           </a>
                         );
                       })}
@@ -174,8 +188,17 @@ export default class HamburgerMenu extends React.Component {
               </>
             ) : null}
             <a href="#" className="box" onClick={() => this.props.close()}>
-              <p href="#">Contact us</p>
+              <p>Contact us</p>
             </a>
+            {
+              this.state.currentUser.points
+              ?
+              <a href="/Dashboard/Refer" className="box" onClick={() => this.props.close()}>
+                <p>Points : {this.state.currentUser.points}</p>
+              </a>
+              :
+              null
+            }
             <p
               className="box"
               id="cart"

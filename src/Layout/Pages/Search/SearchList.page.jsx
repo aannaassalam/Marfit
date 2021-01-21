@@ -85,10 +85,12 @@ class SearchList extends React.Component {
 				var colors = [];
 				snap.forEach((doc) => {
 					var product = doc.data();
+					var tags=product.tag.split(',');
 					if (
 						product.category.toLowerCase().includes(find.toLowerCase()) ||
 						product.subCategory.toLowerCase().includes(find.toLowerCase()) ||
-						product.title.toLowerCase().includes(find.toLowerCase())
+						product.title.toLowerCase().includes(find.toLowerCase()) ||
+						tags.includes(find.toLowerCase())
 					) {
 						product.id = doc.id;
 						productList.push(product);
@@ -496,7 +498,7 @@ class SearchList extends React.Component {
 									<a>
 										<i className='fas fa-chevron-right'></i>
 									</a>
-									<a href={"/Category/" + this.props.match.params.id1} style={{ cursor: "pointer" }}>
+									<a style={{ cursor: "pointer" }}>
 										{this.props.match.params.id1}
 									</a>
 									{this.props.match.params.id2 ? (
@@ -559,7 +561,6 @@ class SearchList extends React.Component {
 										{this.state.filterProductList.length > 0 ? (
 											<>
 												{this.state.filterProductList.map((item, index) => {
-													console.log(item.sp);
 													return (
 														<Card
 															item={item}

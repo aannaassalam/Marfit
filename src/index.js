@@ -16,4 +16,4 @@ ReactDOM.render(
   </CookiesProvider>,
   document.getElementById("root")
 );
-serviceWorker.register();
+serviceWorker.unregister();

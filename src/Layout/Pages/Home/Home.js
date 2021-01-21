@@ -88,11 +88,11 @@ export default class Home extends React.Component {
 						<Add add={this.state.add2} />
 						<Slider data={this.state.sliders[2].products} title={this.state.sliders[2].title} view={this.state.viewAll} />
 						<About />
-						<Slider data={this.state.sliders[2].products} title={this.state.sliders[2].title} view={this.state.viewAll} />
+						<Slider data={this.state.sliders[3].products} title={this.state.sliders[3].title} view={this.state.viewAll} />
 						<Add add={this.state.add3} />
 						{this.state.sliders &&
 							this.state.sliders.map((slider, index) => {
-								if (index > 2) {
+								if (index > 3) {
 									return <Slider data={slider.products} title={slider.title} view={this.state.viewAll} />;
 								}
 							})}
