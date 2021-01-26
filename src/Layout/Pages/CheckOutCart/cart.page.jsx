@@ -15,6 +15,8 @@ import loading from "../../../assets/loading.json";
 import empty from "./629-empty-box.json";
 import toaster from "toasted-notes";
 import CheckOutCard from "../../Components/CheckOutCard/CheckOutCard";
+import axios from "axios";
+import link from "../../../fetchPath";
 
 const pageVariants = {
 	initial: {
@@ -69,12 +71,22 @@ class Cart extends React.Component {
 			products: [],
 			addressType: "default",
 			points: 0,
+			country: "",
+			coupon: "",
 		};
 	}
 	async componentDidMount() {
+		var snap2 = await firebase.firestore().collection("settings").get();
+		if (snap2) {
+			snap2.forEach((doc) => {
+				this.setState({
+					saddresses: doc.data().stores,
+				});
+			});
+		}
 		firebase.auth().onAuthStateChanged(async (user) => {
 			if (user) {
-				var snap = await firebase.firestore().collection("users").where("email", "==", user.email).get();
+				var snap = await firebase.firestore().collection("users").where("uid", "==", user.uid).get();
 				if (snap) {
 					snap.forEach(async (doc) => {
 						var currentUser = doc.data();
@@ -84,7 +96,6 @@ class Cart extends React.Component {
 							cart: currentUser.cart,
 							loading: false,
 						});
-						var data = doc.data().cart;
 						var addresses = doc.data().addresses;
 						var x = {};
 						var newAddresses = [];
@@ -103,9 +114,6 @@ class Cart extends React.Component {
 								address: x,
 							});
 						}
-						this.setState({
-							total: this.state.shipping + this.state.deposit + this.state.rental,
-						});
 						var products = [];
 						var rental = 0;
 						var shipping = 0;
@@ -127,16 +135,37 @@ class Cart extends React.Component {
 						});
 					});
 				}
-				var snap2 = await firebase.firestore().collection("settings").get();
-				if (snap2) {
-					snap2.forEach((doc) => {
-						this.setState({
-							saddresses: doc.data().stores,
-						});
-					});
-				}
 			} else {
-				window.location.href = "/";
+				var cart = JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [];
+				this.setState(
+					{
+						cart: cart,
+						currentUser: "",
+						userID: "",
+						addAddress: true,
+						loading: false,
+					},
+					async () => {
+						var products = [];
+						var rental = 0;
+						var shipping = 0;
+						for (var i = 0; i < cart.length; i++) {
+							var product = await firebase.firestore().collection("products").doc(cart[i].id).get();
+							var prod = product.data();
+							prod.id = product.id;
+							products.push(prod);
+							rental = rental + prod.sp * cart[i].quantity;
+							shipping = shipping + prod.shippingCharge;
+						}
+						var total = shipping + rental;
+						this.setState({
+							products,
+							rental,
+							shipping,
+							total,
+						});
+					}
+				);
 			}
 		});
 	}
@@ -153,46 +182,68 @@ class Cart extends React.Component {
 	};
 
 	handleDelete = (e) => {
-		firebase
-			.firestore()
-			.collection("users")
-			.where("email", "==", firebase.auth().currentUser.email)
-			.get()
-			.then((snap) => {
-				snap.forEach((doc) => {
-					var cart = doc.data().cart;
-					var newcart = [];
-					cart.map((item) => {
-						if (item.id === e.id) {
-						} else {
-							newcart.push(item);
-						}
-					});
-					this.setState(
-						{
-							cart: [],
-						},
-						() => {
-							this.setState({
-								cart: newcart,
-							});
-						}
-					);
-					firebase
-						.firestore()
-						.collection("users")
-						.doc(doc.id)
-						.update({
-							cart: newcart,
-						})
-						.then(() => {
-							toaster.notify("Item removed from your cart");
-						})
-						.catch((err) => {
-							toaster.notify(err.message);
+		if (firebase.auth().currentUser) {
+			firebase
+				.firestore()
+				.collection("users")
+				.where("uid", "==", firebase.auth().currentUser.uid)
+				.get()
+				.then((snap) => {
+					snap.forEach((doc) => {
+						var cart = doc.data().cart;
+						var newcart = [];
+						cart.map((item) => {
+							if (item.id === e.id) {
+							} else {
+								newcart.push(item);
+							}
 						});
+						this.setState(
+							{
+								cart: [],
+							},
+							() => {
+								this.setState({
+									cart: newcart,
+								});
+							}
+						);
+						firebase
+							.firestore()
+							.collection("users")
+							.doc(doc.id)
+							.update({
+								cart: newcart,
+							})
+							.then(() => {
+								toaster.notify("Item removed from your cart");
+							})
+							.catch((err) => {
+								toaster.notify(err.message);
+							});
+					});
 				});
+		} else {
+			var cart = JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [];
+			var newcart = [];
+			cart.map((item) => {
+				if (item.id === e.id) {
+				} else {
+					newcart.push(item);
+				}
 			});
+			this.setState(
+				{
+					cart: [],
+				},
+				() => {
+					localStorage.setItem("cart", JSON.stringify(newcart));
+					this.setState({
+						cart: newcart,
+					});
+				}
+			);
+		}
 	};
 
 	handleRefresh = () => {
@@ -200,110 +251,150 @@ class Cart extends React.Component {
 	};
 
 	handleSubmit = () => {
-		var arr = {};
-		arr["cname"] = this.state.cname;
-		arr["cphone"] = this.state.cphone;
-		arr["address"] = this.state.add;
-		arr["pin"] = this.state.pin;
-		arr["city"] = this.state.city;
-		arr["state"] = this.state.state;
-		arr["default"] = this.state.isDefault ? this.state.isDefault : this.state.addresses.length === 0 ? true : false;
+		if (this.state.cname === "") {
+			toaster.notify("Please enter your name!");
+		} else if (this.state.cphone === "") {
+			toaster.notify("Please enter contact number!");
+		} else if (this.state.address === "") {
+			toaster.notify("Please enter your address!");
+		} else if (this.state.pin === "") {
+			toaster.notify("Please enter your pincode");
+		} else if (this.state.city === "") {
+			toaster.notify("Please enter your city!");
+		} else if (this.state.state === "") {
+			toaster.notify("Please enter your state!");
+		} else if (this.state.country === "") {
+			toaster.notify("Please enter your country!");
+		} else {
+			var arr = {};
+			arr["cname"] = this.state.cname;
+			arr["cphone"] = this.state.cphone;
+			arr["address"] = this.state.add;
+			arr["pin"] = this.state.pin;
+			arr["city"] = this.state.city;
+			arr["state"] = this.state.state;
+			arr["country"] = this.state.country;
+			arr["default"] = this.state.isDefault ? this.state.isDefault : this.state.addresses.length === 0 ? true : false;
 
-		firebase
-			.firestore()
-			.collection("users")
-			.where("email", "==", firebase.auth().currentUser.email)
-			.get()
-			.then((response) => {
-				response.forEach((doc) => {
-					console.log(doc.data());
-					var oldAddresses = doc.data().addresses;
-					var found = false;
-					oldAddresses.map((add) => {
-						if (add.cname === arr.cname && add.address === arr.address) {
-							found = true;
-						}
-					});
-					if (found === false) {
-						if (this.state.isDefault) {
+			if (firebase.auth().currentUser) {
+				firebase
+					.firestore()
+					.collection("users")
+					.where("email", "==", firebase.auth().currentUser.email)
+					.get()
+					.then((response) => {
+						response.forEach((doc) => {
+							console.log(doc.data());
+							var oldAddresses = doc.data().addresses;
+							var found = false;
 							oldAddresses.map((add) => {
-								add["default"] = false;
+								if (add.cname === arr.cname && add.address === arr.address) {
+									found = true;
+								}
 							});
-							oldAddresses.push(arr);
-							console.log(oldAddresses);
-							firebase
-								.firestore()
-								.collection("users")
-								.doc(doc.id)
-								.update({
-									addresses: oldAddresses,
-								})
-								.then(() => {
-									this.setState({
-										modal: "modal-address",
-										city: "",
-										state: "",
-										pin: "",
-										cname: "",
-										cphone: "",
-										add: "",
-										address: arr,
-										addresses: oldAddresses,
+							if (found === false) {
+								if (this.state.isDefault) {
+									oldAddresses.map((add) => {
+										add["default"] = false;
 									});
-								});
-						} else if (oldAddresses.length === 0) {
-							arr["default"] = true;
-							oldAddresses.push(arr);
-							console.log(oldAddresses);
-							firebase
-								.firestore()
-								.collection("users")
-								.doc(doc.id)
-								.update({
-									addresses: oldAddresses,
-								})
-								.then(() => {
-									this.setState({
-										modal: "modal-address",
-										city: "",
-										state: "",
-										pin: "",
-										cname: "",
-										cphone: "",
-										add: "",
-										address: arr,
-										addresses: oldAddresses,
-									});
-								});
-						} else {
-							oldAddresses.push(arr);
-							console.log(oldAddresses);
-							firebase
-								.firestore()
-								.collection("users")
-								.doc(doc.id)
-								.update({
-									addresses: oldAddresses,
-								})
-								.then(() => {
-									this.setState({
-										modal: "modal-address",
-										city: "",
-										state: "",
-										pin: "",
-										cname: "",
-										cphone: "",
-										add: "",
-										address: arr,
-										addresses: oldAddresses,
-									});
-								});
-						}
-					} else {
-						toaster.notify("Address already exists!");
-					}
-				});
-			});
+									oldAddresses.push(arr);
+									console.log(oldAddresses);
+									firebase
+										.firestore()
+										.collection("users")
+										.doc(doc.id)
+										.update({
+											addresses: oldAddresses,
+										})
+										.then(() => {
+											this.setState({
+												modal: "modal-address",
+												city: "",
+												state: "",
+												pin: "",
+												cname: "",
+												cphone: "",
+												add: "",
+												address: arr,
+												country: "",
+												addresses: oldAddresses,
+											});
+										});
+								} else if (oldAddresses.length === 0) {
+									arr["default"] = true;
+									oldAddresses.push(arr);
+									console.log(oldAddresses);
+									firebase
+										.firestore()
+										.collection("users")
+										.doc(doc.id)
+										.update({
+											addresses: oldAddresses,
+										})
+										.then(() => {
+											this.setState({
+												modal: "modal-address",
+												city: "",
+												state: "",
+												pin: "",
+												cname: "",
+												cphone: "",
+												add: "",
+												address: arr,
+												country: "",
+												addresses: oldAddresses,
+											});
+										});
+								} else {
+									oldAddresses.push(arr);
+									console.log(oldAddresses);
+									firebase
+										.firestore()
+										.collection("users")
+										.doc(doc.id)
+										.update({
+											addresses: oldAddresses,
+										})
+										.then(() => {
+											this.setState({
+												modal: "modal-address",
+												city: "",
+												state: "",
+												pin: "",
+												cname: "",
+												cphone: "",
+												add: "",
+												address: arr,
+												country: "",
+												addresses: oldAddresses,
+											});
+										});
+								}
+							} else {
+								toaster.notify("Address already exists!");
+							}
+						});
+					});
+			} else {
+				if (this.state.email === "") {
+					toaster.notify("Please enter your email address!");
+				} else {
+					arr["email"] = this.state.email;
+					this.setState({
+						modal: "modal-address",
+						city: "",
+						state: "",
+						pin: "",
+						cname: "",
+						cphone: "",
+						add: "",
+						address: arr,
+						country: "",
+						addresses: [...this.state.addresses, arr],
+					});
+				}
+			}
+		}
 	};
 
 	handleSelectAddress = (e) => {
@@ -313,37 +404,65 @@ class Cart extends React.Component {
 	};
 
 	handleDeleteAddress = (e) => {
-		firebase
-			.firestore()
-			.collection("users")
-			.where("email", "==", firebase.auth().currentUser.email)
-			.get()
-			.then((snap) => {
-				snap.forEach((doc) => {
-					var addresses = doc.data().addresses;
-					var newAddresses = [];
-					addresses.map((add) => {
-						if (add.cname === e.cname && add.address === e.address) {
+		if (firebase.auth().currentUser) {
+			firebase
+				.firestore()
+				.collection("users")
+				.where("email", "==", firebase.auth().currentUser.email)
+				.get()
+				.then((snap) => {
+					snap.forEach((doc) => {
+						var addresses = doc.data().addresses;
+						var newAddresses = [];
+						addresses.map((add) => {
+							if (add.cname === e.cname && add.address === e.address) {
+							} else {
+								newAddresses.push(add);
+							}
+						});
+						if (newAddresses.length === 0) {
+							this.setState({
+								address: {},
+								addresses: [],
+							});
+						} else if (newAddresses.length === 1) {
+							this.setState({
+								address: newAddresses[0],
+							});
 						} else {
-							newAddresses.push(add);
+							this.setState({
+								address: newAddresses,
+							});
 						}
-					});
-					if (newAddresses.length === 0) {
-						this.setState({
-							address: {},
-							addresses: [],
+						firebase.firestore().collection("users").doc(doc.id).update({
+							addresses: newAddresses,
 						});
-					}
-					if (newAddresses.length === 1) {
-						this.setState({
-							address: newAddresses[0],
-						});
-					}
-					firebase.firestore().collection("users").doc(doc.id).update({
-						addresses: newAddresses,
 					});
 				});
+		} else {
+			var addresses = this.state.addresses;
+			var newAddresses = [];
+			addresses.map((add) => {
+				if (add.cname === e.cname && add.address === e.address) {
+				} else {
+					newAddresses.push(add);
+				}
 			});
+			if (newAddresses.length === 0) {
+				this.setState({
+					address: {},
+					addresses: [],
+				});
+			} else if (newAddresses.length === 1) {
+				this.setState({
+					address: newAddresses[0],
+				});
+			} else {
+				this.setState({
+					address: newAddresses,
+				});
+			}
+		}
 	};
 
 	handleEditAddressShow = (e) => {
@@ -356,42 +475,85 @@ class Cart extends React.Component {
 			cname: e.cname,
 			cphone: e.cphone,
 			add: e.address,
+			country: e.country,
 			isDefault: e.default,
 			ogname: e.cname,
 			ogaddress: e.address,
+			ogcountry: e.country,
 		});
 	};
 
 	handleEditAddress = () => {
-		firebase
-			.firestore()
-			.collection("users")
-			.where("email", "==", firebase.auth().currentUser.email)
-			.get()
-			.then((snap) => {
-				snap.forEach((doc) => {
-					var addresses = doc.data().addresses;
-					if (this.state.isDefault === false) {
-						addresses.map((add) => {
-							if (add.cname === this.state.ogname && add.address === this.state.ogaddress) {
-								add["cname"] = this.state.cname;
-								add["cphone"] = this.state.cphone;
-								add["address"] = this.state.add;
-								add["pin"] = this.state.pin;
-								add["city"] = this.state.city;
-								add["state"] = this.state.state;
-								add["default"] = this.state.isDefault;
+		if (firebase.auth().currentUser) {
+			firebase
+				.firestore()
+				.collection("users")
+				.where("email", "==", firebase.auth().currentUser.email)
+				.get()
+				.then((snap) => {
+					snap.forEach((doc) => {
+						var addresses = doc.data().addresses;
+						if (this.state.isDefault === false) {
+							addresses.map((add) => {
+								if (add.cname === this.state.ogname && add.address === this.state.ogaddress) {
+									add["cname"] = this.state.cname;
+									add["cphone"] = this.state.cphone;
+									add["address"] = this.state.add;
+									add["pin"] = this.state.pin;
+									add["city"] = this.state.city;
+									add["state"] = this.state.state;
+									add["country"] = this.state.country;
+									add["default"] = this.state.isDefault;
+								}
+							});
+							var found = false;
+							addresses.map((add) => {
+								if (add["default"] === true) {
+									found = true;
+								}
+							});
+							if (found === false) {
+								toaster.notify("Atleast one default address is required");
+							} else if (found === true) {
+								firebase
+									.firestore()
+									.collection("users")
+									.doc(doc.id)
+									.update({
+										addresses: addresses,
+									})
+									.then(() => {
+										toaster.notify("Address Updated");
+										this.setState({
+											modal: "modal-address",
+											city: "",
+											state: "",
+											pin: "",
+											cname: "",
+											cphone: "",
+											add: "",
+											country: "",
+											ogaddress: "",
+											ogname: "",
+										});
+									});
 							}
-						});
-						var found = false;
-						addresses.map((add) => {
-							if (add["default"] === true) {
-								found = true;
-							}
-						});
-						if (found === false) {
-							toaster.notify("Atleast one default address is required");
-						} else if (found === true) {
+						} else {
+							addresses.map((add) => {
+								add["default"] = false;
+							});
+							addresses.map((add) => {
+								if (add.cname === this.state.ogname && add.address === this.state.ogaddress) {
+									add["cname"] = this.state.cname;
+									add["cphone"] = this.state.cphone;
+									add["address"] = this.state.add;
+									add["pin"] = this.state.pin;
+									add["city"] = this.state.city;
+									add["state"] = this.state.state;
+									add["country"] = this.state.country;
+									add["default"] = this.state.isDefault;
+								}
+							});
 							firebase
 								.firestore()
 								.collection("users")
@@ -411,86 +573,220 @@ class Cart extends React.Component {
 										add: "",
 										ogaddress: "",
 										ogname: "",
+										country: "",
+										addresses: addresses,
 									});
 								});
 						}
-					} else {
-						addresses.map((add) => {
-							add["default"] = false;
-						});
-						addresses.map((add) => {
-							if (add.cname === this.state.ogname && add.address === this.state.ogaddress) {
-								add["cname"] = this.state.cname;
-								add["cphone"] = this.state.cphone;
-								add["address"] = this.state.add;
-								add["pin"] = this.state.pin;
-								add["city"] = this.state.city;
-								add["state"] = this.state.state;
-								add["default"] = this.state.isDefault;
-							}
-						});
-						firebase
-							.firestore()
-							.collection("users")
-							.doc(doc.id)
-							.update({
-								addresses: addresses,
-							})
-							.then(() => {
-								toaster.notify("Address Updated");
-								this.setState({
-									modal: "modal-address",
-									city: "",
-									state: "",
-									pin: "",
-									cname: "",
-									cphone: "",
-									add: "",
-									ogaddress: "",
-									ogname: "",
-								});
-							});
-					}
+					});
 				});
+		} else {
+			var addresses = this.state.addresses;
+			addresses.map((add) => {
+				if (add.cname === this.state.ogname && add.address === this.state.ogaddress) {
+					add["cname"] = this.state.cname;
+					add["cphone"] = this.state.cphone;
+					add["address"] = this.state.add;
+					add["pin"] = this.state.pin;
+					add["city"] = this.state.city;
+					add["state"] = this.state.state;
+					add["default"] = this.state.isDefault;
+				}
 			});
+			this.setState({
+				modal: "modal-address",
+				city: "",
+				state: "",
+				pin: "",
+				cname: "",
+				cphone: "",
+				add: "",
+				ogaddress: "",
+				ogname: "",
+				country: "",
+				addresses: addresses,
+			});
+		}
 	};
 
 	handlePayment = () => {
-		if (this.state.total - this.state.points > 0) {
-			if (this.state.paymentTab === 1) {
-				this.handleRazorPayment();
+		if (this.state.address.cname) {
+			if (this.state.rental - this.state.points + (this.state.addressType === "default" ? this.state.shipping : 0) > 0) {
+				if (this.state.paymentTab === 1) {
+					this.handleRazorPayment();
+				}
+				if (this.state.paymentTab === 2) {
+					alert("COD");
+				}
 			}
-			if (this.state.paymentTab === 2) {
-				alert("COD");
-			}
+		} else {
+			toaster.notify("Please add a address!");
 		}
 	};
 
 	handleRazorPayment = () => {
-		var total = Math.round((this.state.total - this.state.points) * 100);
-		let options = {
-			key: "rzp_live_YmYlELv3yfrWe6",
-			amount: total, // 2000 paise = INR 20, amount in paisa
+		var total = Math.round((this.state.rental - this.state.points + (this.state.addressType === "default" ? this.state.shipping : 0) - (this.state.paymentTab === 1 ? 50 : 0)) * 100);
+		// let options = {
+		// 	key: "rzp_live_YmYlELv3yfrWe6",
+		// 	amount: total, // 2000 paise = INR 20, amount in paisa
+		// 	name: "Marfit",
+		// 	description: "",
+		// 	image: "/favicon-96x96.png",
+		// 	handler: function (response) {
+		// 		console.log(response);
+		// 	},
+		// 	prefill: {
+		// 		name: this.state.address.name,
+		// 		email: firebase.auth().currentUser ? firebase.auth().currentUser.email : this.state.address.email,
+		// 	},
+		// 	notes: {
+		// 		address: "Hello World",
+		// 	},
+		// 	theme: {
+		// 		color: "#393280",
+		// 	},
+		// };
+
+		// let rzp = new window.Razorpay(options);
+		// rzp.open();
+		const options = {
+			key: "rzp_test_GLsJlJZsykHTEw",
 			name: "Marfit",
 			description: "",
 			image: "/favicon-96x96.png",
-			handler: function (response) {
+			amount: total,
+			handler: async (response) => {
 				console.log(response);
+				this.handleAfterPay(response.razorpay_payment_id);
 			},
 			prefill: {
-				name: this.state.currentUser.name,
-				email: firebase.auth().currentUser.email,
-			},
-			notes: {
-				address: "Hello World",
+				name: this.state.address.cname,
+				email: firebase.auth().currentUser ? firebase.auth().currentUser.email : this.state.address.email,
+				contact: this.state.address.cphone,
 			},
 			theme: {
-				color: "#393280",
+				color: "#000",
 			},
 		};
+		const rzp1 = new window.Razorpay(options);
+		rzp1.open();
+	};
 
-		let rzp = new window.Razorpay(options);
-		rzp.open();
+	handleAfterPay = (response) => {
+		var products = [];
+		this.state.products.forEach((product) => {
+			product.rate = false;
+			products.push(product);
+		});
+		var a = {
+			paymentId: response,
+			products: products,
+			date: new Date(),
+			points: this.state.points,
+			email: firebase.auth().currentUser ? this.state.currentUser.email : this.state.email,
+			address: this.state.address.address,
+			city: this.state.address.city,
+			country: this.state.address.country,
+			pincode: this.state.address.pin,
+			phone: this.state.address.cphone,
+			state: this.state.address.state,
+			coupon: this.state.coupon,
+			name: this.state.address.cname,
+			total: this.state.rental - this.state.points + (this.state.addressType === "default" ? this.state.shipping : 0),
+			shipping: this.state.addressType === "default" ? this.state.shipping : 0,
+			tag: firebase.auth().currentUser ? "Default" : "Guest",
+			status: [0],
+			tracking: "",
+			paymentMethod: this.state.paymentTab === "1" ? "Online Razorpay" : "COD",
+			type: this.state.addressType === "default" ? "Delivery" : "Store Pickup",
+		};
+		console.log(a);
+		firebase
+			.firestore()
+			.collection("orders")
+			.add({
+				paymentId: response,
+				products: products,
+				date: new Date(),
+				points: this.state.points,
+				email: firebase.auth().currentUser ? this.state.currentUser.email : this.state.email,
+				address: this.state.address.address,
+				city: this.state.address.city,
+				country: this.state.address.country,
+				pincode: this.state.address.pin,
+				phone: this.state.address.cphone,
+				state: this.state.address.state,
+				coupon: this.state.coupon,
+				name: this.state.address.cname,
+				total: this.state.rental - this.state.points + (this.state.addressType === "default" ? this.state.shipping : 0),
+				shipping: this.state.addressType === "default" ? this.state.shipping : 0,
+				tag: firebase.auth().currentUser ? "Default" : "Guest",
+				status: [0],
+				tracking: "",
+				paymentMethod: this.state.paymentTab === "1" ? "Online Razorpay" : "COD",
+				type: this.state.addressType === "default" ? "Delivery" : "Store Pickup",
+			})
+			.then(async (res) => {
+				products.forEach((product) => {
+					if (!product.noSize) {
+						product.sizes.map((size, index) => {
+							if (size.name === product.userSize) {
+								size.quantity = size.quantity - product.userquantity;
+							}
+						});
+					}
+					if (product.quantity > 0) {
+						firebase
+							.firestore()
+							.collection("products")
+							.doc(product.id)
+							.update({
+								quantity: product.quantity - product.userquantity,
+								sizes: product.sizes,
+							});
+					}
+				});
+				if (firebase.auth().currentUser) {
+					firebase
+						.firestore()
+						.collection("users")
+						.doc(this.state.currentUser.id)
+						.get()
+						.then((doc) => {
+							var addresses = doc.data().addresses;
+							var orders = doc.data().orders;
+							orders.push(res.id);
+							firebase
+								.firestore()
+								.collection("users")
+								.doc(this.state.currentUser.id)
+								.update({
+									orders: orders,
+									addresses: addresses,
+									cart: [],
+									points: 0,
+								})
+								.then(async () => {
+									const data = {
+										email: this.state.address.email,
+										subject: this.state.products[0].title,
+										message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id}`,
+									};
+									var res2 = await axios.post(link + "/api/sendemail", data);
+									window.location.href = "/Orders/" + res.id;
+								});
+						});
+				} else {
+					localStorage.setItem("cart", JSON.stringify([]));
+					const data = {
+						email: this.state.address.email,
+						subject: this.state.products[0].title,
+						message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id}`,
+					};
+					var res2 = await axios.post(link + "/api/sendemail", data);
+					window.location.href = "/Orders/" + res.id;
+				}
+			});
 	};
 
 	render() {
@@ -552,10 +848,10 @@ class Cart extends React.Component {
 													<div className='line'></div>
 												</div>
 
-												{this.state.currentUser.cart.length > 0 ? (
+												{this.state.cart.length > 0 ? (
 													<div className='item-count'>
 														<p>
-															{this.state.currentUser.cart.length} {this.state.currentUser.cart.length === 1 ? "item" : " items"}
+															{this.state.cart.length} {this.state.cart.length === 1 ? "item" : " items"}
 														</p>
 													</div>
 												) : null}
@@ -671,22 +967,23 @@ class Cart extends React.Component {
 															<div className='line'></div>
 															<div className='rent'>
 																<p>Total</p>
-																<span>&#8377; {this.state.rental}</span>
+																<span>+ &#8377; {this.state.rental}</span>
 															</div>
 
 															<div className='rent'>
 																<p>Shipping Fees</p>
-																<span>{this.state.shipping > 0 ? "₹ " + this.state.shipping : "Free"}</span>
+																<span>+ {this.state.shipping > 0 ? "₹ " + this.state.shipping : "Free"}</span>
 															</div>
 
-															<div className='rent'>
-																<p>Reddem Points</p>
-																<span>- &#8377; {this.state.points}</span>
-															</div>
-
+															{this.state.points > 0 ? (
+																<div className='rent'>
+																	<p>Reddem Points</p>
+																	<span>- &#8377; {this.state.points}</span>
+																</div>
+															) : null}
 															<div className='total'>
 																<p>Sub Total</p>
-																<span>&#8377; {this.state.total - this.state.points}</span>
+																<span>&#8377; {this.state.rental - this.state.points + this.state.shipping}</span>
 															</div>
 
 															<div className='next-button'>
@@ -826,7 +1123,7 @@ class Cart extends React.Component {
 															<div className='pay' onClick={() => this.setState({ paymentTab: 1 })}>
 																{this.state.paymentTab === 1 ? <i class='far fa-dot-circle active'></i> : <i class='far fa-circle'></i>}
 																<img src={razorpay} alt='razorpay-logo' />
-																<p>Pay via razorpay &#8377;50 off</p>
+																<p>Pay via razorpay &#8377; 50 off</p>
 															</div>
 															<div className='pay' onClick={() => this.setState({ paymentTab: 2 })}>
 																{this.state.paymentTab === 2 ? <i class='far fa-dot-circle active'></i> : <i class='far fa-circle'></i>}
@@ -859,7 +1156,13 @@ class Cart extends React.Component {
                               </div> */}
 
 															<div className='final-button' onClick={this.handlePayment}>
-																<button type='button'>ORDER</button>
+																<button type='button'>
+																	ORDER FOR &#8377;{" "}
+																	{this.state.rental +
+																		(this.state.addressType === "default" ? this.state.shipping : 0) -
+																		this.state.points -
+																		(this.state.paymentTab === 1 ? 50 : 0)}
+																</button>
 															</div>
 														</div>
 													</div>
@@ -889,10 +1192,15 @@ class Cart extends React.Component {
 													<input type='text' placeholder='Pincode' name='pin' onChange={this.handleChange} value={this.state.pin} />
 													<input type='text' placeholder='City' name='city' onChange={this.handleChange} value={this.state.city} />
 													<input type='text' placeholder='State' name='state' onChange={this.handleChange} value={this.state.state} />
-													<div id='check-default'>
-														<input type='checkbox' onChange={this.handleIsDefault} checked={this.state.isDefault} />
-														<p>Make this my default address</p>
-													</div>
+													<input type='text' placeholder='Country' name='country' onChange={this.handleChange} value={this.state.country} />
+													{firebase.auth().currentUser ? (
+														<div id='check-default'>
+															<input type='checkbox' onChange={this.handleIsDefault} checked={this.state.isDefault} />
+															<p>Make this my default address</p>
+														</div>
+													) : (
+														<input type='text' placeholder='Email' name='email' onChange={this.handleChange} value={this.state.email} />
+													)}
 												</div>
 											</div>
 											<div className='modal-footer'>

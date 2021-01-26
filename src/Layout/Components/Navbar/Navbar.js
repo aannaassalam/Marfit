@@ -106,19 +106,19 @@ export default class Navbar extends React.Component {
 	};
 
 	handleCart = () => {
-		if (firebase.auth().currentUser) {
-			window.location.href = "/Cart";
-		} else {
-			this.setState(
-				{
-					showCart: true,
-				},
-				() => {
-					this.windowOffSet = window.scrollY;
-					document.body.setAttribute("style", `position: fixed; top: -${this.windowOffSet}px; left: 0; right: 0;`);
-				}
-			);
-		}
+		// if (firebase.auth().currentUser) {
+		window.location.href = "/Cart";
+		// } else {
+		// 	this.setState(
+		// 		{
+		// 			showCart: true,
+		// 		},
+		// 		() => {
+		// 			this.windowOffSet = window.scrollY;
+		// 			document.body.setAttribute("style", `position: fixed; top: -${this.windowOffSet}px; left: 0; right: 0;`);
+		// 		}
+		// 	);
+		// }
 	};
 
 	handleSearch = (e) => {

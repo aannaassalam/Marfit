@@ -80,53 +80,94 @@ export default class CheckOutCard extends React.Component {
 	handleRemove = async () => {
 		var q = this.state.quantity - 1;
 		if (q >= 0) {
-			var snap = await firebase.firestore().collection("users").doc(this.props.currentUser.id).get();
-			if (snap) {
-				var data = snap.data();
+			if (firebase.auth().currentUser) {
+				var snap = await firebase.firestore().collection("users").doc(this.props.currentUser.id).get();
+				if (snap) {
+					var data = snap.data();
+					var newCart = [];
+					if (q !== 0) {
+						newCart = data.cart;
+						newCart.map((c) => {
+							if (c.id === this.props.info.id) {
+								c.quantity = q;
+							}
+						});
+					} else {
+						data.cart.map((c) => {
+							if (c.id !== this.props.info.id) {
+								newCart.push(c);
+							}
+						});
+					}
+					firebase
+						.firestore()
+						.collection("users")
+						.doc(this.props.currentUser.id)
+						.update({
+							cart: newCart,
+						})
+						.then(() => {
+							this.setState(
+								{
+									quantity: q,
+								},
+								() => {
+									if (this.state.quantity === 0) {
+										this.setState(
+											{
+												NF: true,
+											},
+											() => {
+												this.props.handleRefresh();
+											}
+										);
+									} else {
+										this.props.handleRefresh();
+									}
+								}
+							);
+						})
+						.catch((err) => {
+							toaster.notify("Could Update Quantity");
+						});
+				}
+			} else {
+				var data = JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [];
 				var newCart = [];
 				if (q !== 0) {
-					newCart = data.cart;
+					newCart = data;
 					newCart.map((c) => {
 						if (c.id === this.props.info.id) {
 							c.quantity = q;
 						}
 					});
 				} else {
-					data.cart.map((c) => {
+					data.map((c) => {
 						if (c.id !== this.props.info.id) {
 							newCart.push(c);
 						}
 					});
 				}
-				firebase
-					.firestore()
-					.collection("users")
-					.doc(this.props.currentUser.id)
-					.update({
-						cart: newCart,
-					})
-					.then(() => {
-						this.setState(
-							{
-								quantity: q,
-							},
-							() => {
-								if (this.state.quantity === 0) {
-									this.setState(
-										{
-											NF: true,
-										},
-										() => {
-											this.props.handleRefresh();
-										}
-									);
+				localStorage.setItem("cart", JSON.stringify(newCart));
+				this.setState(
+					{
+						quantity: q,
+					},
+					() => {
+						if (this.state.quantity === 0) {
+							this.setState(
+								{
+									NF: true,
+								},
+								() => {
+									this.props.handleRefresh();
 								}
-							}
-						);
-					})
-					.catch((err) => {
-						toaster.notify("Could Update Quantity");
-					});
+							);
+						} else {
+							this.props.handleRefresh();
+						}
+					}
+				);
 			}
 		}
 	};
@@ -143,29 +184,52 @@ export default class CheckOutCard extends React.Component {
 				productInfo.id = snap.id;
 				if (this.props.info.size === "null") {
 					if (productInfo.quantity >= q && productInfo.max >= q) {
-						var snap = await firebase.firestore().collection("users").doc(this.props.currentUser.id).get();
-						if (snap) {
-							var data = snap.data();
-							data.cart.map((c) => {
+						if (firebase.auth().currentUser) {
+							var snap = await firebase.firestore().collection("users").doc(this.props.currentUser.id).get();
+							if (snap) {
+								var data = snap.data();
+								data.cart.map((c) => {
+									if (c.id === this.props.info.id) {
+										c.quantity = q;
+									}
+								});
+								firebase
+									.firestore()
+									.collection("users")
+									.doc(this.props.currentUser.id)
+									.update({
+										cart: data.cart,
+									})
+									.then(() => {
+										this.setState(
+											{
+												quantity: q,
+											},
+											() => {
+												this.props.handleRefresh();
+											}
+										);
+									})
+									.catch((err) => {
+										toaster.notify("Could Update Quantity");
+									});
+							}
+						} else {
+							var data = JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [];
+							data.map((c) => {
 								if (c.id === this.props.info.id) {
 									c.quantity = q;
 								}
 							});
-							firebase
-								.firestore()
-								.collection("users")
-								.doc(this.props.currentUser.id)
-								.update({
-									cart: data.cart,
-								})
-								.then(() => {
-									this.setState({
-										quantity: q,
-									});
-								})
-								.catch((err) => {
-									toaster.notify("Could Update Quantity");
-								});
+							localStorage.setItem("cart", JSON.stringify(data));
+							this.setState(
+								{
+									quantity: q,
+								},
+								() => {
+									this.props.handleRefresh();
+								}
+							);
 						}
 					} else {
 						toaster.notify("You cannot add more quanity");
@@ -182,21 +246,44 @@ export default class CheckOutCard extends React.Component {
 											c.quantity = q;
 										}
 									});
-									firebase
-										.firestore()
-										.collection("users")
-										.doc(this.props.currentUser.id)
-										.update({
-											cart: data.cart,
-										})
-										.then(() => {
-											this.setState({
-												quantity: q,
+									if (firebase.auth().currentUser) {
+										firebase
+											.firestore()
+											.collection("users")
+											.doc(this.props.currentUser.id)
+											.update({
+												cart: data.cart,
+											})
+											.then(() => {
+												this.setState(
+													{
+														quantity: q,
+													},
+													() => {
+														this.props.handleRefresh();
+													}
+												);
+											})
+											.catch((err) => {
+												toaster.notify("Could Update Quantity");
 											});
-										})
-										.catch((err) => {
-											toaster.notify("Could Update Quantity");
+									} else {
+										var data = JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [];
+										data.map((c) => {
+											if (c.id === this.props.info.id) {
+												c.quantity = q;
+											}
 										});
+										localStorage.setItem("cart", JSON.stringify(data));
+										this.setState(
+											{
+												quantity: q,
+											},
+											() => {
+												this.props.handleRefresh();
+											}
+										);
+									}
 								}
 							} else {
 								toaster.notify("You cannot add more quanity");

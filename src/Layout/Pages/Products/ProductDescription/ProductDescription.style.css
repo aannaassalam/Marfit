@@ -161,6 +161,7 @@
 	background-color: #fff;
 	border-radius: 5px;
 	box-shadow: 5px 5px 10px 0 #dee0e2;
+	z-index: 1;
 }
 
 .product-desc .all-product-image .carousal-section .product-zoom-image {
@@ -476,8 +477,63 @@
 	font-size: 1rem;
 }
 
+.product-desc .description-section .product-delivery {
+	display: flex;
+	align-items: center;
+	margin: 1.5rem 0;
+}
+
+.product-desc .description-section .product-delivery p {
+	font-size: 1.1rem;
+	font-weight: 600;
+	color: #464646;
+	margin-right: 1rem;
+}
+
+.product-desc .description-section .product-delivery .delivery-input {
+	display: flex;
+	align-items: center;
+	border-bottom: 2px solid #fb6b25;
+	position: relative;
+}
+
+.product-desc .description-section .product-delivery .delivery-input i {
+	margin-right: 8px;
+	color: #fb6b25;
+}
+
+.product-desc .description-section .product-delivery .delivery-input input {
+	border: none;
+	border: none;
+	width: 160px;
+	height: 40px;
+	font-size: 0.9rem;
+	outline: none;
+}
+
+.product-desc .description-section .product-delivery .delivery-input p {
+	font-size: 0.85rem;
+	font-weight: 600;
+	color: #fb6b25;
+	cursor: pointer;
+	position: absolute;
+	right: 0;
+}
+
+.product-desc .description-section .product-delivery .delivery-input-box p {
+	font-size: 0.85rem;
+	margin-top: 0.25rem;
+}
+
+.product-desc .description-section .product-delivery .delivery-input-box p.right {
+	color: #26a541;
+}
+
+.product-desc .description-section .product-delivery .delivery-input-box p.wrong {
+	color: #de3700;
+}
+
 .product-desc .description-section .product-details {
-	margin-top: 50px;
 	border-bottom: 2px solid lightgray;
 }
 

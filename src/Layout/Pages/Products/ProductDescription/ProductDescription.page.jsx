@@ -11,6 +11,8 @@ import moment from "moment";
 import ReactImageMagnify from "react-image-magnify";
 import firebase from "firebase";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import link from "../../../../fetchPath";
 
 const pageVariants = {
 	initial: {
@@ -51,6 +53,10 @@ export default class ProductDesc extends React.Component {
 			ratings: [],
 			stars: 0,
 			sizeIndex: 0,
+			available: false,
+			delivery: "",
+			navailable: false,
+			checked: false,
 		};
 	}
 
@@ -148,8 +154,116 @@ export default class ProductDesc extends React.Component {
 	};
 
 	AddToCart = () => {
-		if (!this.state.product.noSize) {
-			if (this.state.sizeSelected !== "") {
+		if (this.state.available) {
+			if (!this.state.product.noSize) {
+				if (this.state.sizeSelected !== "") {
+					this.setState({
+						addLoading: true,
+					});
+					if (firebase.auth().currentUser) {
+						firebase
+							.firestore()
+							.collection("users")
+							.where("uid", "==", firebase.auth().currentUser.uid)
+							.get()
+							.then((snap) => {
+								snap.forEach((doc) => {
+									var cart = doc.data().cart;
+									var found = false;
+									cart.forEach((item) => {
+										if (item.id === this.state.product.id) {
+											found = true;
+										}
+									});
+									if (found === false) {
+										var tempCart = {};
+										tempCart.id = this.state.product.id;
+										tempCart.quantity = this.state.usersQuantity;
+										tempCart.size = this.state.sizeSelected;
+										tempCart.max = this.state.product.max;
+										tempCart.sizeMax = this.state.product.sizes[this.state.sizeIndex].quantity;
+										cart.push(tempCart);
+										console.log(cart);
+										firebase
+											.firestore()
+											.collection("users")
+											.doc(doc.id)
+											.update({
+												cart: cart,
+											})
+											.then(() => {
+												toaster.notify("Added to cart");
+												this.setState({
+													addLoading: false,
+												});
+
+												this.removeFromWishlist(this.state.product.id);
+											});
+									} else {
+										toaster.notify("Item already exist in your cart");
+										this.setState({
+											addLoading: false,
+										});
+									}
+								});
+							});
+					} else {
+						var cart = JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [];
+						if (cart.length > 0) {
+							cart.forEach((item) => {
+								if (item.id !== this.state.product.id) {
+									var tempCart = {};
+									tempCart.id = this.state.product.id;
+									tempCart.quantity = this.state.usersQuantity;
+									tempCart.size = this.state.sizeSelected;
+									tempCart.max = this.state.product.max;
+									tempCart.sizeMax = this.state.product.sizes[this.state.sizeIndex].quantity;
+									cart.push(tempCart);
+									this.setState(
+										{
+											cart: cart,
+											addloading: false,
+										},
+										() => {
+											var localCart = JSON.stringify(this.state.cart);
+											localStorage.setItem("cart", localCart);
+											toaster.notify("Added to cart");
+											this.props.handleParent();
+										}
+									);
+								} else {
+									toaster.notify("Item already exist in your cart");
+									this.setState({
+										addLoading: false,
+									});
+								}
+							});
+						} else {
+							var tempCart = {};
+							tempCart.id = this.state.product.id;
+							tempCart.quantity = this.state.usersQuantity;
+							tempCart.size = this.state.sizeSelected;
+							tempCart.max = this.state.product.max;
+							tempCart.sizeMax = this.state.product.sizes[this.state.sizeIndex].quantity;
+							cart.push(tempCart);
+							this.setState(
+								{
+									cart: cart,
+									addloading: false,
+								},
+								() => {
+									var localCart = JSON.stringify(this.state.cart);
+									localStorage.setItem("cart", localCart);
+									toaster.notify("Added to cart");
+									this.props.handleParent();
+								}
+							);
+						}
+					}
+				} else {
+					toaster.notify("Please select a size !");
+				}
+			} else {
 				this.setState({
 					addLoading: true,
 				});
@@ -172,9 +286,8 @@ export default class ProductDesc extends React.Component {
 									var tempCart = {};
 									tempCart.id = this.state.product.id;
 									tempCart.quantity = this.state.usersQuantity;
-									tempCart.size = this.state.sizeSelected;
+									tempCart.size = "null";
 									tempCart.max = this.state.product.max;
-									tempCart.sizeMax = this.state.product.sizes[this.state.sizeIndex].quantity;
 									cart.push(tempCart);
 									console.log(cart);
 									firebase
@@ -208,9 +321,8 @@ export default class ProductDesc extends React.Component {
 								var tempCart = {};
 								tempCart.id = this.state.product.id;
 								tempCart.quantity = this.state.usersQuantity;
-								tempCart.size = this.state.sizeSelected;
+								tempCart.size = "null";
 								tempCart.max = this.state.product.max;
-								tempCart.sizeMax = this.state.product.sizes[this.state.sizeIndex].quantity;
 								cart.push(tempCart);
 								this.setState(
 									{
@@ -235,9 +347,8 @@ export default class ProductDesc extends React.Component {
 						var tempCart = {};
 						tempCart.id = this.state.product.id;
 						tempCart.quantity = this.state.usersQuantity;
-						tempCart.size = this.state.sizeSelected;
+						tempCart.size = "null";
 						tempCart.max = this.state.product.max;
-						tempCart.sizeMax = this.state.product.sizes[this.state.sizeIndex].quantity;
 						cart.push(tempCart);
 						this.setState(
 							{
@@ -253,110 +364,9 @@ export default class ProductDesc extends React.Component {
 						);
 					}
 				}
-			} else {
-				toaster.notify("Please select a size !");
 			}
 		} else {
-			this.setState({
-				addLoading: true,
-			});
-			if (firebase.auth().currentUser) {
-				firebase
-					.firestore()
-					.collection("users")
-					.where("uid", "==", firebase.auth().currentUser.uid)
-					.get()
-					.then((snap) => {
-						snap.forEach((doc) => {
-							var cart = doc.data().cart;
-							var found = false;
-							cart.forEach((item) => {
-								if (item.id === this.state.product.id) {
-									found = true;
-								}
-							});
-							if (found === false) {
-								var tempCart = {};
-								tempCart.id = this.state.product.id;
-								tempCart.quantity = this.state.usersQuantity;
-								tempCart.size = "null";
-								tempCart.max = this.state.product.max;
-								cart.push(tempCart);
-								console.log(cart);
-								firebase
-									.firestore()
-									.collection("users")
-									.doc(doc.id)
-									.update({
-										cart: cart,
-									})
-									.then(() => {
-										toaster.notify("Added to cart");
-										this.setState({
-											addLoading: false,
-										});
-
-										this.removeFromWishlist(this.state.product.id);
-									});
-							} else {
-								toaster.notify("Item already exist in your cart");
-								this.setState({
-									addLoading: false,
-								});
-							}
-						});
-					});
-			} else {
-				var cart = JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [];
-				if (cart.length > 0) {
-					cart.forEach((item) => {
-						if (item.id !== this.state.product.id) {
-							var tempCart = {};
-							tempCart.id = this.state.product.id;
-							tempCart.quantity = this.state.usersQuantity;
-							tempCart.size = "null";
-							tempCart.max = this.state.product.max;
-							cart.push(tempCart);
-							this.setState(
-								{
-									cart: cart,
-									addloading: false,
-								},
-								() => {
-									var localCart = JSON.stringify(this.state.cart);
-									localStorage.setItem("cart", localCart);
-									toaster.notify("Added to cart");
-									this.props.handleParent();
-								}
-							);
-						} else {
-							toaster.notify("Item already exist in your cart");
-							this.setState({
-								addLoading: false,
-							});
-						}
-					});
-				} else {
-					var tempCart = {};
-					tempCart.id = this.state.product.id;
-					tempCart.quantity = this.state.usersQuantity;
-					tempCart.size = "null";
-					tempCart.max = this.state.product.max;
-					cart.push(tempCart);
-					this.setState(
-						{
-							cart: cart,
-							addloading: false,
-						},
-						() => {
-							var localCart = JSON.stringify(this.state.cart);
-							localStorage.setItem("cart", localCart);
-							toaster.notify("Added to cart");
-							this.props.handleParent();
-						}
-					);
-				}
-			}
+			toaster.notify("Please check your delivery pincode");
 		}
 	};
 
@@ -431,32 +441,53 @@ export default class ProductDesc extends React.Component {
 			});
 	};
 
-	handlePlus = () => {
-		var usersQuantity = this.state.usersQuantity;
-		if (this.state.product.noSize) {
-			if (usersQuantity < this.state.product.max) {
-				usersQuantity += 1;
-				this.setState({
-					usersQuantity,
-				});
-			}
+	handlePincode = (e) => {
+		var x = e.target.value;
+		var delivery = parseInt(x);
+		if (Number.isInteger(delivery)) {
+			this.setState({
+				delivery: x,
+				available: false,
+				navailable: false,
+				checked: false,
+			});
 		} else {
-			if (usersQuantity < this.state.product.max && usersQuantity < this.state.product.sizes[this.state.sizeIndex].quantity) {
-				usersQuantity += 1;
+			if (x === "") {
 				this.setState({
-					usersQuantity,
+					delivery: "",
+					available: false,
+					navailable: false,
+					checked: false,
+				});
+			} else {
+				this.setState({
+					available: false,
+					navailable: false,
+					checked: false,
 				});
 			}
 		}
 	};
 
-	handleMinus = () => {
-		var usersQuantity = this.state.usersQuantity;
-		if (usersQuantity > 1) {
-			usersQuantity -= 1;
-			this.setState({
-				usersQuantity,
-			});
+	handleCheck = async () => {
+		var data = {
+			pincode: this.state.delivery,
+		};
+		var res = await axios.post(link + "/checkPincode", data);
+		if (res.data !== null) {
+			if (res.data.type === "success") {
+				this.setState({
+					available: true,
+					checked: true,
+					navailable: false,
+				});
+			} else {
+				this.setState({
+					navailable: true,
+					checked: true,
+					available: false,
+				});
+			}
 		}
 	};
 
@@ -725,6 +756,19 @@ export default class ProductDesc extends React.Component {
 													<p>This item is currently out of stock</p>
 												</div>
 											)}
+										</div>
+										<div className='product-delivery'>
+											<p>Delivery</p>
+											<div className='delivery-input-box'>
+												<div className='delivery-input'>
+													<i className='fas fa-map-marker-alt'></i>
+													<input value={this.state.delivery} onChange={this.handlePincode} placeholder='Enter Delivery Pincode' maxLength={6} />
+													{this.state.delivery.length === 6 ? <p onClick={this.handleCheck}>Check</p> : null}
+												</div>
+												{this.state.checked ? (
+													<>{this.state.navailable ? <p className='wrong'>Not-availble at your pincode</p> : <p className='right'>Availble at your pincode</p>}</>
+												) : null}
+											</div>
 										</div>
 										<div className='product-details'>
 											<h3>Product Details</h3>
