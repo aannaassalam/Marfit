@@ -39,11 +39,7 @@ function App() {
 					<Route exact path='/Category/:id' component={CategoryList} />
 					<Route exact path='/Category/:id1/:id2' component={ProductList} />
 					<Route exact path='/Search/:id1' component={SearchList} />
-					<Route
-						exact
-						path='/Category/:id1/:id2/:id3'
-						render={(routeProps) => <ProductDesc handleParent={handleParent} {...routeProps} />}
-					/>
+					<Route exact path='/Category/:id1/:id2/:id3' render={(routeProps) => <ProductDesc handleParent={handleParent} {...routeProps} />} />
 					<Route exact path='/Dashboard/:id' component={Dashboard} />
 					<Route exact path='/ComingSoon' component={ComingSoon} />
 					<Route exact path='/NewArrivals' component={NewArrival} />

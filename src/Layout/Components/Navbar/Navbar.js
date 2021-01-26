@@ -28,8 +28,8 @@ export default class Navbar extends React.Component {
 			cartSize: 0,
 			currentScroll: "",
 			hamburgerOffSet: 0,
-			tags:[],
-			stags:[]
+			tags: [],
+			stags: [],
 		};
 		this.windowOffSet = 0;
 	}
@@ -40,24 +40,26 @@ export default class Navbar extends React.Component {
 	}
 
 	handleInit = () => {
-		firebase.firestore().collection('products').get().then(snap=>{
-			var tags=[];
-			snap.forEach(doc=>{
-				if(doc.data().tag)
-				{
-					var tag=doc.data().tag.split(',');
-					for(var i=0;i<tag.length;i++)
-					{
-						if(!tags.includes(tag[i])){
-							tags.push(tag[i])
+		firebase
+			.firestore()
+			.collection("products")
+			.get()
+			.then((snap) => {
+				var tags = [];
+				snap.forEach((doc) => {
+					if (doc.data().tag) {
+						var tag = doc.data().tag.split(",");
+						for (var i = 0; i < tag.length; i++) {
+							if (!tags.includes(tag[i])) {
+								tags.push(tag[i]);
+							}
 						}
 					}
-				}
+				});
+				this.setState({
+					tags,
+				});
 			});
-			this.setState({
-				tags
-			})
-		})
 		firebase.auth().onAuthStateChanged((user) => {
 			if (user) {
 				firebase
@@ -104,30 +106,33 @@ export default class Navbar extends React.Component {
 	};
 
 	handleCart = () => {
-		this.setState(
-			{
-				showCart: true,
-			},
-			() => {
-				this.windowOffSet = window.scrollY;
-				document.body.setAttribute("style", `position: fixed; top: -${this.windowOffSet}px; left: 0; right: 0;`);
-			}
-		);
+		if (firebase.auth().currentUser) {
+			window.location.href = "/Cart";
+		} else {
+			this.setState(
+				{
+					showCart: true,
+				},
+				() => {
+					this.windowOffSet = window.scrollY;
+					document.body.setAttribute("style", `position: fixed; top: -${this.windowOffSet}px; left: 0; right: 0;`);
+				}
+			);
+		}
 	};
 
 	handleSearch = (e) => {
 		console.log(e.target.value);
-		var tags=this.state.tags;
-		var stags=[];
-		tags.map(t=>{
-			if(t.toLowerCase().includes(e.target.value.toLowerCase()))
-			{
-				stags.push(t)
+		var tags = this.state.tags;
+		var stags = [];
+		tags.map((t) => {
+			if (t.toLowerCase().includes(e.target.value.toLowerCase())) {
+				stags.push(t);
 			}
-		})
+		});
 		this.setState({
 			[e.target.name]: e.target.value,
-			stags:stags
+			stags: stags,
 		});
 	};
 
@@ -190,7 +195,7 @@ export default class Navbar extends React.Component {
 								onClick={() => {
 									this.setState({ showMenu: true });
 								}}></i>
-							<div className={this.state.stags.length>0 && this.state.search.length>0?"searchContainer active":"searchContainer"}>
+							<div className={this.state.stags.length > 0 && this.state.search.length > 0 ? "searchContainer active" : "searchContainer"}>
 								<div className='input-container'>
 									<input
 										type='text'
@@ -200,39 +205,36 @@ export default class Navbar extends React.Component {
 										onChange={this.handleSearch}
 										value={this.state.search}
 										onKeyPress={this.handleKeyPress}
-										autoComplete="off"
+										autoComplete='off'
 									/>
 								</div>
 								<button>
 									<i className='fa fa-search' onClick={this.handleSearchIt}></i>
 								</button>
-								{
-								this.state.stags.length>0 && this.state.search.length>0
-								?
-								<div className='suggestions'>
-								<div className='suggestions-box'>
-									{
-										this.state.stags.map(tag=>{
-											return (
-												<p className='suggest' onClick={()=>{
-													this.setState({
-														search:tag
-													},()=>{
-														this.handleSearchIt();
-													})
-												}}>
-												{
-													tag
-												}
-												</p>
-											)
-										})
-									}
-								</div>
-							</div>
-							:
-							null
-							}
+								{this.state.stags.length > 0 && this.state.search.length > 0 ? (
+									<div className='suggestions'>
+										<div className='suggestions-box'>
+											{this.state.stags.map((tag) => {
+												return (
+													<p
+														className='suggest'
+														onClick={() => {
+															this.setState(
+																{
+																	search: tag,
+																},
+																() => {
+																	this.handleSearchIt();
+																}
+															);
+														}}>
+														{tag}
+													</p>
+												);
+											})}
+										</div>
+									</div>
+								) : null}
 							</div>
 						</div>
 						<div className='nav-container hide'>
@@ -248,7 +250,7 @@ export default class Navbar extends React.Component {
 									<img src={title} alt='Marfit Title' className='logo-title' />
 								</a>
 							</div>
-							<div className={this.state.stags.length>0 && this.state.search.length>0 ? "second-container active" : "second-container"}>
+							<div className={this.state.stags.length > 0 && this.state.search.length > 0 ? "second-container active" : "second-container"}>
 								<div className='input-container'>
 									<input
 										type='text'
@@ -258,39 +260,36 @@ export default class Navbar extends React.Component {
 										onChange={this.handleSearch}
 										value={this.state.search}
 										onKeyPress={this.handleKeyPress}
-										autoComplete="off"
+										autoComplete='off'
 									/>
 								</div>
 								<button id='search-btn' onClick={this.handleSearchIt}>
 									<i className='fa fa-search'></i>
 								</button>
-								{
-								this.state.stags.length>0 && this.state.search.length>0
-								?
-								<div className='suggestions'>
-								<div className='suggestions-box'>
-									{
-										this.state.stags.map(tag=>{
-											return (
-												<p className='suggest' onClick={()=>{
-													this.setState({
-														search:tag
-													},()=>{
-														this.handleSearchIt();
-													})
-												}}>
-												{
-													tag
-												}
-												</p>
-											)
-										})
-									}
-								</div>
-							</div>
-							:
-							null
-							}
+								{this.state.stags.length > 0 && this.state.search.length > 0 ? (
+									<div className='suggestions'>
+										<div className='suggestions-box'>
+											{this.state.stags.map((tag) => {
+												return (
+													<p
+														className='suggest'
+														onClick={() => {
+															this.setState(
+																{
+																	search: tag,
+																},
+																() => {
+																	this.handleSearchIt();
+																}
+															);
+														}}>
+														{tag}
+													</p>
+												);
+											})}
+										</div>
+									</div>
+								) : null}
 							</div>
 							<div className={this.state.searchbtn ? "third-container-none" : "third-container"}>
 								<i
@@ -378,7 +377,7 @@ export default class Navbar extends React.Component {
 								<img src={title} alt='Marfit Title' className='logo-title' />
 							</a>
 						</div>
-						<div className={this.state.stags.length>0 && this.state.search.length>0 ? "second-container active" : "second-container"}>
+						<div className={this.state.stags.length > 0 && this.state.search.length > 0 ? "second-container active" : "second-container"}>
 							<div className='input-container'>
 								<input
 									type='text'
@@ -388,90 +387,80 @@ export default class Navbar extends React.Component {
 									onChange={this.handleSearch}
 									value={this.state.search}
 									onKeyPress={this.handleKeyPress}
-									autocomplete="off"
+									autocomplete='off'
 								/>
 							</div>
 							<button>
 								<i className='fa fa-search' onClick={this.handleSearchIt}></i>
 							</button>
-							{
-								this.state.stags.length>0 && this.state.search.length>0
-								?
+							{this.state.stags.length > 0 && this.state.search.length > 0 ? (
 								<div className='suggestions'>
-								<div className='suggestions-box'>
-									{
-										this.state.stags.map(tag=>{
+									<div className='suggestions-box'>
+										{this.state.stags.map((tag) => {
 											return (
-												<p className='suggest' onClick={()=>{
-													this.setState({
-														search:tag
-													},()=>{
-														this.handleSearchIt();
-													})
-												}}>
-												{
-													tag
-												}
-												</p>
-											)
-										})
-									}
-								</div>
-							</div>
-							:
-							null
-							}
-						</div>
-						{
-								this.state.searchbtn
-								?
-								<div className={this.state.stags.length>0 && this.state.search.length>0?"searchContainer active":"searchContainer"}>
-									<div className='input-container'>
-										<input
-											type='text'
-											name='search'
-											id='search'
-											placeholder='What are you looking for ?'
-											onChange={this.handleSearch}
-											value={this.state.search}
-											onKeyPress={this.handleKeyPress}
-											autoComplete="off"
-										/>
-									</div>
-									<button>
-										<i className='fa fa-search' onClick={this.handleSearchIt}></i>
-									</button>
-									{
-										this.state.stags.length>0 && this.state.search.length>0
-										?
-										<div className='suggestions'>
-										<div className='suggestions-box'>
-											{
-												this.state.stags.map(tag=>{
-													return (
-														<p className='suggest' onClick={()=>{
-															this.setState({
-																search:tag
-															},()=>{
+												<p
+													className='suggest'
+													onClick={() => {
+														this.setState(
+															{
+																search: tag,
+															},
+															() => {
 																this.handleSearchIt();
-															})
+															}
+														);
+													}}>
+													{tag}
+												</p>
+											);
+										})}
+									</div>
+								</div>
+							) : null}
+						</div>
+						{this.state.searchbtn ? (
+							<div className={this.state.stags.length > 0 && this.state.search.length > 0 ? "searchContainer active" : "searchContainer"}>
+								<div className='input-container'>
+									<input
+										type='text'
+										name='search'
+										id='search'
+										placeholder='What are you looking for ?'
+										onChange={this.handleSearch}
+										value={this.state.search}
+										onKeyPress={this.handleKeyPress}
+										autoComplete='off'
+									/>
+								</div>
+								<button>
+									<i className='fa fa-search' onClick={this.handleSearchIt}></i>
+								</button>
+								{this.state.stags.length > 0 && this.state.search.length > 0 ? (
+									<div className='suggestions'>
+										<div className='suggestions-box'>
+											{this.state.stags.map((tag) => {
+												return (
+													<p
+														className='suggest'
+														onClick={() => {
+															this.setState(
+																{
+																	search: tag,
+																},
+																() => {
+																	this.handleSearchIt();
+																}
+															);
 														}}>
-														{
-															tag
-														}
-														</p>
-													)
-												})
-											}
+														{tag}
+													</p>
+												);
+											})}
 										</div>
 									</div>
-									:
-									null
-									}
-								</div>
-								:
-								null
-							}
+								) : null}
+							</div>
+						) : null}
 						<div className={this.state.searchbtn ? "third-container-none" : "third-container"}>
 							<i
 								className='fas fa-times'
