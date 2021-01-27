@@ -107,13 +107,6 @@ export default class Login extends React.Component {
 														});
 														this.props.login(true);
 														this.props.close(false);
-														const data = {
-															email: this.state.email,
-															subject: "Marfit",
-															message: "You just got registered to mafit website, email",
-														};
-														axios.post(link + "/api/sendemail", data);
-														window.location.href = "/";
 													})
 													.catch((err) => {
 														toaster.notify(err.message);
@@ -386,56 +379,60 @@ export default class Login extends React.Component {
 
 	handlePhoneLogin = () => {
 		this.setState({
-			loading: true,
+			loadingNext: true,
 		});
-		console.log("Phone Login");
-		firebase
-			.firestore()
-			.collection("users")
-			.where("phone", "==", this.state.email)
-			.get()
-			.then((snap) => {
-				if (snap.size > 0) {
-					snap.forEach((doc) => {
-						firebase
-							.auth()
-							.signInAnonymously()
-							.then((res) => {
-								firebase
-									.firestore()
-									.collection("users")
-									.doc(doc.id)
-									.update({
-										uid: res.user.uid,
-									})
-									.then(() => {
-										this.setState({
-											loading: false,
-										});
-										this.props.login(true);
-										this.props.close(false);
-										const data = {
-											email: this.state.email,
-											subject: "Marfit",
-											message: "You just login to mafit website, We welcome you",
-										};
-										axios.post(link + "/api/sendMessage", data);
-									})
-									.catch((err) => {
-										console.log(err);
-										this.setState({
-											loading: false,
-										});
-									});
-							});
-					});
-				} else {
-					this.setState({
-						loading: false,
-					});
-					alert("No such account found with this phone number");
-				}
+		var otp = this.state.c1 + this.state.c2 + this.state.c3 + this.state.c4;
+		if (otp === this.state.otp) {
+			this.setState({
+				loadingNext: true,
 			});
+			firebase
+				.firestore()
+				.collection("users")
+				.where("phone", "==", this.state.email)
+				.get()
+				.then((snap) => {
+					if (snap.size > 0) {
+						snap.forEach((doc) => {
+							firebase
+								.auth()
+								.signInAnonymously()
+								.then((res) => {
+									firebase
+										.firestore()
+										.collection("users")
+										.doc(doc.id)
+										.update({
+											uid: res.user.uid,
+										})
+										.then(() => {
+											this.setState({
+												loadingNext: false,
+											});
+											this.props.login(true);
+											this.props.close(false);
+										})
+										.catch((err) => {
+											console.log(err);
+											this.setState({
+												loadingNext: false,
+											});
+										});
+								});
+						});
+					} else {
+						this.setState({
+							loadingNext: false,
+						});
+						toaster.notify("No such account found with this phone number");
+					}
+				});
+		} else {
+			toaster.notify("Wrong OTP");
+			this.setState({
+				loadingNext: false,
+			});
+		}
 	};
 
 	handleNext = async () => {
@@ -443,18 +440,27 @@ export default class Login extends React.Component {
 			alert("Please enter a valid email or phone number");
 		}
 		if (!this.state.email.includes("@") && this.state.email.length === 10) {
-			const message = "Please enter this OTP to verify your login: 4036";
+			this.setState({
+				loadingNext: true,
+			});
+			var otp = await otpGenerator.generate(4, {
+				upperCase: false,
+				specialChars: false,
+				alphabets: false,
+			});
+			this.setState({
+				otp: otp,
+			});
 			var data = {
-				apikey: "aP2UPmYzGCo-LZzL6YvkaHmEO6EzazQYQKwBA83czl",
-				numbers: ["8017036489"],
-				sender: "TXTLCL",
-				message: "1024",
+				message: otp,
+				number: this.state.email,
 			};
-			// var res = await axios.post(link+"/api/sendMessage", data);
-			// console.log(res.data);
+			var res = await axios.post(link + "/api/sendMessage", data);
+			console.log(res.data);
 			this.setState({
 				showOTP: true,
 				showNext: true,
+				loadingNext: false,
 			});
 		} else if (this.state.email.includes("@")) {
 			this.setState({
@@ -740,7 +746,7 @@ export default class Login extends React.Component {
 										<div className='otp-cont'>
 											<div className='vrf'>
 												<h1>Enter verification code</h1>
-												<p>Enter 4 digit verification code send to your email address</p>
+												<p>Enter 4 digit verification code</p>
 											</div>
 											<div className='verification-cont'>
 												<div className='code-container'>
