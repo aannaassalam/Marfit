@@ -121,6 +121,7 @@ class Cart extends React.Component {
 							var product = await firebase.firestore().collection("products").doc(doc.data().cart[i].id).get();
 							var prod = product.data();
 							prod.id = product.id;
+							prod.quantity = doc.data().cart[i].quantity;
 							products.push(prod);
 							rental = rental + prod.sp * doc.data().cart[i].quantity;
 							shipping = shipping + prod.shippingCharge;
@@ -616,7 +617,7 @@ class Cart extends React.Component {
 					this.handleRazorPayment();
 				}
 				if (this.state.paymentTab === 2) {
-					alert("COD");
+					this.handleAfterPay("COD");
 				}
 			}
 		} else {
@@ -672,36 +673,30 @@ class Cart extends React.Component {
 		rzp1.open();
 	};
 
-	handleAfterPay = (response) => {
+	handleAfterPay = async (response) => {
 		var products = [];
-		this.state.products.forEach((product) => {
+		var oproducts = this.state.products;
+		var done = 0;
+		oproducts.forEach((product) => {
 			product.rate = false;
 			products.push(product);
 		});
-		var a = {
-			paymentId: response,
-			products: products,
-			date: new Date(),
-			points: this.state.points,
-			email: firebase.auth().currentUser ? this.state.currentUser.email : this.state.email,
-			address: this.state.address.address,
-			city: this.state.address.city,
-			country: this.state.address.country,
-			pincode: this.state.address.pin,
-			phone: this.state.address.cphone,
-			state: this.state.address.state,
-			coupon: this.state.coupon,
-			name: this.state.address.cname,
-			total: this.state.rental - this.state.points + (this.state.addressType === "default" ? this.state.shipping : 0),
-			shipping: this.state.addressType === "default" ? this.state.shipping : 0,
-			tag: firebase.auth().currentUser ? "Default" : "Guest",
-			status: [0],
-			tracking: "",
-			paymentMethod: this.state.paymentTab === "1" ? "Online Razorpay" : "COD",
-			type: this.state.addressType === "default" ? "Delivery" : "Store Pickup",
-		};
-		console.log(a);
-		firebase
+		var res = await this.handleFirebaseOrder(response, products);
+		console.log(res.id);
+		var res3 = await this.handleUpdateUser(res.id);
+		console.log(res3);
+		for (var i = 0; i < products.length; i++) {
+			var res2 = await this.handleUpdateProduct(products[i]);
+			console.log(res2);
+			done += 1;
+		}
+		if (done === products.length) {
+			window.location.href = "/Dashboard/Orders";
+		}
+	};
+
+	handleFirebaseOrder = async (response, products) => {
+		var order = await firebase
 			.firestore()
 			.collection("orders")
 			.add({
@@ -725,68 +720,121 @@ class Cart extends React.Component {
 				tracking: "",
 				paymentMethod: this.state.paymentTab === "1" ? "Online Razorpay" : "COD",
 				type: this.state.addressType === "default" ? "Delivery" : "Store Pickup",
-			})
-			.then(async (res) => {
-				products.forEach((product) => {
-					if (!product.noSize) {
-						product.sizes.map((size, index) => {
-							if (size.name === product.userSize) {
-								size.quantity = size.quantity - product.userquantity;
-							}
-						});
-					}
-					if (product.quantity > 0) {
-						firebase
-							.firestore()
-							.collection("products")
-							.doc(product.id)
-							.update({
-								quantity: product.quantity - product.userquantity,
-								sizes: product.sizes,
-							});
-					}
-				});
-				if (firebase.auth().currentUser) {
-					firebase
-						.firestore()
-						.collection("users")
-						.doc(this.state.currentUser.id)
-						.get()
-						.then((doc) => {
-							var addresses = doc.data().addresses;
-							var orders = doc.data().orders;
-							orders.push(res.id);
-							firebase
-								.firestore()
-								.collection("users")
-								.doc(this.state.currentUser.id)
-								.update({
-									orders: orders,
-									addresses: addresses,
-									cart: [],
-									points: 0,
-								})
-								.then(async () => {
-									const data = {
-										email: this.state.address.email,
-										subject: this.state.products[0].title,
-										message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id}`,
-									};
-									var res2 = await axios.post(link + "/api/sendemail", data);
-									window.location.href = "/Orders/" + res.id;
-								});
-						});
-				} else {
-					localStorage.setItem("cart", JSON.stringify([]));
-					const data = {
-						email: this.state.address.email,
-						subject: this.state.products[0].title,
-						message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id}`,
-					};
-					var res2 = await axios.post(link + "/api/sendemail", data);
-					window.location.href = "/Orders/" + res.id;
-				}
 			});
+		return order;
+		// firebase
+		// .firestore()
+		// .collection("orders")
+		// .add({
+		// 	paymentId: response,
+		// 	product: products[i],
+		// 	date: new Date(),
+		// 	points: this.state.points,
+		// 	email: firebase.auth().currentUser ? this.state.currentUser.email : this.state.email,
+		// 	address: this.state.address.address,
+		// 	city: this.state.address.city,
+		// 	country: this.state.address.country,
+		// 	pincode: this.state.address.pin,
+		// 	phone: this.state.address.cphone,
+		// 	state: this.state.address.state,
+		// 	coupon: this.state.coupon,
+		// 	name: this.state.address.cname,
+		// 	total: this.state.rental - this.state.points + (this.state.addressType === "default" ? this.state.shipping : 0),
+		// 	shipping: this.state.addressType === "default" ? this.state.shipping : 0,
+		// 	tag: firebase.auth().currentUser ? "Default" : "Guest",
+		// 	status: [0],
+		// 	tracking: "",
+		// 	paymentMethod: this.state.paymentTab === "1" ? "Online Razorpay" : "COD",
+		// 	type: this.state.addressType === "default" ? "Delivery" : "Store Pickup",
+		// })
+		// .then(async (res) => {
+		// 	const increment = firebase.firestore.FieldValue.increment(-1);
+		// 	firebase.firestore().collection("products").doc(products[i].id).update({
+		// 		quantity: increment,
+		// 	});
+		// 	if (firebase.auth().currentUser) {
+		// 		firebase
+		// 			.firestore()
+		// 			.collection("users")
+		// 			.doc(this.state.currentUser.id)
+		// 			.get()
+		// 			.then((doc) => {
+		// 				var addresses = doc.data().addresses;
+		// 				var orders = doc.data().orders;
+		// 				orders.push(res.id);
+		// 				firebase
+		// 					.firestore()
+		// 					.collection("users")
+		// 					.doc(this.state.currentUser.id)
+		// 					.update({
+		// 						orders: orders,
+		// 						addresses: addresses,
+		// 						cart: [],
+		// 						points: 0,
+		// 					})
+		// 					.then(async () => {
+		// 						const data = {
+		// 							email: firebase.auth().currentUser ? this.state.currentUser.email : this.state.email,
+		// 							subject: this.state.products[0].title,
+		// 							message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id}`,
+		// 						};
+		// 						var res2 = await axios.post(link + "/api/sendemail", data);
+		// 						done = done + 1;
+		// 						if (done === products.length) {
+		// 							window.location.href = "/Orders/" + res.id;
+		// 						}
+		// 					});
+		// 			});
+		// 	} else {
+		// 		localStorage.setItem("cart", JSON.stringify([]));
+		// 		const data = {
+		// 			email: this.state.email,
+		// 			subject: this.state.products[0].title,
+		// 			message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id}`,
+		// 		};
+		// 		var res2 = await axios.post(link + "/api/sendemail", data);
+		// 		if (done === products.length) {
+		// 			window.location.href = "/Orders/" + res.id;
+		// 		}
+		// 	}
+		// });
+	};
+
+	handleUpdateProduct = async (e) => {
+		const increment = firebase.firestore.FieldValue.increment(-1);
+		var update = await firebase.firestore().collection("products").doc(e.id).update({
+			quantity: increment,
+		});
+		return true;
+	};
+
+	handleUpdateUser = async (e) => {
+		if (firebase.auth().currentUser) {
+			var user = await firebase.firestore().collection("users").doc(this.state.currentUser.id).get();
+			var orders = user.data().orders;
+			orders.push(e);
+			var updateUser = await firebase.firestore().collection("users").doc(this.state.currentUser.id).update({
+				orders: orders,
+				cart: [],
+				points: 0,
+			});
+			const data = {
+				email: firebase.auth().currentUser ? this.state.currentUser.email : this.state.email,
+				subject: "MARFIT ORDER",
+				message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${e}`,
+			};
+			var res2 = await axios.post(link + "/api/sendemail", data);
+			return true;
+		} else {
+			localStorage.setItem("cart", JSON.stringify([]));
+			const data = {
+				email: this.state.email,
+				subject: "MARFIT ORDER",
+				message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${e}`,
+			};
+			var res2 = await axios.post(link + "/api/sendemail", data);
+			return true;
+		}
 	};
 
 	render() {
