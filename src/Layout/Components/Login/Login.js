@@ -96,6 +96,7 @@ export default class Login extends React.Component {
 														referalID: "",
 														points: 10,
 														uid: res.user.uid,
+														couponsUsed: [],
 													})
 													.then((res) => {
 														var referal = res.id.substr(16, 4) + this.state.email.substr(0, 2);
@@ -164,6 +165,7 @@ export default class Login extends React.Component {
 									referalID: "",
 									points: 0,
 									uid: res.user.uid,
+									couponsUsed: [],
 								})
 								.then((res) => {
 									var referal = res.id.substr(16, 4) + this.state.email.substr(0, 2);

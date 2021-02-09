@@ -72,7 +72,9 @@ class Cart extends React.Component {
 			addressType: "default",
 			points: 0,
 			country: "",
-			coupon: "",
+			coupon: {},
+			coupons: [],
+			couponCode: "",
 		};
 	}
 	async componentDidMount() {
@@ -81,6 +83,7 @@ class Cart extends React.Component {
 			snap2.forEach((doc) => {
 				this.setState({
 					saddresses: doc.data().stores,
+					coupons: doc.data().coupons,
 				});
 			});
 		}
@@ -626,7 +629,14 @@ class Cart extends React.Component {
 	};
 
 	handleRazorPayment = () => {
-		var total = Math.round((this.state.rental - this.state.points + (this.state.addressType === "default" ? this.state.shipping : 0) - (this.state.paymentTab === 1 ? 50 : 0)) * 100);
+		var total = Math.round(
+			(this.state.rental -
+				this.state.points +
+				(this.state.addressType === "default" ? this.state.shipping : 0) -
+				(this.state.coupon.name ? (this.state.coupon.type === "money" ? this.state.coupon.value : Math.round(this.state.rental * (this.state.coupon.value / 100))) : 0) -
+				(this.state.paymentTab === 1 ? 50 : 0)) *
+				100
+		);
 		// let options = {
 		// 	key: "rzp_live_YmYlELv3yfrWe6",
 		// 	amount: total, // 2000 paise = INR 20, amount in paisa
@@ -713,7 +723,11 @@ class Cart extends React.Component {
 				state: this.state.address.state,
 				coupon: this.state.coupon,
 				name: this.state.address.cname,
-				total: this.state.rental - this.state.points + (this.state.addressType === "default" ? this.state.shipping : 0),
+				total:
+					this.state.rental -
+					this.state.points +
+					(this.state.addressType === "default" ? this.state.shipping : 0) -
+					(this.state.coupon.name ? (this.state.coupon.type === "money" ? this.state.coupon.value : Math.round(this.state.rental * (this.state.coupon.value / 100))) : 0),
 				shipping: this.state.addressType === "default" ? this.state.shipping : 0,
 				tag: firebase.auth().currentUser ? "Default" : "Guest",
 				status: [0],
@@ -722,82 +736,6 @@ class Cart extends React.Component {
 				type: this.state.addressType === "default" ? "Delivery" : "Store Pickup",
 			});
 		return order;
-		// firebase
-		// .firestore()
-		// .collection("orders")
-		// .add({
-		// 	paymentId: response,
-		// 	product: products[i],
-		// 	date: new Date(),
-		// 	points: this.state.points,
-		// 	email: firebase.auth().currentUser ? this.state.currentUser.email : this.state.email,
-		// 	address: this.state.address.address,
-		// 	city: this.state.address.city,
-		// 	country: this.state.address.country,
-		// 	pincode: this.state.address.pin,
-		// 	phone: this.state.address.cphone,
-		// 	state: this.state.address.state,
-		// 	coupon: this.state.coupon,
-		// 	name: this.state.address.cname,
-		// 	total: this.state.rental - this.state.points + (this.state.addressType === "default" ? this.state.shipping : 0),
-		// 	shipping: this.state.addressType === "default" ? this.state.shipping : 0,
-		// 	tag: firebase.auth().currentUser ? "Default" : "Guest",
-		// 	status: [0],
-		// 	tracking: "",
-		// 	paymentMethod: this.state.paymentTab === "1" ? "Online Razorpay" : "COD",
-		// 	type: this.state.addressType === "default" ? "Delivery" : "Store Pickup",
-		// })
-		// .then(async (res) => {
-		// 	const increment = firebase.firestore.FieldValue.increment(-1);
-		// 	firebase.firestore().collection("products").doc(products[i].id).update({
-		// 		quantity: increment,
-		// 	});
-		// 	if (firebase.auth().currentUser) {
-		// 		firebase
-		// 			.firestore()
-		// 			.collection("users")
-		// 			.doc(this.state.currentUser.id)
-		// 			.get()
-		// 			.then((doc) => {
-		// 				var addresses = doc.data().addresses;
-		// 				var orders = doc.data().orders;
-		// 				orders.push(res.id);
-		// 				firebase
-		// 					.firestore()
-		// 					.collection("users")
-		// 					.doc(this.state.currentUser.id)
-		// 					.update({
-		// 						orders: orders,
-		// 						addresses: addresses,
-		// 						cart: [],
-		// 						points: 0,
-		// 					})
-		// 					.then(async () => {
-		// 						const data = {
-		// 							email: firebase.auth().currentUser ? this.state.currentUser.email : this.state.email,
-		// 							subject: this.state.products[0].title,
-		// 							message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id}`,
-		// 						};
-		// 						var res2 = await axios.post(link + "/api/sendemail", data);
-		// 						done = done + 1;
-		// 						if (done === products.length) {
-		// 							window.location.href = "/Orders/" + res.id;
-		// 						}
-		// 					});
-		// 			});
-		// 	} else {
-		// 		localStorage.setItem("cart", JSON.stringify([]));
-		// 		const data = {
-		// 			email: this.state.email,
-		// 			subject: this.state.products[0].title,
-		// 			message: `Your order was successful, you can see and track you from https://localhost:3000/Orders/${res.id}`,
-		// 		};
-		// 		var res2 = await axios.post(link + "/api/sendemail", data);
-		// 		if (done === products.length) {
-		// 			window.location.href = "/Orders/" + res.id;
-		// 		}
-		// 	}
-		// });
 	};
 
 	handleUpdateProduct = async (e) => {
@@ -808,13 +746,43 @@ class Cart extends React.Component {
 		return true;
 	};
 
+	handleApplyCoupon = async () => {
+		var coupon = {};
+		var coupons = this.state.coupons;
+		var snap = await firebase.firestore().collection("users").doc(this.state.currentUser.id).get();
+		var currentUser = snap.data();
+		coupons.map((c) => {
+			if (c.name.toLowerCase() === this.state.couponCode.toLowerCase() && c.active === "Active") {
+				coupon = c;
+			}
+		});
+		var found = false;
+		currentUser.couponsUsed.map((c2) => {
+			if (c2.name === coupon.name) {
+				found = true;
+			}
+		});
+		if (coupon.value && found === false) {
+			this.setState({
+				coupon: coupon,
+			});
+		} else {
+			toaster.notify("Coupon not valid!");
+		}
+	};
+
 	handleUpdateUser = async (e) => {
 		if (firebase.auth().currentUser) {
 			var user = await firebase.firestore().collection("users").doc(this.state.currentUser.id).get();
 			var orders = user.data().orders;
+			var couponsUsed = user.data().couponsUsed;
+			if (this.state.coupon.value) {
+				couponsUsed.push(this.state.coupon);
+			}
 			orders.push(e);
 			var updateUser = await firebase.firestore().collection("users").doc(this.state.currentUser.id).update({
 				orders: orders,
+				couponsUsed: couponsUsed,
 				cart: [],
 				points: 0,
 			});
@@ -872,7 +840,7 @@ class Cart extends React.Component {
 									}}>
 									Your cart is empty
 								</p>
-								<p style={{ color: "#717171", marginBottom: "15px" }}>Add items in your cart and come back later to process checkout.</p>
+								<p style={{ color: "#717171", textAlign: "center", margin: "0 10px", marginBottom: "15px" }}>Add items in your cart and come back later to process checkout.</p>
 								<a
 									href='/'
 									style={{
@@ -919,8 +887,22 @@ class Cart extends React.Component {
 									<div className='right'>
 										<div className='coupon-box'>
 											<div className='coupon'>
-												<input type='text' placeholder='Enter coupon code' />
-												<button type='button'>APPLY</button>
+												<input type='text' placeholder='Enter coupon code' name='couponCode' value={this.state.couponCode} onChange={this.handleChange} />
+												{this.state.coupon.value ? (
+													<>
+														{this.state.coupon.name.toLowerCase() === this.state.couponCode.toLowerCase() ? (
+															<button type='button'>APPLIED</button>
+														) : (
+															<button type='button' onClick={this.handleApplyCoupon}>
+																APPLY
+															</button>
+														)}
+													</>
+												) : (
+													<button type='button' onClick={this.handleApplyCoupon}>
+														APPLY
+													</button>
+												)}
 											</div>
 										</div>
 										<div className='process-box'>
@@ -1017,21 +999,42 @@ class Cart extends React.Component {
 																<p>Total</p>
 																<span>+ &#8377; {this.state.rental}</span>
 															</div>
-
 															<div className='rent'>
 																<p>Shipping Fees</p>
 																<span>+ {this.state.shipping > 0 ? "₹ " + this.state.shipping : "Free"}</span>
 															</div>
-
 															{this.state.points > 0 ? (
 																<div className='rent'>
 																	<p>Reddem Points</p>
 																	<span>- &#8377; {this.state.points}</span>
 																</div>
 															) : null}
+															{this.state.coupon.value > 0 ? (
+																<div className='rent'>
+																	<p>Coupon</p>
+																	<span>
+																		- &#8377;{" "}
+																		{this.state.coupon.name
+																			? this.state.coupon.type === "money"
+																				? this.state.coupon.value
+																				: Math.round(this.state.rental * (this.state.coupon.value / 100))
+																			: 0}
+																	</span>
+																</div>
+															) : null}
 															<div className='total'>
 																<p>Sub Total</p>
-																<span>&#8377; {this.state.rental - this.state.points + this.state.shipping}</span>
+																<span>
+																	&#8377;{" "}
+																	{this.state.rental -
+																		this.state.points +
+																		this.state.shipping -
+																		(this.state.coupon.name
+																			? this.state.coupon.type === "money"
+																				? this.state.coupon.value
+																				: Math.round(this.state.rental * (this.state.coupon.value / 100))
+																			: 0)}
+																</span>
 															</div>
 
 															<div className='next-button'>
@@ -1209,6 +1212,11 @@ class Cart extends React.Component {
 																	{this.state.rental +
 																		(this.state.addressType === "default" ? this.state.shipping : 0) -
 																		this.state.points -
+																		(this.state.coupon.name
+																			? this.state.coupon.type === "money"
+																				? this.state.coupon.value
+																				: Math.round(this.state.rental * (this.state.coupon.value / 100))
+																			: 0) -
 																		(this.state.paymentTab === 1 ? 50 : 0)}
 																</button>
 															</div>
