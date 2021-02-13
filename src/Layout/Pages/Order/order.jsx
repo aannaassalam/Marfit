@@ -423,8 +423,6 @@ export default class Order extends React.Component {
 												<option value='Did not approve purchase'>Did not approve purchase</option>
 												<option value='Inaccurate website description'>Inaccurate website description</option>
 											</select>
-											{/* <button>Bought by mistake</button>
-                      <div class="dropdown-content"></div> */}
 										</div>
 										<button className='replace'>Replace</button>
 									</div>

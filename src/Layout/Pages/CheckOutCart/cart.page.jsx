@@ -125,6 +125,7 @@ class Cart extends React.Component {
 							var prod = product.data();
 							prod.id = product.id;
 							prod.quantity = doc.data().cart[i].quantity;
+							prod.size = doc.data().cart[i].size;
 							products.push(prod);
 							rental = rental + prod.sp * doc.data().cart[i].quantity;
 							shipping = shipping + prod.shippingCharge;
@@ -710,6 +711,7 @@ class Cart extends React.Component {
 			.firestore()
 			.collection("orders")
 			.add({
+				varient: "default",
 				paymentId: response,
 				products: products,
 				date: new Date(),
@@ -1126,10 +1128,6 @@ class Cart extends React.Component {
 																						<p>
 																							Mobile : <span>{add.cphone}</span>
 																						</p>
-																					</div>
-																					<div className='address-actions'>
-																						<i class='far fa-edit' onClick={() => this.handleEditAddressShow(add)}></i>
-																						<i class='far fa-trash-alt' onClick={() => this.handleDeleteAddress(add)}></i>
 																					</div>
 																				</div>
 																			);
