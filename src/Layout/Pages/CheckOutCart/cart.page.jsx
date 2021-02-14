@@ -1007,7 +1007,7 @@ class Cart extends React.Component {
 															</div>
 															{this.state.points > 0 ? (
 																<div className='rent'>
-																	<p>Reddem Points</p>
+																	<p>Redeem Points</p>
 																	<span>- &#8377; {this.state.points}</span>
 																</div>
 															) : null}

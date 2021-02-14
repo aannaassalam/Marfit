@@ -9,7 +9,6 @@ import toaster from "toasted-notes";
 import Loader from "../../Components/Loader/Loader";
 import axios from "axios";
 import moment from "moment";
-import CheckOutCard2 from "../../Components/CheckOutCard2/CheckOutCard2";
 
 export default class Order extends React.Component {
 	constructor(props) {
@@ -85,13 +84,11 @@ export default class Order extends React.Component {
 						}
 
 						var products = [];
-						if (this.state.order.status.includes(7)) {
-							this.state.order.products.map((product) => {
-								if (product.rate === false) {
-									products.push(product);
-								}
-							});
-						}
+						this.state.order.products.map((product) => {
+							if (product.rate === false) {
+								products.push(product);
+							}
+						});
 						this.setState(
 							{
 								rateProducts: products,
@@ -199,11 +196,6 @@ export default class Order extends React.Component {
 	};
 
 	render() {
-		var total = 0;
-		this.state.order &&
-			this.state.order.products.map((p) => {
-				total += p.sp * p.quantity;
-			});
 		return (
 			<div className='container'>
 				{this.state.loading ? (
@@ -215,7 +207,7 @@ export default class Order extends React.Component {
 								<div className='main'>
 									<main>
 										<div className='head'>
-											<p>Thank You for placing your order...</p>
+											<p>Thanks for placing your order...</p>
 										</div>
 
 										<div className='section_content'>
@@ -320,22 +312,12 @@ export default class Order extends React.Component {
 						</div>
 
 						<div className='sidebar'>
-							<div className='items-container'>{this.state.order && this.state.order.products.map((item, index) => <CheckOutCard2 product={item} key={index} />)}</div>
+							<div className='items-container'>{this.state.order && this.state.order.products.map((item, index) => <OrderCard item={item} key={index} />)}</div>
 							<div className='order-details'>
-								<div className='shipping-sub'>
-									<p className='sub-title'>Total</p>
-									<p>+ &#8377; {total}</p>
-								</div>
 								<div className='shipping-sub'>
 									<p className='sub-title'>Shipping</p>
 									<p>+ &#8377; {this.state.order.shipping}</p>
 								</div>
-								{this.state.order.coupon && this.state.order.coupon.name ? (
-									<div className='shipping-sub'>
-										<p className='sub-title'>Coupon</p>
-										<p>- &#8377; {this.state.order.coupon.type === "money" ? this.state.order.coupon.value : Math.round(total * (this.state.order.coupon.value / 100))}</p>
-									</div>
-								) : null}
 								{this.state.order.points ? (
 									<div className='points-sub'>
 										<p className='sub-title'>Points ({this.state.order.points})</p>
@@ -344,7 +326,7 @@ export default class Order extends React.Component {
 								) : null}
 							</div>
 							<div className='total'>
-								<p>SUB-TOTAL</p>
+								<p>TOTAL</p>
 								<p>&#8377; {this.state.order.total}</p>
 							</div>
 						</div>

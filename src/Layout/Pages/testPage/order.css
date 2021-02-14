@@ -3,21 +3,26 @@
 }
 .container-main {
 	width: 100%;
+	height: 78vh;
 	display: flex;
+	align-items: center;
 	justify-content: center;
+	margin-top: 10px;
 	position: relative;
-	background-color: #fff;
 }
 .content {
 	display: flex;
-	width: 50%;
+	width: 60%;
+	height: 100%;
 	flex-wrap: wrap !important;
 }
 .wrap {
 	width: 100%;
+	height: 100%;
 }
 .content .wrap .main {
 	display: flex;
+	height: 100%;
 	flex-wrap: wrap !important;
 	overflow-y: scroll;
 	background-color: #fff;
@@ -271,11 +276,13 @@
 }
 
 .container-main .sidebar {
-	width: 50%;
+	width: 40%;
 	border-right: none;
 	border-top: none;
+	background-color: #fafafa;
+	border-left: 1px solid #e1e1e1;
 	padding: 0 2rem;
-	padding-top: 2rem;
+	height: 100%;
 }
 
 .order_update h2 {
@@ -311,6 +318,7 @@
 }
 
 .sidebar .items-container {
+	max-height: 57vh;
 	width: 90%;
 	margin: 10px auto;
 	overflow-y: scroll;
