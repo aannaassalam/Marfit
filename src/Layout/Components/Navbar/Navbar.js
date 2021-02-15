@@ -107,7 +107,7 @@ export default class Navbar extends React.Component {
 
 	handleCart = () => {
 		// if (firebase.auth().currentUser) {
-		window.location.href = "/Cart";
+		window.location.href = "/Cart/View/All/Items";
 		// } else {
 		// 	this.setState(
 		// 		{
@@ -313,7 +313,7 @@ export default class Navbar extends React.Component {
 											<>
 												<div className='profile' style={{ cursor: "pointer", userSelect: "none" }}>
 													<a className='username'>
-														<p>{this.state.currentUser.name}</p>
+														<p>{this.state.currentUser.name ? this.state.currentUser.name : this.state.currentUser.phone}</p>
 														<i className='fas fa-chevron-down'></i>
 													</a>
 													{/* <div className="arrow-up"></div> */}
@@ -483,7 +483,7 @@ export default class Navbar extends React.Component {
 										<>
 											<div className='profile' style={{ cursor: "pointer", userSelect: "none" }}>
 												<a className='username'>
-													<p>{this.state.currentUser.name}</p>
+													<p>{this.state.currentUser.name ? this.state.currentUser.name : this.state.currentUser.phone}</p>
 													<i className='fas fa-chevron-down'></i>
 												</a>
 												{/* <div className="arrow-up"></div> */}

@@ -13,13 +13,15 @@ import toaster from "toasted-notes";
 import "toasted-notes/src/styles.css";
 import axios from "axios";
 import link from "../../../fetchPath";
+import "react-phone-input-2/lib/material.css";
+import PhoneInput from "react-phone-input-2";
 
 const otpGenerator = require("otp-generator");
 
 export default class Login extends React.Component {
 	constructor(props) {
 		super(props);
-		for (var i = 1; i <= 4; i++) {
+		for (var i = 1; i <= 6; i++) {
 			this["c" + i] = React.createRef();
 		}
 		this.state = {
@@ -40,6 +42,9 @@ export default class Login extends React.Component {
 			c2: "",
 			c3: "",
 			c4: "",
+			c5: "",
+			c6: "",
+			phone: "",
 		};
 	}
 
@@ -438,38 +443,160 @@ export default class Login extends React.Component {
 	};
 
 	handleNext = async () => {
-		if (this.state.email === "") {
-			alert("Please enter a valid email or phone number");
+		if (this.state.phone === "") {
+			alert("Please enter a valid phone number");
 		}
-		if (!this.state.email.includes("@") && this.state.email.length === 10) {
-			this.setState({
-				loadingNext: true,
+		this.setState({
+			loadingNext: true,
+		});
+		var otp = await otpGenerator.generate(4, {
+			upperCase: false,
+			specialChars: false,
+			alphabets: false,
+		});
+		this.setState({
+			otp: otp,
+		});
+		var data = {
+			message: otp,
+			number: this.state.email,
+		};
+		var res = await axios.post(link + "/api/sendMessage", data);
+		console.log(res.data);
+		this.setState({
+			showOTP: true,
+			showNext: true,
+			loadingNext: false,
+		});
+	};
+
+	setUpRecaptcha = () => {
+		window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier("recaptcha-container", {
+			size: "invisible",
+			callback: function (response) {
+				console.log("Captcha Resolved");
+				this.onSignInSubmit();
+			},
+			defaultCountry: "IN",
+		});
+	};
+
+	onSignInSubmit = () => {
+		this.setState({
+			loadingNext: true,
+		});
+		this.setUpRecaptcha();
+		let phoneNumber = "+91" + this.state.phone;
+		console.log("486", phoneNumber);
+		let appVerifier = window.recaptchaVerifier;
+		firebase
+			.auth()
+			.signInWithPhoneNumber(phoneNumber, appVerifier)
+			.then((confirmationResult) => {
+				// SMS sent. Prompt user to type the code from the message, then sign the
+				// user in with confirmationResult.confirm(code).
+				this.setState({
+					showOTP: true,
+					loadingNext: false,
+					showNext: true,
+				});
+				window.confirmationResult = confirmationResult;
+				// console.log(confirmationResult);
+				toaster.notify("OTP is sent");
+			})
+			.catch(function (error) {
+				console.log(error);
+				this.setState({
+					loadingNext: false,
+				});
 			});
-			var otp = await otpGenerator.generate(4, {
-				upperCase: false,
-				specialChars: false,
-				alphabets: false,
+	};
+
+	onSubmitOtp = () => {
+		this.setState({
+			loadingNext: true,
+		});
+		let phoneNumber = "+91" + this.state.phone;
+		let otpInput = this.state.c1 + this.state.c2 + this.state.c3 + this.state.c4 + this.state.c5 + this.state.c6;
+		let optConfirm = window.confirmationResult;
+		// console.log(codee);
+		optConfirm
+			.confirm(otpInput)
+			.then(async (result) => {
+				var user = result.user;
+
+				var snaps = await firebase.firestore().collection("users").where("phone", "==", phoneNumber).get();
+				if (snaps.size > 0) {
+					this.setState({
+						loadingNext: false,
+						showNext: false,
+						showOTP: false,
+					});
+					this.props.login(true);
+					this.props.close(false);
+				} else {
+					firebase
+						.firestore()
+						.collection("users")
+						.add({
+							email: "",
+							name: "",
+							orders: [],
+							addresses: [],
+							phone: phoneNumber,
+							dob: "",
+							gender: "",
+							alt: "",
+							cart: [],
+							wishlist: [],
+							referalID: "",
+							points: 0,
+							uid: user.uid,
+							couponsUsed: [],
+							poinstsHistory: [],
+						})
+						.then(() => {
+							this.setState({
+								loadingNext: false,
+								showNext: false,
+								showOTP: false,
+							});
+							this.props.login(true);
+							this.props.close(false);
+							// var referal = res.id.substr(16, 4) + this.state.email.substr(0, 2);
+							// firebase.firestore().collection("users").doc(res.id).update({
+							// 	referalID: referal,
+							// });
+							// this.setState({
+							// 	loading: false,
+							// });
+							// this.props.login(true);
+							// this.props.close(false);
+							// const data = {
+							// 	email: this.state.email,
+							// 	subject: "Marfit",
+							// 	message: "You just got registered to mafit website, email",
+							// };
+							// axios.post(link + "/api/sendemail", data);
+							// window.location.href = "/";
+						})
+						.catch((err) => {
+							toaster.notify(err.message);
+							this.setState({
+								loadingNext: false,
+								showNext: false,
+								showOTP: false,
+							});
+						});
+				}
+			})
+			.catch((error) => {
+				console.log(error);
+				this.setState({
+					loadingNext: false,
+				});
+				toaster.notify("Incorrect OTP");
 			});
-			this.setState({
-				otp: otp,
-			});
-			var data = {
-				message: otp,
-				number: this.state.email,
-			};
-			var res = await axios.post(link + "/api/sendMessage", data);
-			console.log(res.data);
-			this.setState({
-				showOTP: true,
-				showNext: true,
-				loadingNext: false,
-			});
-		} else if (this.state.email.includes("@")) {
-			this.setState({
-				showNext: true,
-				showPassword: true,
-			});
-		}
 	};
 
 	handleGoogleLogin = () => {
@@ -599,10 +726,12 @@ export default class Login extends React.Component {
 				var num = parseInt(id[1]) + 1;
 				var num2 = parseInt(id[1]) - 1;
 				var num3 = parseInt(id[1]);
-				if (num < 5 && value && num3 !== 4) {
+				if (num < 7 && value && num3 !== 6) {
 					this["c" + num].current.focus();
 				} else if (value === "" && num2 > 0) {
 					this["c" + num2].current.focus();
+				} else if (num3 === 6) {
+					this.onSubmitOtp();
 				}
 			}
 		);
@@ -610,7 +739,7 @@ export default class Login extends React.Component {
 
 	render() {
 		var inpuCode = [];
-		for (var i = 1; i <= 4; i++) {
+		for (var i = 1; i <= 6; i++) {
 			inpuCode.push("c" + i);
 		}
 		return (
@@ -623,7 +752,6 @@ export default class Login extends React.Component {
 							document.body.setAttribute("style", "");
 							window.scrollTo(0, this.props.windowOffSet);
 						}}></i>
-					{/* <button onClick={this.handlePhoneLogin}>Phone Login</button> */}
 					<div className='section-1'>
 						<img src={loginBag} alt='' />
 					</div>
@@ -708,7 +836,6 @@ export default class Login extends React.Component {
 							</div>
 							<div className='social'>
 								<img src={google} alt='Google Image' onClick={this.handleGoogleLogin} />
-								{/* <img src={fb} alt='Facebook Image' /> */}
 							</div>
 							<div className='already-customer'>
 								<p>
@@ -722,6 +849,7 @@ export default class Login extends React.Component {
 								<img src={logo} alt='Marfit logo' />
 								<img src={marfit} alt='Marfit title' />
 							</div>
+							<div id='recaptcha-container'></div>
 							{this.state.forgotpass ? (
 								<div className='resetPass'>
 									<i
@@ -748,7 +876,7 @@ export default class Login extends React.Component {
 										<div className='otp-cont'>
 											<div className='vrf'>
 												<h1>Enter verification code</h1>
-												<p>Enter 4 digit verification code</p>
+												<p>Enter 6 digit verification code</p>
 											</div>
 											<div className='verification-cont'>
 												<div className='code-container'>
@@ -762,27 +890,18 @@ export default class Login extends React.Component {
 												</div>
 											</div>
 										</div>
-									) : this.state.showPassword ? (
-										<div className='input-fields'>
-											<input type='email' name='email' id='user-email' value={this.state.email} placeholder='Enter Email' onChange={this.handleChange} />
-											<div className='pass'>
-												<input type='password' name='password' value={this.state.password} id='user-password' placeholder='Enter Password' onChange={this.handleChange} />
-												<p
-													onClick={() =>
-														this.setState({
-															forgotpass: true,
-														})
-													}>
-													Forgot password?
-												</p>
-											</div>
-										</div>
 									) : (
-										<>
-											<div className='input-fields'>
-												<input type='email' name='email' id='user-email' placeholder='Enter Email or Phone Number' onChange={this.handleChange} />
-											</div>
-										</>
+										<div className='input-fields'>
+											<PhoneInput
+												country={"in"}
+												onlyCountries={["in"]}
+												disableDropdown={true}
+												disableCountryCode={true}
+												value={this.state.phone}
+												onChange={(phone) => this.setState({ phone })}
+												placeholder='Enter your phone number'
+											/>
+										</div>
 									)}
 
 									{this.state.showNext ? (
@@ -792,7 +911,7 @@ export default class Login extends React.Component {
 											) : (
 												<>
 													{this.state.showOTP ? (
-														<button type='button' className='btn-next' onClick={this.handlePhoneLogin}>
+														<button type='button' className='btn-next' onClick={this.onSubmitOtp}>
 															Verify & Login
 														</button>
 													) : (
@@ -808,7 +927,7 @@ export default class Login extends React.Component {
 											{this.state.loadingNext ? (
 												<Lottie options={{ animationData: loading }} width={80} height={80} />
 											) : (
-												<button className='btn-next' type='button' onClick={this.handleNext}>
+												<button className='btn-next' type='button' onClick={this.onSignInSubmit}>
 													Next
 												</button>
 											)}
@@ -821,7 +940,6 @@ export default class Login extends React.Component {
 									</div>
 									<div className='social'>
 										<img src={google} alt='Google Image' onClick={this.handleGoogleLogin} />
-										{/* <img src={fb} alt='Facebook Image' /> */}
 									</div>
 									<div className='already-customer'>
 										<p>

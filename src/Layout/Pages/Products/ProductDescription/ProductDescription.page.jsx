@@ -82,7 +82,7 @@ export default class ProductDesc extends React.Component {
 							});
 							this.setState({
 								cart: doc.data().cart,
-								currentUser: doc.data().email,
+								currentUser: doc.data().uid,
 							});
 						});
 					});
@@ -370,6 +370,222 @@ export default class ProductDesc extends React.Component {
 		}
 	};
 
+	handleByeNow = () => {
+		if (this.state.available) {
+			if (!this.state.product.noSize) {
+				if (this.state.sizeSelected !== "") {
+					this.setState({
+						addLoading: true,
+					});
+					if (firebase.auth().currentUser) {
+						firebase
+							.firestore()
+							.collection("users")
+							.where("uid", "==", firebase.auth().currentUser.uid)
+							.get()
+							.then((snap) => {
+								snap.forEach((doc) => {
+									var cart = doc.data().cart;
+									var found = false;
+									cart.forEach((item) => {
+										if (item.id === this.state.product.id) {
+											found = true;
+										}
+									});
+									var tempCart = {};
+									tempCart.id = this.state.product.id;
+									tempCart.quantity = this.state.usersQuantity;
+									tempCart.size = this.state.sizeSelected;
+									tempCart.max = this.state.product.max;
+									tempCart.sizeMax = this.state.product.sizes[this.state.sizeIndex].quantity;
+									if (found === false) {
+										cart.push(tempCart);
+										console.log(cart);
+										firebase
+											.firestore()
+											.collection("users")
+											.doc(doc.id)
+											.update({
+												cart: cart,
+											})
+											.then(() => {
+												this.setState({
+													addLoading: false,
+												});
+												this.removeFromWishlist(this.state.product.id);
+												window.location.href = "/Cart/" + tempCart.id + "/" + tempCart.quantity + "/" + tempCart.size;
+											});
+									} else {
+										this.setState({
+											addLoading: false,
+										});
+										window.location.href = "/Cart/" + tempCart.id + "/" + tempCart.quantity + "/" + tempCart.size;
+									}
+								});
+							});
+					} else {
+						var cart = JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [];
+						if (cart.length > 0) {
+							cart.forEach((item) => {
+								var tempCart = {};
+								tempCart.id = this.state.product.id;
+								tempCart.quantity = this.state.usersQuantity;
+								tempCart.size = this.state.sizeSelected;
+								tempCart.max = this.state.product.max;
+								tempCart.sizeMax = this.state.product.sizes[this.state.sizeIndex].quantity;
+								if (item.id !== this.state.product.id) {
+									cart.push(tempCart);
+									this.setState(
+										{
+											cart: cart,
+											addloading: false,
+										},
+										() => {
+											var localCart = JSON.stringify(this.state.cart);
+											localStorage.setItem("cart", localCart);
+											this.props.handleParent();
+											window.location.href = "/Cart/" + tempCart.id + "/" + tempCart.quantity + "/" + tempCart.size;
+										}
+									);
+								} else {
+									this.setState({
+										addLoading: false,
+									});
+									window.location.href = "/Cart/" + tempCart.id + "/" + tempCart.quantity + "/" + tempCart.size;
+								}
+							});
+						} else {
+							var tempCart = {};
+							tempCart.id = this.state.product.id;
+							tempCart.quantity = this.state.usersQuantity;
+							tempCart.size = this.state.sizeSelected;
+							tempCart.max = this.state.product.max;
+							tempCart.sizeMax = this.state.product.sizes[this.state.sizeIndex].quantity;
+							cart.push(tempCart);
+							this.setState(
+								{
+									cart: cart,
+									addloading: false,
+								},
+								() => {
+									var localCart = JSON.stringify(this.state.cart);
+									localStorage.setItem("cart", localCart);
+									this.props.handleParent();
+									window.location.href = "/Cart/" + tempCart.id + "/" + tempCart.quantity + "/" + tempCart.size;
+								}
+							);
+						}
+					}
+				} else {
+					toaster.notify("Please select a size !");
+				}
+			} else {
+				this.setState({
+					addLoading: true,
+				});
+				if (firebase.auth().currentUser) {
+					firebase
+						.firestore()
+						.collection("users")
+						.where("uid", "==", firebase.auth().currentUser.uid)
+						.get()
+						.then((snap) => {
+							snap.forEach((doc) => {
+								var cart = doc.data().cart;
+								var found = false;
+								cart.forEach((item) => {
+									if (item.id === this.state.product.id) {
+										found = true;
+									}
+								});
+								var tempCart = {};
+								tempCart.id = this.state.product.id;
+								tempCart.quantity = this.state.usersQuantity;
+								tempCart.size = "null";
+								tempCart.max = this.state.product.max;
+								if (found === false) {
+									cart.push(tempCart);
+									console.log(cart);
+									firebase
+										.firestore()
+										.collection("users")
+										.doc(doc.id)
+										.update({
+											cart: cart,
+										})
+										.then(() => {
+											this.setState({
+												addLoading: false,
+											});
+
+											this.removeFromWishlist(this.state.product.id);
+											window.location.href = "/Cart/" + tempCart.id + "/" + tempCart.quantity + "/" + tempCart.size;
+										});
+								} else {
+									this.setState({
+										addLoading: false,
+									});
+									window.location.href = "/Cart/" + tempCart.id + "/" + tempCart.quantity + "/" + tempCart.size;
+								}
+							});
+						});
+				} else {
+					var cart = JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [];
+					if (cart.length > 0) {
+						cart.forEach((item) => {
+							var tempCart = {};
+							tempCart.id = this.state.product.id;
+							tempCart.quantity = this.state.usersQuantity;
+							tempCart.size = "null";
+							tempCart.max = this.state.product.max;
+							if (item.id !== this.state.product.id) {
+								cart.push(tempCart);
+								this.setState(
+									{
+										cart: cart,
+										addloading: false,
+									},
+									() => {
+										var localCart = JSON.stringify(this.state.cart);
+										localStorage.setItem("cart", localCart);
+										this.props.handleParent();
+										window.location.href = "/Cart/" + tempCart.id + "/" + tempCart.quantity + "/" + tempCart.size;
+									}
+								);
+							} else {
+								this.setState({
+									addLoading: false,
+								});
+								window.location.href = "/Cart/" + tempCart.id + "/" + tempCart.quantity + "/" + tempCart.size;
+							}
+						});
+					} else {
+						var tempCart = {};
+						tempCart.id = this.state.product.id;
+						tempCart.quantity = this.state.usersQuantity;
+						tempCart.size = "null";
+						tempCart.max = this.state.product.max;
+						cart.push(tempCart);
+						this.setState(
+							{
+								cart: cart,
+								addloading: false,
+							},
+							() => {
+								var localCart = JSON.stringify(this.state.cart);
+								localStorage.setItem("cart", localCart);
+								this.props.handleParent();
+								window.location.href = "/Cart/" + tempCart.id + "/" + tempCart.quantity + "/" + tempCart.size;
+							}
+						);
+					}
+				}
+			}
+		} else {
+			toaster.notify("Please check your delivery pincode");
+		}
+	};
+
 	addToWishlist = () => {
 		firebase
 			.firestore()
@@ -628,19 +844,7 @@ export default class ProductDesc extends React.Component {
 														<i className='fas fa-shopping-cart'></i>
 														<p>ADD TO CART</p>
 													</div>
-													<div
-														className='option'
-														onClick={() => {
-															if (this.state.product.noSize) {
-																window.location.href = "/Checkout/" + this.state.product.id + "/" + this.state.usersQuantity + "/" + "null";
-															} else {
-																if (this.state.sizeSelected !== "" && !this.state.product.noSize) {
-																	window.location.href = "/Checkout/" + this.state.product.id + "/" + this.state.usersQuantity + "/" + this.state.sizeSelected;
-																} else {
-																	toaster.notify("Please select a size !");
-																}
-															}
-														}}>
+													<div className='option' onClick={this.handleByeNow}>
 														<i className='fas fa-bolt'></i>
 														<p>BUY NOW</p>
 													</div>
@@ -874,7 +1078,7 @@ export default class ProductDesc extends React.Component {
 												<i className='fas fa-shopping-cart'></i>
 												<p>ADD TO CART</p>
 											</div>
-											<div className='option' onClick={() => (window.location.href = "/Checkout/" + this.state.product.id + "/" + this.state.usersQuantity)}>
+											<div className='option' onClick={this.handleByeNow}>
 												<i className='fas fa-bolt'></i>
 												<p>BUY NOW</p>
 											</div>

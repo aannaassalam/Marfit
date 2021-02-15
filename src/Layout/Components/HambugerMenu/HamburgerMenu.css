@@ -141,6 +141,7 @@
 	text-decoration: none;
 	color: #000;
 	transition: height 0.5s;
+	user-select: none;
 }
 
 .menu-ham .hamburger-menu .ham-list p {
@@ -155,13 +156,13 @@
 .menu-ham .hamburger-menu .ham-list .box:hover,
 .menu-ham .hamburger-menu .ham-list #cart:hover,
 .menu-ham .hamburger-menu .ham-list #wishlist:hover {
-	background-color: #f5f5f5;
+	/* background-color: #f5f5f5; */
 }
 
 .menu-ham .hamburger-menu .ham-list .box:active,
 .menu-ham .hamburger-menu .ham-list #cart:active,
 .menu-ham .hamburger-menu .ham-list #wishlist:active {
-	background-color: grey;
+	/* background-color: grey; */
 }
 
 .menu-ham .hamburger-menu .ham-list .box span,
@@ -176,7 +177,7 @@
 	display: none !important;
 }
 
-.open {
+.open-arrow {
 	transform: rotate(180deg) !important;
 	transition: transform 0.2s !important;
 }

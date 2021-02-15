@@ -17,6 +17,10 @@ import toaster from "toasted-notes";
 import CheckOutCard from "../../Components/CheckOutCard/CheckOutCard";
 import axios from "axios";
 import link from "../../../fetchPath";
+import "react-phone-input-2/lib/style.css";
+import PhoneInput from "react-phone-input-2";
+
+const otpGenerator = require("otp-generator");
 
 const pageVariants = {
 	initial: {
@@ -42,9 +46,13 @@ const pageTransition = {
 class Cart extends React.Component {
 	constructor(props) {
 		super(props);
+		for (var i = 1; i <= 4; i++) {
+			this["c" + i] = React.createRef();
+		}
 		this.state = {
 			tab: 1,
 			modal: "modal-address",
+			modalVerfiy: "modal-verify",
 			addresses: [],
 			saddresses: [],
 			isDefault: false,
@@ -60,6 +68,7 @@ class Cart extends React.Component {
 			pin: "",
 			cname: "",
 			cphone: "",
+			cemail: "",
 			add: "",
 			process1: "process1",
 			process2: "process2",
@@ -75,6 +84,14 @@ class Cart extends React.Component {
 			coupon: {},
 			coupons: [],
 			couponCode: "",
+			c1: "",
+			c2: "",
+			c3: "",
+			c4: "",
+			c5: "",
+			c6: "",
+			otp: 0,
+			showOTP: false,
 		};
 	}
 	async componentDidMount() {
@@ -87,92 +104,194 @@ class Cart extends React.Component {
 				});
 			});
 		}
-		firebase.auth().onAuthStateChanged(async (user) => {
-			if (user) {
-				var snap = await firebase.firestore().collection("users").where("uid", "==", user.uid).get();
-				if (snap) {
-					snap.forEach(async (doc) => {
-						var currentUser = doc.data();
-						currentUser.id = doc.id;
-						this.setState({
-							currentUser,
-							cart: currentUser.cart,
-							loading: false,
-						});
-						var addresses = doc.data().addresses;
-						var x = {};
-						var newAddresses = [];
-
-						if (addresses.length > 0) {
-							addresses.map((add) => {
-								if (add.default) {
-									x = add;
-								} else {
-									newAddresses.push(add);
-								}
-							});
-							newAddresses.unshift(x);
+		if (this.props.match.params.id1 === "View" && this.props.match.params.id2 === "All" && this.props.match.params.id3 === "Items") {
+			firebase.auth().onAuthStateChanged(async (user) => {
+				if (user) {
+					var snap = await firebase.firestore().collection("users").where("uid", "==", user.uid).get();
+					if (snap) {
+						snap.forEach(async (doc) => {
+							var currentUser = doc.data();
+							currentUser.id = doc.id;
 							this.setState({
-								addresses: newAddresses,
-								address: x,
+								currentUser,
+								cart: currentUser.cart,
+								loading: false,
 							});
-						}
-						var products = [];
-						var rental = 0;
-						var shipping = 0;
-						for (var i = 0; i < doc.data().cart.length; i++) {
-							var product = await firebase.firestore().collection("products").doc(doc.data().cart[i].id).get();
-							var prod = product.data();
-							prod.id = product.id;
-							prod.quantity = doc.data().cart[i].quantity;
-							prod.size = doc.data().cart[i].size;
-							products.push(prod);
-							rental = rental + prod.sp * doc.data().cart[i].quantity;
-							shipping = shipping + prod.shippingCharge;
-						}
-						var total = shipping + rental;
-						this.setState({
-							products,
-							rental,
-							shipping,
-							total,
-							points: currentUser.points < total ? currentUser.points : total,
-						});
-					});
-				}
-			} else {
-				var cart = JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [];
-				this.setState(
-					{
-						cart: cart,
-						currentUser: "",
-						userID: "",
-						addAddress: true,
-						loading: false,
-					},
-					async () => {
-						var products = [];
-						var rental = 0;
-						var shipping = 0;
-						for (var i = 0; i < cart.length; i++) {
-							var product = await firebase.firestore().collection("products").doc(cart[i].id).get();
-							var prod = product.data();
-							prod.id = product.id;
-							products.push(prod);
-							rental = rental + prod.sp * cart[i].quantity;
-							shipping = shipping + prod.shippingCharge;
-						}
-						var total = shipping + rental;
-						this.setState({
-							products,
-							rental,
-							shipping,
-							total,
+							var addresses = doc.data().addresses;
+							var x = {};
+							var newAddresses = [];
+
+							if (addresses.length > 0) {
+								addresses.map((add) => {
+									if (add.default) {
+										x = add;
+									} else {
+										newAddresses.push(add);
+									}
+								});
+								newAddresses.unshift(x);
+								this.setState({
+									addresses: newAddresses,
+									address: x,
+								});
+							}
+							var products = [];
+							var rental = 0;
+							var shipping = 0;
+							for (var i = 0; i < doc.data().cart.length; i++) {
+								var product = await firebase.firestore().collection("products").doc(doc.data().cart[i].id).get();
+								var prod = product.data();
+								prod.id = product.id;
+								prod.quantity = doc.data().cart[i].quantity;
+								prod.size = doc.data().cart[i].size;
+								products.push(prod);
+								rental = rental + prod.sp * doc.data().cart[i].quantity;
+								shipping = shipping + prod.shippingCharge;
+							}
+							var total = shipping + rental;
+							this.setState({
+								products,
+								rental,
+								shipping,
+								total,
+								points: currentUser.points < total ? currentUser.points : total,
+							});
 						});
 					}
-				);
-			}
-		});
+				} else {
+					var cart = JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [];
+					this.setState(
+						{
+							cart: cart,
+							currentUser: "",
+							userID: "",
+							addAddress: true,
+							loading: false,
+						},
+						async () => {
+							var products = [];
+							var rental = 0;
+							var shipping = 0;
+							for (var i = 0; i < cart.length; i++) {
+								var product = await firebase.firestore().collection("products").doc(cart[i].id).get();
+								var prod = product.data();
+								prod.id = product.id;
+								products.push(prod);
+								rental = rental + prod.sp * cart[i].quantity;
+								shipping = shipping + prod.shippingCharge;
+							}
+							var total = shipping + rental;
+							this.setState({
+								products,
+								rental,
+								shipping,
+								total,
+							});
+						}
+					);
+				}
+			});
+		} else {
+			firebase.auth().onAuthStateChanged(async (user) => {
+				if (user) {
+					var snap = await firebase.firestore().collection("users").where("uid", "==", user.uid).get();
+					if (snap) {
+						snap.forEach(async (doc) => {
+							var currentUser = doc.data();
+							var cart = [
+								{
+									id: this.props.match.params.id1,
+									quantity: this.props.match.params.id2,
+									size: this.props.match.params.id3,
+								},
+							];
+							currentUser.id = doc.id;
+							this.setState({
+								currentUser,
+								cart: cart,
+								loading: false,
+							});
+							var addresses = doc.data().addresses;
+							var x = {};
+							var newAddresses = [];
+
+							if (addresses.length > 0) {
+								addresses.map((add) => {
+									if (add.default) {
+										x = add;
+									} else {
+										newAddresses.push(add);
+									}
+								});
+								newAddresses.unshift(x);
+								this.setState({
+									addresses: newAddresses,
+									address: x,
+								});
+							}
+							var products = [];
+							var rental = 0;
+							var shipping = 0;
+							for (var i = 0; i < cart.length; i++) {
+								var product = await firebase.firestore().collection("products").doc(cart[i].id).get();
+								var prod = product.data();
+								prod.id = product.id;
+								prod.quantity = cart[i].quantity;
+								prod.size = cart[i].size;
+								products.push(prod);
+								rental = rental + prod.sp * doc.data().cart[i].quantity;
+								shipping = shipping + prod.shippingCharge;
+							}
+							var total = shipping + rental;
+							this.setState({
+								products,
+								rental,
+								shipping,
+								total,
+								points: currentUser.points < total ? currentUser.points : total,
+							});
+						});
+					}
+				} else {
+					var cart = [
+						{
+							id: this.props.match.params.id1,
+							quantity: this.props.match.params.id2,
+							size: this.props.match.params.id3,
+						},
+					];
+					this.setState(
+						{
+							cart: cart,
+							currentUser: "",
+							userID: "",
+							addAddress: true,
+							loading: false,
+						},
+						async () => {
+							var products = [];
+							var rental = 0;
+							var shipping = 0;
+							for (var i = 0; i < cart.length; i++) {
+								var product = await firebase.firestore().collection("products").doc(cart[i].id).get();
+								var prod = product.data();
+								prod.id = product.id;
+								products.push(prod);
+								rental = rental + prod.sp * cart[i].quantity;
+								shipping = shipping + prod.shippingCharge;
+							}
+							var total = shipping + rental;
+							this.setState({
+								products,
+								rental,
+								shipping,
+								total,
+							});
+						}
+					);
+				}
+			});
+		}
 	}
 
 	handleChange = (e) => {
@@ -694,7 +813,7 @@ class Cart extends React.Component {
 		});
 		var res = await this.handleFirebaseOrder(response, products);
 		console.log(res.id);
-		var res3 = await this.handleUpdateUser(res.id);
+		var res3 = await this.handleUpdateUser(res.id, products);
 		console.log(res3);
 		for (var i = 0; i < products.length; i++) {
 			var res2 = await this.handleUpdateProduct(products[i]);
@@ -702,7 +821,7 @@ class Cart extends React.Component {
 			done += 1;
 		}
 		if (done === products.length) {
-			window.location.href = "/Dashboard/Orders";
+			window.location.href = "/Orders/" + res.id;
 		}
 	};
 
@@ -716,15 +835,15 @@ class Cart extends React.Component {
 				products: products,
 				date: new Date(),
 				points: this.state.points,
-				email: firebase.auth().currentUser ? this.state.currentUser.email : this.state.email,
+				email: this.state.cemail,
 				address: this.state.address.address,
 				city: this.state.address.city,
 				country: this.state.address.country,
 				pincode: this.state.address.pin,
-				phone: this.state.address.cphone,
+				phone: this.state.cphone,
 				state: this.state.address.state,
 				coupon: this.state.coupon,
-				name: this.state.address.cname,
+				name: this.state.cname,
 				total:
 					this.state.rental -
 					this.state.points +
@@ -773,7 +892,7 @@ class Cart extends React.Component {
 		}
 	};
 
-	handleUpdateUser = async (e) => {
+	handleUpdateUser = async (e, products) => {
 		if (firebase.auth().currentUser) {
 			var user = await firebase.firestore().collection("users").doc(this.state.currentUser.id).get();
 			var orders = user.data().orders;
@@ -782,10 +901,23 @@ class Cart extends React.Component {
 				couponsUsed.push(this.state.coupon);
 			}
 			orders.push(e);
+			var finalCart = [];
+			var items = [];
+			products.map((c) => {
+				items.push(c.id);
+			});
+			console.log(items);
+			this.state.currentUser.cart.map((p) => {
+				console.log(p);
+				if (!items.includes(p.id)) {
+					finalCart.push(p);
+				}
+			});
+			console.log(finalCart);
 			var updateUser = await firebase.firestore().collection("users").doc(this.state.currentUser.id).update({
 				orders: orders,
 				couponsUsed: couponsUsed,
-				cart: [],
+				cart: finalCart,
 				points: 0,
 			});
 			const data = {
@@ -796,7 +928,21 @@ class Cart extends React.Component {
 			var res2 = await axios.post(link + "/api/sendemail", data);
 			return true;
 		} else {
-			localStorage.setItem("cart", JSON.stringify([]));
+			var finalCart = [];
+			var items = [];
+			products.map((c) => {
+				items.push(c.id);
+			});
+			console.log(items);
+			var cart = JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [];
+			cart.map((p) => {
+				console.log(p);
+				if (!items.includes(p.id)) {
+					finalCart.push(p);
+				}
+			});
+			console.log(finalCart);
+			localStorage.setItem("cart", JSON.stringify(finalCart));
 			const data = {
 				email: this.state.email,
 				subject: "MARFIT ORDER",
@@ -807,7 +953,88 @@ class Cart extends React.Component {
 		}
 	};
 
+	handleAddContactInfo = async () => {
+		if (this.state.cname === "") {
+			alert("Please enter a valid name");
+		} else if (this.state.cphone === "") {
+			alert("Please enter a valid phone number");
+		} else if (this.state.cemail === "") {
+			alert("Please enter a valid email address");
+		} else {
+			this.setState({
+				loadingNext: true,
+			});
+			var otp = await otpGenerator.generate(4, {
+				upperCase: false,
+				specialChars: false,
+				alphabets: false,
+			});
+			this.setState({
+				otp: otp,
+			});
+			var data = {
+				message: otp,
+				number: this.state.cphone,
+			};
+			var res = await axios.post(link + "/api/sendMessage", data);
+			console.log(res.data);
+			this.setState({
+				showOTP: true,
+				loadingNext: false,
+			});
+		}
+	};
+
+	handleVerify = async () => {
+		this.setState({
+			loadingNext: true,
+		});
+		var otp = this.state.c1 + this.state.c2 + this.state.c3 + this.state.c4;
+		if (otp === this.state.otp) {
+			this.setState(
+				{
+					loadingNext: true,
+					modalVerfiy: "modal-verify",
+				},
+				() => {
+					this.handlePayment();
+				}
+			);
+		} else {
+			toaster.notify("Wrong OTP");
+			this.setState({
+				loadingNext: false,
+			});
+		}
+	};
+
+	handleChangeCode = (e) => {
+		var { id, value } = e.target;
+		this.setState(
+			{
+				[id]: value,
+			},
+			() => {
+				console.log(id);
+				var num = parseInt(id[1]) + 1;
+				var num2 = parseInt(id[1]) - 1;
+				var num3 = parseInt(id[1]);
+				if (num < 5 && value && num3 !== 4) {
+					this["c" + num].current.focus();
+				} else if (value === "" && num2 > 0) {
+					this["c" + num2].current.focus();
+				} else if (num3 === 4) {
+					this.handleVerify();
+				}
+			}
+		);
+	};
+
 	render() {
+		var inpuCode = [];
+		for (var i = 1; i <= 4; i++) {
+			inpuCode.push("c" + i);
+		}
 		return (
 			<>
 				{this.state.loading ? (
@@ -1179,32 +1406,13 @@ class Cart extends React.Component {
 																<img src={cod} alt='razorpay-logo' />
 																<p>Pay on delivery</p>
 															</div>
-															{/* <div
-                                className="pay"
-                                onClick={() => this.setState({ paymentTab: 2 })}
-                              >
-                                {this.state.paymentTab === 2 ? (
-                                  <i class="far fa-dot-circle active"></i>
-                                ) : (
-                                  <i class="far fa-circle"></i>
-                                )}
-                                <img src={paytm} alt="razorpay-logo" />
-                                <p>Pay via paytm</p>
-                              </div>
-                              <div
-                                className="pay"
-                                onClick={() => this.setState({ paymentTab: 3 })}
-                              >
-                                {this.state.paymentTab === 3 ? (
-                                  <i class="far fa-dot-circle active"></i>
-                                ) : (
-                                  <i class="far fa-circle"></i>
-                                )}
-                                <img src={phonepe} alt="razorpay-logo" />
-                                <p>Pay via phonepe</p>
-                              </div> */}
-
-															<div className='final-button' onClick={this.handlePayment}>
+															<div
+																className='final-button'
+																onClick={() => {
+																	this.setState({
+																		modalVerfiy: "modal-verify-active",
+																	});
+																}}>
 																<button type='button'>
 																	ORDER FOR &#8377;{" "}
 																	{this.state.rental +
@@ -1220,6 +1428,80 @@ class Cart extends React.Component {
 															</div>
 														</div>
 													</div>
+												)}
+											</div>
+										</div>
+									</div>
+
+									{/* verify */}
+
+									<div className={this.state.modalVerfiy}>
+										<div className='modal-content'>
+											<div className='modal-header'>
+												<p>Verify Order</p>
+												<div className='modal-address-close-button' onClick={() => this.setState({ modalVerfiy: "modal-verify" })}>
+													<i class='far fa-times-circle'></i>
+												</div>
+											</div>
+											<div className='modal-body'>
+												<div className='modal-contact-details'>
+													{this.state.showOTP === false ? (
+														<>
+															<p>CONTACT DETAILS</p>
+															<input className='contact-input' type='text' placeholder='Name' name='cname' onChange={this.handleChange} value={this.state.cname} />
+															<PhoneInput
+																country={"in"}
+																onlyCountries={["in"]}
+																disableDropdown={true}
+																disableCountryCode={true}
+																value={this.state.phone}
+																onChange={(cphone) => this.setState({ cphone })}
+																placeholder='Enter your phone number'
+															/>
+															<input
+																className='contact-input'
+																type='text'
+																placeholder='Email Address'
+																name='cemail'
+																onChange={this.handleChange}
+																value={this.state.cemail}
+															/>
+														</>
+													) : (
+														<>
+															<p>Enter 4 digit verification code</p>
+															<div className='verification-cont'>
+																<div className='code-container'>
+																	{inpuCode.map((item) => {
+																		return (
+																			<div className='code-verification'>
+																				<input
+																					maxLength={1}
+																					id={item}
+																					type='text'
+																					value={this.state[item]}
+																					onChange={this.handleChangeCode}
+																					name={item}
+																					ref={this[item]}
+																				/>
+																			</div>
+																		);
+																	})}
+																</div>
+															</div>
+														</>
+													)}
+												</div>
+											</div>
+											<div className='modal-footer'>
+												{this.state.showOTP ? (
+													<button type='button' onClick={this.handleVerify}>
+														ORDER
+													</button>
+												) : (
+													<button type='button' onClick={this.handleAddContactInfo}>
+														VERIFY DETAILS
+													</button>
 												)}
 											</div>
 										</div>

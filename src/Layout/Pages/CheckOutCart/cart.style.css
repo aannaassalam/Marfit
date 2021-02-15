@@ -775,6 +775,220 @@
 	cursor: pointer;
 }
 
+/* Modal Verfiy */
+
+.cart-container .modal-verify {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	background-color: rgba(0, 0, 0, 0.5);
+	opacity: 0;
+	z-index: 999;
+	visibility: hidden;
+	transform: scale(1.1);
+	transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+	overflow: hidden;
+}
+
+.cart-container .modal-verify-active {
+	position: fixed;
+	top: 0;
+	width: 100%;
+	height: 100vh;
+	background-color: rgba(0, 0, 0, 0.5);
+	opacity: 1;
+	z-index: 999;
+	transition: visibility 0s linear 0.25s, opacity 0.25s 0s, transform 0.25s;
+}
+
+.cart-container .modal-verify .modal-content,
+.cart-container .modal-verify-active .modal-content {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: white;
+	width: 360px;
+	padding: 1rem;
+	border-radius: 0.5rem;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: flex-start;
+	box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.5);
+}
+
+.cart-container .modal-verify .modal-content .modal-header,
+.cart-container .modal-verify-active .modal-content .modal-header {
+	width: 100%;
+	height: 10%;
+	padding: 15px;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom: 1px solid #d5d5d5;
+}
+
+.cart-container .modal-verify .modal-content .modal-header p,
+.cart-container .modal-verify-active .modal-content .modal-header p {
+	font-size: 16px;
+	font-weight: 500;
+	color: #fb6b25;
+}
+
+.cart-container .modal-verify .modal-content .modal-header .modal-verify-close-button,
+.cart-container .modal-verify-active .modal-content .modal-header .modal-verify-close-button {
+	width: 35px;
+	height: 35px;
+	text-align: center;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+
+.cart-container .modal-verify .modal-content .modal-header .modal-verify-close-button i,
+.cart-container .modal-verify-active .modal-content .modal-header .modal-verify-close-button i {
+	font-size: 25px;
+	color: #fb6b25;
+}
+
+.cart-container .modal-verify .modal-content .modal-body,
+.cart-container .modal-verify-active .modal-content .modal-body {
+	width: 100%;
+	padding: 0 25px;
+	display: flex;
+	flex-direction: column;
+}
+
+.cart-container .modal-verify .modal-content .modal-body .modal-contact-details,
+.cart-container .modal-verify-active .modal-content .modal-body .modal-contact-details {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	padding: 1rem 0;
+}
+
+.cart-container .modal-verify-active .modal-content .modal-body .modal-contact-details .verification-cont {
+	margin-bottom: 1rem;
+	display: flex;
+	align-items: center;
+	flex-direction: column;
+	justify-content: center;
+	width: 100%;
+}
+
+.cart-container .modal-verify-active .modal-content .modal-body .modal-contact-details .verification-cont .code-verification {
+	margin: 0.5rem 0;
+	height: 45px;
+	width: 19%;
+	display: flex;
+	flex-direction: column;
+}
+
+.cart-container .modal-verify-active .modal-content .modal-body .modal-contact-details .verification-cont .code-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin: 15px 0;
+	width: 100%;
+}
+
+.cart-container .modal-verify-active .modal-content .modal-body .modal-contact-details .verification-cont .code-verification input {
+	width: 50px;
+	height: 100%;
+	text-align: center;
+	background-color: #f4f6f8;
+	border: none;
+	box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+	font-size: 25px;
+	border: 1px solid lightgray;
+	border-radius: 5px;
+}
+
+.cart-container .modal-verify .modal-content .modal-body .modal-contact-details p,
+.cart-container .modal-verify-active .modal-content .modal-body .modal-contact-details p {
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.cart-container .modal-verify .modal-content .modal-body .modal-contact-details .contact-input,
+.cart-container .modal-verify-active .modal-content .modal-body .modal-contact-details .contact-input {
+	width: 100%;
+	height: 40px;
+	outline: none;
+	border: 1px solid #bababa;
+	border-radius: 5px;
+	padding: 0 0.8rem;
+	margin: 0.5rem 0;
+}
+
+.cart-container .modal-verify .modal-content .modal-body .modal-contact-details input,
+.cart-container .modal-verify-active .modal-content .modal-body .modal-contact-details input {
+	width: 100%;
+}
+
+.cart-container .modal-verify .modal-content .modal-body .modal-contact-details .contact-input::placeholder,
+.cart-container .modal-verify-active .modal-content .modal-body .modal-contact-details .contact-input::placeholder {
+	font-size: 12px;
+	color: #717171;
+}
+
+.cart-container .modal-verify .modal-content .modal-body .modal-verify-details,
+.cart-container .modal-verify-active .modal-content .modal-body .modal-verify-details {
+	width: 100%;
+	height: 65%;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+	padding: 0.8rem 0;
+}
+
+.cart-container .modal-verify .modal-content .modal-body .modal-verify-details p,
+.cart-container .modal-verify-active .modal-content .modal-body .modal-verify-details p {
+	font-size: 12px;
+	font-weight: 500;
+}
+
+.cart-container .modal-verify .modal-content .modal-body .modal-verify-details input,
+.cart-container .modal-verify-active .modal-content .modal-body .modal-verify-details input {
+	width: 100%;
+	height: 40px;
+	outline: none;
+	border: 1px solid #bababa;
+	border-radius: 5px;
+	padding: 0 0.8rem;
+}
+
+.cart-container .modal-verify .modal-content .modal-body .modal-verify-details input::placeholder,
+.cart-container .modal-verify-active .modal-content .modal-body .modal-verify-details input::placeholder {
+	font-size: 12px;
+	color: #717171;
+}
+
+.cart-container .modal-verify .modal-content .modal-footer,
+.cart-container .modal-verify-active .modal-content .modal-footer {
+	width: 100%;
+	height: 10%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.cart-container .modal-verify .modal-content .modal-footer button,
+.cart-container .modal-verify-active .modal-content .modal-footer button {
+	width: 90%;
+	height: 42px;
+	border-radius: 5px;
+	background-color: #fb6b25;
+	color: #fff;
+	border: none;
+	cursor: pointer;
+}
+
 @media (max-width: 768px) {
 	.cart-container .cart-section {
 		width: 100%;

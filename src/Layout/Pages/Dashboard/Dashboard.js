@@ -132,7 +132,7 @@ class Dashboard extends React.Component {
 		firebase
 			.firestore()
 			.collection("users")
-			.where("email", "==", firebase.auth().currentUser.email)
+			.where("uid", "==", firebase.auth().currentUser.uid)
 			.get()
 			.then((snap) => {
 				snap.forEach((doc) => {
@@ -143,6 +143,7 @@ class Dashboard extends React.Component {
 						.update({
 							name: this.state.name,
 							phone: this.state.phone,
+							email: this.state.email,
 							// alt: this.state.alt,
 							gender: this.state.gender,
 							dob: this.state.dob,
@@ -462,7 +463,11 @@ class Dashboard extends React.Component {
 											</div>
 											<div className='input-group'>
 												<p className='title'>Email</p>
-												<p className='value'>{this.state.currentUser ? this.state.currentUser.email : "N/A"}</p>
+												{this.state.editProifle ? (
+													<input id='email' type='text' value={this.state.email} placeholder='Enter your email address' onChange={this.handleChange} />
+												) : (
+													<p className='value'>{this.state.currentUser ? this.state.currentUser.email : "N/A"}</p>
+												)}
 											</div>
 											<div className='input-group'>
 												<p className='title'>Mobile No.</p>
