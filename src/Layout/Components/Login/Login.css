@@ -13,8 +13,8 @@
 }
 
 .login-container .login {
-	width: 50%;
-	/* height: 80%; */
+	width: 360px;
+	height: 500px;
 	padding: 2rem 1rem;
 	background-color: #fff;
 	position: relative;
@@ -44,7 +44,7 @@
 /* Register CSS */
 
 .login-container .login .register-form {
-	width: 50%;
+	width: 100%;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -186,7 +186,7 @@
 /* Log-in CSS */
 
 .login-container .login .login-form {
-	width: 50%;
+	width: 100%;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -241,6 +241,10 @@
 	margin: 3px 0 7px;
 }
 
+.login-container .login .login-form .input-fields input {
+	width: 100%;
+}
+
 .login-container .login .login-form .btn-next {
 	width: 80%;
 	height: 45px;
@@ -253,6 +257,7 @@
 	border-radius: 5px;
 	cursor: pointer;
 	margin-bottom: 10px;
+	margin-top: 1rem;
 }
 
 .login-container .login .login-form .lines {
@@ -288,15 +293,15 @@
 }
 
 .login-container .login .login-form .social img {
-	width: 40px;
-	height: 40px;
+	width: 35px;
+	height: 35px;
 	cursor: pointer;
 }
 
-.login-container .login .login-form .social img:last-child {
+/* .login-container .login .login-form .social img:last-child {
 	width: 45px;
 	height: 45px;
-}
+} */
 
 .login-container .login .login-form .social p {
 	font-size: 12px;
@@ -352,35 +357,33 @@
 .otp-cont .vrf {
 	display: flex;
 	flex-direction: column;
-	margin-left: 35px;
 }
 
 .otp-cont .vrf p {
 	color: #a5a5a5;
+	margin-bottom: 1rem;
+	text-align: center;
 }
 
 .otp-cont .verification-cont {
 	margin-bottom: 1rem;
 	display: flex;
 	align-items: center;
-	flex-direction: column;
-	justify-content: center;
+	width: 100%;
+	display: flex;
+	margin: 1rem 0;
 }
 
 .otp-cont .verification-cont .code-verification {
 	margin: 0.5rem 0;
-	height: 45px;
-	width: 19%;
 	display: flex;
-	flex-direction: column;
-}
-
-.otp-cont .verification-cont .code-container {
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
 	margin: 15px 0;
-	width: 80%;
+	width: 45px;
+	height: 45px;
+	margin: 0 0.25rem;
 }
 
 .otp-cont .verification-cont .code-verification input {

@@ -13,7 +13,6 @@ import refer from "../../../assets/refer.json";
 import redeem from "./8287-redeem-points-to-get-gift.json";
 import OrdersComp from "../../Components/OrdersComp/OrdersComp";
 import circular from "../../../assets/circular loading.json";
-import moment from "moment";
 
 const pageVariants = {
 	initial: {
@@ -142,9 +141,7 @@ class Dashboard extends React.Component {
 						.doc(doc.id)
 						.update({
 							name: this.state.name,
-							phone: this.state.phone,
 							email: this.state.email,
-							// alt: this.state.alt,
 							gender: this.state.gender,
 							dob: this.state.dob,
 						})
@@ -471,11 +468,7 @@ class Dashboard extends React.Component {
 											</div>
 											<div className='input-group'>
 												<p className='title'>Mobile No.</p>
-												{this.state.editProifle ? (
-													<input id='phone' maxLength={10} type='text' value={this.state.phone} placeholder='Enter your mobile no.' onChange={this.handleChange} />
-												) : (
-													<p className='value'>{this.state.currentUser ? (this.state.currentUser.phone ? this.state.currentUser.phone : "N/A") : "N/A"}</p>
-												)}
+												<p className='value'>{this.state.currentUser ? (this.state.currentUser.phone ? this.state.currentUser.phone : "N/A") : "N/A"}</p>
 											</div>
 											<div className='input-group'>
 												<p className='title'>Gender</p>
@@ -510,27 +503,6 @@ class Dashboard extends React.Component {
 													<p className='value'>{this.state.currentUser ? (this.state.currentUser.dob ? this.state.currentUser.dob : "N/A") : "N/A"}</p>
 												)}
 											</div>
-											{/* <div className="input-group">
-                        <p className="title">Alternative No.</p>
-                        {this.state.editProifle ? (
-                          <input
-                            id="alt"
-                            maxLength={10}
-                            value={this.state.alt}
-                            type="text"
-                            placeholder="Enter an alternative no."
-                            onChange={this.handleChange}
-                          />
-                        ) : (
-                          <p className="value">
-                            {this.state.currentUser
-                              ? this.state.currentUser.alt
-                                ? this.state.currentUser.alt
-                                : "N/A"
-                              : "N/A"}
-                          </p>
-                        )}
-                      </div> */}
 										</div>
 										{this.state.editProifle ? (
 											<>

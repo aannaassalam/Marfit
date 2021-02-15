@@ -4,7 +4,6 @@ import Slider from "../../../Components/Slider/Slider";
 import { motion } from "framer-motion";
 import Lottie from "lottie-react-web";
 import empty from "./629-empty-box.json";
-import loading from "../../../../assets/loading.json";
 import Loader from "../../../Components/Loader/Loader";
 import toaster from "toasted-notes";
 import moment from "moment";
@@ -61,6 +60,10 @@ export default class ProductDesc extends React.Component {
 	}
 
 	componentDidMount() {
+		var delivery = JSON.parse(localStorage.getItem("delivery")) ? JSON.parse(localStorage.getItem("delivery")) : "";
+		this.setState({
+			delivery,
+		});
 		firebase.auth().onAuthStateChanged((user) => {
 			if (user) {
 				this.handleInit();
@@ -72,7 +75,6 @@ export default class ProductDesc extends React.Component {
 					.then((snap) => {
 						snap.forEach((doc) => {
 							var wishlist = doc.data().wishlist;
-							// productShow["isWished"] = false;
 							wishlist.forEach((item) => {
 								if (item === this.props.match.params.id3) {
 									this.setState({
@@ -126,8 +128,8 @@ export default class ProductDesc extends React.Component {
 							} else {
 								if (product.id !== this.props.match.params.id3) {
 									if (product.quantity !== 0 && simProducts2.length < 12) {
-										var sim = product.id;
-										simProducts2.push(sim);
+										var sim2 = product.id;
+										simProducts2.push(sim2);
 									}
 								}
 							}
@@ -314,19 +316,19 @@ export default class ProductDesc extends React.Component {
 							});
 						});
 				} else {
-					var cart = JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [];
-					if (cart.length > 0) {
-						cart.forEach((item) => {
+					var cart2 = JSON.parse(localStorage.getItem("cart")) ? JSON.parse(localStorage.getItem("cart")) : [];
+					if (cart2.length > 0) {
+						cart2.forEach((item) => {
 							if (item.id !== this.state.product.id) {
 								var tempCart = {};
 								tempCart.id = this.state.product.id;
 								tempCart.quantity = this.state.usersQuantity;
 								tempCart.size = "null";
 								tempCart.max = this.state.product.max;
-								cart.push(tempCart);
+								cart2.push(tempCart);
 								this.setState(
 									{
-										cart: cart,
+										cart: cart2,
 										addloading: false,
 									},
 									() => {
@@ -692,6 +694,8 @@ export default class ProductDesc extends React.Component {
 		var res = await axios.post(link + "/checkPincode", data);
 		if (res.data !== null) {
 			if (res.data.type === "success") {
+				var delivery = JSON.stringify(this.state.delivery);
+				localStorage.setItem("delivery", delivery);
 				this.setState({
 					available: true,
 					checked: true,
@@ -947,6 +951,7 @@ export default class ProductDesc extends React.Component {
 																			className={color.color === this.state.product.color ? "color color-selected" : "color"}
 																			to={"/Category/" + this.props.match.params.id1 + "/" + this.props.match.params.id2 + "/" + color.id}>
 																			<img src={color.images[0]} alt='' />
+																			<p>{color.color}</p>
 																		</Link>
 																	);
 																})}

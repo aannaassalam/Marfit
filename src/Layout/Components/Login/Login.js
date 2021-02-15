@@ -60,11 +60,15 @@ export default class Login extends React.Component {
 	};
 
 	handleRegister = () => {
-		var otp = this.state.c1 + this.state.c2 + this.state.c3 + this.state.c4;
-		if (otp === this.state.otp) {
+		if (this.state.username === "") {
+			toaster.notify("Please enter a username");
+		} else if (this.state.checked === false) {
+			toaster.notify("Please accept the terms");
+		} else {
 			this.setState({
-				verify: true,
+				loadingNext: true,
 			});
+			let phoneNumber = "+91" + this.state.phone;
 			if (this.state.referal.length > 0) {
 				firebase
 					.firestore()
@@ -76,398 +80,117 @@ export default class Login extends React.Component {
 							firebase
 								.firestore()
 								.collection("users")
-								.where("email", "==", this.state.email)
-								.get()
-								.then((snap) => {
-									if (snap.size === 0) {
-										firebase
-											.auth()
-											.createUserWithEmailAndPassword(this.state.email, this.state.password)
-											.then((res) => {
-												firebase
-													.firestore()
-													.collection("users")
-													.add({
-														email: this.state.email,
-														name: this.state.username,
-														orders: [],
-														addresses: [],
-														phone: "",
-														dob: "",
-														gender: "",
-														alt: "",
-														cart: [],
-														wishlist: [],
-														referalID: "",
-														points: 10,
-														uid: res.user.uid,
-														couponsUsed: [],
-													})
-													.then((res) => {
-														var referal = res.id.substr(16, 4) + this.state.email.substr(0, 2);
-														firebase.firestore().collection("users").doc(res.id).update({
-															referalID: referal,
-														});
-														this.setState({
-															loading: false,
-														});
-														this.props.login(true);
-														this.props.close(false);
-													})
-													.catch((err) => {
-														toaster.notify(err.message);
-														this.setState({
-															loading: false,
-														});
-													});
-											})
-											.catch((err) => {
-												toaster.notify(err.message);
-												this.setState({
-													loading: false,
-												});
-											});
-									} else {
-										toaster.notify("You are already a user");
-										this.setState({
-											loading: false,
-										});
-									}
-								});
-						} else {
-							toaster.notify("Invalid Referal Code");
-							this.setState({
-								loading: false,
-							});
-						}
-					})
-					.catch((err) => {
-						toaster.notify("Invalid Referal Code");
-						this.setState({
-							loading: false,
-						});
-					});
-			} else {
-				firebase
-					.auth()
-					.createUserWithEmailAndPassword(this.state.email, this.state.password)
-					.then(
-						(res) => {
-							firebase
-								.firestore()
-								.collection("users")
 								.add({
-									email: this.state.email,
+									email: "",
 									name: this.state.username,
 									orders: [],
 									addresses: [],
-									phone: "",
+									phone: phoneNumber,
 									dob: "",
 									gender: "",
 									alt: "",
 									cart: [],
 									wishlist: [],
 									referalID: "",
-									points: 0,
-									uid: res.user.uid,
+									points: 10,
+									uid: this.state.user.uid,
 									couponsUsed: [],
+									poinstsHistory: [],
 								})
 								.then((res) => {
-									var referal = res.id.substr(16, 4) + this.state.email.substr(0, 2);
-									firebase.firestore().collection("users").doc(res.id).update({
-										referalID: referal,
-									});
-									this.setState({
-										loading: false,
-									});
-									this.props.login(true);
-									this.props.close(false);
-									const data = {
-										email: this.state.email,
-										subject: "Marfit",
-										message: "You just got registered to mafit website, email",
-									};
-									axios.post(link + "/api/sendemail", data);
-									window.location.href = "/";
+									var referal = res.id.substr(16, 4) + phoneNumber.substr(0, 2);
+									firebase
+										.firestore()
+										.collection("users")
+										.doc(res.id)
+										.update({
+											referalID: referal,
+										})
+										.then(() => {
+											this.setState({
+												loadingNext: false,
+												showNext: false,
+												showOTP: false,
+											});
+											this.props.login(true);
+											this.props.close(false);
+										});
 								})
 								.catch((err) => {
 									toaster.notify(err.message);
 									this.setState({
-										loading: false,
+										loadingNext: false,
+										showNext: false,
+										showOTP: false,
 									});
 								});
-						},
-						firebase
-							.firestore()
-							.collection("users")
-							.where("referalID", "==", this.state.referal)
-							.get()
-							.then((snap) => {
-								if (snap.size > 0) {
-									var id = "";
-									var points = "";
-									snap.docChanges().forEach((change) => {
-										id = change.doc.id;
-										points = change.doc.data().points + 10;
-										firebase.firestore().collection("users").doc(id).update({
-											points: points,
-										});
-									});
-								}
-							})
-					)
+						} else {
+							toaster.notify("Invalid Referal Code");
+							this.setState({
+								loadingNext: false,
+								showNext: false,
+								showOTP: false,
+							});
+						}
+					})
 					.catch((err) => {
 						toaster.notify(err.message);
 						this.setState({
-							loading: false,
+							loadingNext: false,
+							showNext: false,
+							showOTP: false,
+						});
+					});
+			} else {
+				firebase
+					.firestore()
+					.collection("users")
+					.add({
+						email: "",
+						name: this.state.username,
+						orders: [],
+						addresses: [],
+						phone: phoneNumber,
+						dob: "",
+						gender: "",
+						alt: "",
+						cart: [],
+						wishlist: [],
+						referalID: "",
+						points: 0,
+						uid: this.state.user.uid,
+						couponsUsed: [],
+						poinstsHistory: [],
+					})
+					.then((res) => {
+						var referal = res.id.substr(16, 4) + phoneNumber.substr(0, 2);
+						firebase
+							.firestore()
+							.collection("users")
+							.doc(res.id)
+							.update({
+								referalID: referal,
+							})
+							.then(() => {
+								this.setState({
+									loadingNext: false,
+									showNext: false,
+									showOTP: false,
+								});
+								this.props.login(true);
+								this.props.close(false);
+							});
+					})
+					.catch((err) => {
+						toaster.notify(err.message);
+						this.setState({
+							loadingNext: false,
+							showNext: false,
+							showOTP: false,
 						});
 					});
 			}
-		} else {
-			toaster.notify("Invalid OTP");
 		}
-	};
-
-	handleOTP = (e) => {
-		e.preventDefault();
-		this.setState({
-			loading: true,
-		});
-		if (this.state.email === "" || !this.state.email.includes("@")) {
-			toaster.notify("Enter email correctly !", {
-				position: "top-right",
-				autoClose: 5000,
-				hideProgressBar: false,
-				closeOnClick: true,
-				pauseOnHover: false,
-				draggable: true,
-				progress: undefined,
-			});
-			this.setState({
-				loading: false,
-			});
-		} else if (this.state.password === "") {
-			toaster.notify("Enter password !");
-			this.setState({
-				loading: false,
-			});
-		} else if (this.state.username === "") {
-			toaster.notify("Enter Username !");
-			this.setState({
-				loading: false,
-			});
-		} else if (!this.state.checked) {
-			toaster.notify("Please agree to the Terms & Condition");
-			this.setState({
-				loading: false,
-			});
-		} else {
-			firebase
-				.firestore()
-				.collection("users")
-				.where("email", "==", this.state.email)
-				.get()
-				.then(async (snap) => {
-					if (snap.size === 0) {
-						var otp = await otpGenerator.generate(4, {
-							upperCase: false,
-							specialChars: false,
-							alphabets: false,
-						});
-						this.setState({
-							otp: otp,
-						});
-						var data = {
-							message: `Hey, your OTP is ${otp}`,
-							email: this.state.email,
-							subject: "Verify your Marfit Account",
-						};
-						var resp = await axios.post(link + "/api/sendemail", data);
-						console.log(resp);
-						if (resp.data !== null) {
-							this.setState({
-								showOTP: true,
-								loading: false,
-							});
-							this.c1.current.focus();
-						} else {
-							alert("none");
-						}
-					} else {
-						toaster.notify("You are already a user");
-						this.setState({
-							loading: false,
-						});
-					}
-				});
-		}
-	};
-
-	handleLogin = () => {
-		this.setState({
-			loading: true,
-		});
-
-		if (this.state.email === "" || !this.state.email.includes("@")) {
-			toaster.notify("Enter email correctly");
-			this.setState({
-				loading: false,
-			});
-		} else if (this.state.password === "") {
-			toaster.notify("Enter password");
-			this.setState({
-				loading: false,
-			});
-		} else {
-			firebase
-				.firestore()
-				.collection("users")
-				.where("email", "==", this.state.email)
-				.get()
-				.then((snap) => {
-					if (snap.size > 0) {
-						snap.forEach((doc) => {
-							firebase
-								.auth()
-								.signInWithEmailAndPassword(this.state.email, this.state.password)
-								.then((res) => {
-									firebase
-										.firestore()
-										.collection("users")
-										.doc(doc.id)
-										.update({
-											uid: res.user.uid,
-										})
-										.then(() => {
-											this.setState({
-												loading: false,
-											});
-											this.props.login(true);
-											this.props.close(false);
-										});
-								})
-								.catch((err) => {
-									toaster.notify(err.message);
-									this.setState({
-										loading: false,
-									});
-								});
-						});
-					} else {
-						toaster.notify("Please register!");
-						this.setState({
-							loading: false,
-						});
-					}
-				});
-		}
-	};
-
-	resetPassword = () => {
-		this.setState({
-			loading: true,
-		});
-		firebase
-			.auth()
-			.sendPasswordResetEmail(this.state.resetEmail)
-			.then(() => {
-				toaster.notify("Reset E-mail sent successfully");
-				this.setState({
-					loading: false,
-				});
-			})
-			.catch((err) => {
-				toaster.notify("User account does not exist!!!");
-				this.setState({
-					loading: false,
-				});
-			});
-	};
-
-	handlePhoneLogin = () => {
-		this.setState({
-			loadingNext: true,
-		});
-		var otp = this.state.c1 + this.state.c2 + this.state.c3 + this.state.c4;
-		if (otp === this.state.otp) {
-			this.setState({
-				loadingNext: true,
-			});
-			firebase
-				.firestore()
-				.collection("users")
-				.where("phone", "==", this.state.email)
-				.get()
-				.then((snap) => {
-					if (snap.size > 0) {
-						snap.forEach((doc) => {
-							firebase
-								.auth()
-								.signInAnonymously()
-								.then((res) => {
-									firebase
-										.firestore()
-										.collection("users")
-										.doc(doc.id)
-										.update({
-											uid: res.user.uid,
-										})
-										.then(() => {
-											this.setState({
-												loadingNext: false,
-											});
-											this.props.login(true);
-											this.props.close(false);
-										})
-										.catch((err) => {
-											console.log(err);
-											this.setState({
-												loadingNext: false,
-											});
-										});
-								});
-						});
-					} else {
-						this.setState({
-							loadingNext: false,
-						});
-						toaster.notify("No such account found with this phone number");
-					}
-				});
-		} else {
-			toaster.notify("Wrong OTP");
-			this.setState({
-				loadingNext: false,
-			});
-		}
-	};
-
-	handleNext = async () => {
-		if (this.state.phone === "") {
-			alert("Please enter a valid phone number");
-		}
-		this.setState({
-			loadingNext: true,
-		});
-		var otp = await otpGenerator.generate(4, {
-			upperCase: false,
-			specialChars: false,
-			alphabets: false,
-		});
-		this.setState({
-			otp: otp,
-		});
-		var data = {
-			message: otp,
-			number: this.state.email,
-		};
-		var res = await axios.post(link + "/api/sendMessage", data);
-		console.log(res.data);
-		this.setState({
-			showOTP: true,
-			showNext: true,
-			loadingNext: false,
-		});
 	};
 
 	setUpRecaptcha = () => {
@@ -500,12 +223,14 @@ export default class Login extends React.Component {
 					loadingNext: false,
 					showNext: true,
 				});
+				this.c1.current.focus();
 				window.confirmationResult = confirmationResult;
 				// console.log(confirmationResult);
 				toaster.notify("OTP is sent");
 			})
-			.catch(function (error) {
+			.catch((error) => {
 				console.log(error);
+				toaster.notify(error.message);
 				this.setState({
 					loadingNext: false,
 				});
@@ -524,8 +249,11 @@ export default class Login extends React.Component {
 			.confirm(otpInput)
 			.then(async (result) => {
 				var user = result.user;
-
+				this.setState({
+					user,
+				});
 				var snaps = await firebase.firestore().collection("users").where("phone", "==", phoneNumber).get();
+				console.log(snaps.size);
 				if (snaps.size > 0) {
 					this.setState({
 						loadingNext: false,
@@ -535,59 +263,11 @@ export default class Login extends React.Component {
 					this.props.login(true);
 					this.props.close(false);
 				} else {
-					firebase
-						.firestore()
-						.collection("users")
-						.add({
-							email: "",
-							name: "",
-							orders: [],
-							addresses: [],
-							phone: phoneNumber,
-							dob: "",
-							gender: "",
-							alt: "",
-							cart: [],
-							wishlist: [],
-							referalID: "",
-							points: 0,
-							uid: user.uid,
-							couponsUsed: [],
-							poinstsHistory: [],
-						})
-						.then(() => {
-							this.setState({
-								loadingNext: false,
-								showNext: false,
-								showOTP: false,
-							});
-							this.props.login(true);
-							this.props.close(false);
-							// var referal = res.id.substr(16, 4) + this.state.email.substr(0, 2);
-							// firebase.firestore().collection("users").doc(res.id).update({
-							// 	referalID: referal,
-							// });
-							// this.setState({
-							// 	loading: false,
-							// });
-							// this.props.login(true);
-							// this.props.close(false);
-							// const data = {
-							// 	email: this.state.email,
-							// 	subject: "Marfit",
-							// 	message: "You just got registered to mafit website, email",
-							// };
-							// axios.post(link + "/api/sendemail", data);
-							// window.location.href = "/";
-						})
-						.catch((err) => {
-							toaster.notify(err.message);
-							this.setState({
-								loadingNext: false,
-								showNext: false,
-								showOTP: false,
-							});
-						});
+					toaster.notify("Please fill the details !");
+					this.setState({
+						toggle: "register",
+						loadingNext: false,
+					});
 				}
 			})
 			.catch((error) => {
@@ -637,6 +317,8 @@ export default class Login extends React.Component {
 									referalID: "",
 									points: 0,
 									uid: user.uid,
+									couponsUsed: [],
+									poinstsHistory: [],
 								})
 								.then(() => {
 									props.login(true);
@@ -748,85 +430,43 @@ export default class Login extends React.Component {
 					<i
 						className='fa fa-times fa-1x'
 						onClick={() => {
+							firebase.auth().signOut();
 							this.props.close(false);
 							document.body.setAttribute("style", "");
 							window.scrollTo(0, this.props.windowOffSet);
 						}}></i>
-					<div className='section-1'>
+					{/* <div className='section-1'>
 						<img src={loginBag} alt='' />
-					</div>
+					</div> */}
 					{this.state.toggle === "register" ? (
 						<div className='register-form'>
 							<div className='marfit-img'>
 								<img src={logo} alt='Marfit logo' />
 								<img src={marfit} alt='Marfit title' />
 							</div>
-							{this.state.toggle === "register" && this.state.showOTP ? (
-								<div className='otp-cont'>
-									<div className='vrf'>
-										<h1>Enter verification code</h1>
-										<p>Enter 4 digit verification code send to your email address</p>
-									</div>
-									<div className='verification-cont'>
-										<div className='code-container'>
-											{inpuCode.map((item) => {
-												return (
-													<div className='code-verification'>
-														<input maxLength={1} id={item} type='text' value={this.state[item]} onChange={this.handleChangeCode} name={item} ref={this[item]} />
-													</div>
-												);
-											})}
-										</div>
-										<div className='button-verification'>
-											<button
-												className='btn-cancel'
-												onClick={() => {
-													this.setState({
-														showOTP: false,
-														otp: 0,
-														c1: "",
-														c2: "",
-														c3: "",
-														c4: "",
-													});
-												}}>
-												Cancel
-											</button>
-											<button className='btn-register' onClick={this.handleRegister}>
-												Register
-											</button>
-										</div>
-									</div>
-								</div>
+							<div className='input-fields'>
+								<input type='text' name='username' placeholder='Username' onChange={this.handleChange} maxLength={10} />
+								<input type='text' name='referal' placeholder='Referal code  (optional)' onChange={this.handleChange} />
+							</div>
+							<div className='agree'>
+								<input type='checkbox' name='checkbox' id='check' checked={this.state.checked} onChange={this.handleCheck} />
+								<p className='conditions'>
+									I agree to the{" "}
+									<a href='#' className='terms'>
+										TERMS & CONDITION
+									</a>{" "}
+									&{" "}
+									<a href='#' className='policy'>
+										PRIVACY POLICY
+									</a>
+								</p>
+							</div>
+							{this.state.loadingNext ? (
+								<Lottie options={{ animationData: loading }} width={50} height={50} />
 							) : (
-								<>
-									<div className='input-fields'>
-										<input type='text' name='username' placeholder='Username' onChange={this.handleChange} maxLength={10} />
-										<input type='email' name='email' placeholder='Enter Email' onChange={this.handleChange} />
-										<input type='password' name='password' placeholder='Enter Passsword' onChange={this.handleChange} />
-										<input type='text' name='referal' placeholder='Referal code  (optional)' onChange={this.handleChange} />
-									</div>
-									<div className='agree'>
-										<input type='checkbox' name='checkbox' id='check' checked={this.state.checked} onChange={this.handleCheck} />
-										<p className='conditions'>
-											I agree to the{" "}
-											<a href='#' className='terms'>
-												TERMS & CONDITION
-											</a>{" "}
-											&{" "}
-											<a href='#' className='policy'>
-												PRIVACY POLICY
-											</a>
-										</p>
-									</div>
-									{this.state.loading ? (
-										<Lottie options={{ animationData: loading }} width={50} height={50} />
-									) : (
-										<button type='button' className='btn-next' id='btn' onClick={this.handleOTP}>
-											Register
-										</button>
-									)}
-								</>
+								<button type='button' className='btn-next' id='btn' onClick={this.handleRegister}>
+									Register
+								</button>
 							)}
 
 							<div className='lines'>
@@ -837,11 +477,6 @@ export default class Login extends React.Component {
 							<div className='social'>
 								<img src={google} alt='Google Image' onClick={this.handleGoogleLogin} />
 							</div>
-							<div className='already-customer'>
-								<p>
-									Already a Customer? <a onClick={() => this.setState({ toggle: "login", showOTP: false })}>Log in</a>
-								</p>
-							</div>
 						</div>
 					) : (
 						<div className='login-form'>
@@ -850,104 +485,72 @@ export default class Login extends React.Component {
 								<img src={marfit} alt='Marfit title' />
 							</div>
 							<div id='recaptcha-container'></div>
-							{this.state.forgotpass ? (
-								<div className='resetPass'>
-									<i
-										className='fas fa-arrow-left'
-										onClick={() =>
-											this.setState({
-												forgotpass: false,
-											})
-										}></i>
-									<div className='sendmail'>
-										<input type='email' name='resetEmail' value={this.state.resetEmail} placeholder='Enter your Email' onChange={this.handleChange} />
-										{this.state.loading ? (
-											<Lottie options={{ animationData: loading }} width={50} height={50} />
-										) : (
-											<button type='button' onClick={this.resetPassword}>
-												<p>Reset Password</p>
-											</button>
-										)}
+							{this.state.toggle === "login" && this.state.showOTP ? (
+								<div className='otp-cont'>
+									<div className='vrf'>
+										<p>Enter 6 digit verification code send to your phone number</p>
+									</div>
+									<div className='verification-cont'>
+										{inpuCode.map((item) => {
+											return (
+												<div className='code-verification'>
+													<input maxLength={1} id={item} type='text' value={this.state[item]} onChange={this.handleChangeCode} name={item} ref={this[item]} />
+												</div>
+											);
+										})}
 									</div>
 								</div>
 							) : (
-								<>
-									{this.state.toggle === "login" && this.state.showOTP ? (
-										<div className='otp-cont'>
-											<div className='vrf'>
-												<h1>Enter verification code</h1>
-												<p>Enter 6 digit verification code</p>
-											</div>
-											<div className='verification-cont'>
-												<div className='code-container'>
-													{inpuCode.map((item) => {
-														return (
-															<div className='code-verification'>
-																<input maxLength={1} id={item} type='text' value={this.state[item]} onChange={this.handleChangeCode} name={item} ref={this[item]} />
-															</div>
-														);
-													})}
-												</div>
-											</div>
-										</div>
-									) : (
-										<div className='input-fields'>
-											<PhoneInput
-												country={"in"}
-												onlyCountries={["in"]}
-												disableDropdown={true}
-												disableCountryCode={true}
-												value={this.state.phone}
-												onChange={(phone) => this.setState({ phone })}
-												placeholder='Enter your phone number'
-											/>
-										</div>
-									)}
+								<div className='input-fields'>
+									<PhoneInput
+										country={"in"}
+										onlyCountries={["in"]}
+										disableDropdown={true}
+										disableCountryCode={true}
+										value={this.state.phone}
+										onChange={(phone) => this.setState({ phone })}
+										placeholder='Enter your phone number'
+									/>
+								</div>
+							)}
 
-									{this.state.showNext ? (
-										<>
-											{this.state.loadingNext ? (
-												<Lottie options={{ animationData: loading }} width={80} height={80} />
-											) : (
-												<>
-													{this.state.showOTP ? (
-														<button type='button' className='btn-next' onClick={this.onSubmitOtp}>
-															Verify & Login
-														</button>
-													) : (
-														<button className='btn-next' type='button' onClick={this.handleLogin}>
-															Login
-														</button>
-													)}
-												</>
-											)}
-										</>
+							{this.state.showNext ? (
+								<>
+									{this.state.loadingNext ? (
+										<Lottie options={{ animationData: loading }} width={50} height={50} />
 									) : (
 										<>
-											{this.state.loadingNext ? (
-												<Lottie options={{ animationData: loading }} width={80} height={80} />
+											{this.state.showOTP ? (
+												<button type='button' className='btn-next' onClick={this.onSubmitOtp}>
+													Verify & Login
+												</button>
 											) : (
-												<button className='btn-next' type='button' onClick={this.onSignInSubmit}>
-													Next
+												<button className='btn-next' type='button' onClick={this.handleLogin}>
+													Login
 												</button>
 											)}
 										</>
 									)}
-									<div className='lines'>
-										<div className='horizontal'></div>
-										<div className='or'>OR</div>
-										<div className='horizontal'></div>
-									</div>
-									<div className='social'>
-										<img src={google} alt='Google Image' onClick={this.handleGoogleLogin} />
-									</div>
-									<div className='already-customer'>
-										<p>
-											Not a Customer. <a onClick={() => this.setState({ toggle: "register", showOTP: false })}>Register</a>
-										</p>
-									</div>
+								</>
+							) : (
+								<>
+									{this.state.loadingNext ? (
+										<Lottie options={{ animationData: loading }} width={50} height={50} />
+									) : (
+										<button className='btn-next' type='button' onClick={this.onSignInSubmit}>
+											Next
+										</button>
+									)}
 								</>
 							)}
+							<div className='lines'>
+								<div className='horizontal'></div>
+								<div className='or'>OR</div>
+								<div className='horizontal'></div>
+							</div>
+							<div className='social'>
+								<img src={google} alt='Google Image' onClick={this.handleGoogleLogin} />
+							</div>
 						</div>
 					)}
 				</div>
